@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Node API with Fastify",
+  "main": "src/server.js",
+  "type": "module",
+
+  "scripts": {
+    "dev": "nodemon --watch src --legacy-watch --exec node src/app.js"
+  },
+
+  "dependencies": {
+    "fastify": "^4.0.0",
+    "@fastify/cors": "^8.0.0"
+  },
+
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
