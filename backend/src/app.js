@@ -1,16 +1,26 @@
-import fastify from 'fastify'
-import routes from './routes.js'
-import fastifyCors from '@fastify/cors'
+/* fastify */
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
 
-const app = fastify({ logger: true });
+/* Database */
+import db from './database/database.js'
 
-app.register(fastifyCors, {
+/* Local files */
+import routes from './routes/routes.js';
+
+/* NOTE: Create the server object */
+const app = Fastify({ logger: true });
+
+/* NOTE: Register the valid methods and IPs */
+app.register(cors, {
   origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 });
 
+/* NOTE: Register the routes */
 app.register(routes);
 
+/* NOTE: Start the server */
 const start = async () => {
   try {
     console.log('Starting server...');
@@ -21,5 +31,4 @@ const start = async () => {
     process.exit(1);
   }
 };
-
 start();  
