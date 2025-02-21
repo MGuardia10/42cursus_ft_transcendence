@@ -3,7 +3,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 
 /* Database */
-import db from './database/database.js'
+import {initializeDB} from './database/database.js'
 
 /* Local files */
 import routes from './routes/routes.js';
@@ -16,6 +16,9 @@ app.register(cors, {
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 });
+
+/* NOTE: Init the database */
+await initializeDB()
 
 /* NOTE: Register the routes */
 app.register(routes);

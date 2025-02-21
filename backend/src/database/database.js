@@ -24,7 +24,6 @@ const initializeDB = async () => {
 		console.error("Error on the database init: ", error);
 	}
 }
-await initializeDB();
 
 /* Export the database object */
-export default db;
+export { db, initializeDB };
