@@ -1,4 +1,4 @@
-import {db} from '../database/database.js'
+import db from '../database/database.js'
 
 export function get_users(request, reply) {
 	try {

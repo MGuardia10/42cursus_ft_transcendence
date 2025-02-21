@@ -26,4 +26,5 @@ const initializeDB = async () => {
 }
 
 /* Export the database object */
-export { db, initializeDB };
+export default db;
+export { initializeDB };
