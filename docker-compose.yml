@@ -15,7 +15,7 @@ services:
       - transcendence
     ports:
       - "3000:3000"
-    command: npm run dev
+    # command: npm run dev
 
   # nginx:
   #   container_name: Nginx
@@ -29,18 +29,24 @@ services:
   #   networks:
   #     - transcendence
 
-  # react:
-  #   container_name: React
-  #   build:
-  #     context: frontend/
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   depends_on:
-  #     - node
-  #   networks:
-  #     - transcendence
-
-
+  react:
+    container_name: React
+    build:
+      context: frontend/
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    restart: always
+    # depends_on:
+    #   - backend
+    networks:
+      - transcendence
+    ports:
+      - "5173:5173"
+    # command: npm run dev
 
 # volumes:
 
