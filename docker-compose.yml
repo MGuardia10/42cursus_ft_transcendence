@@ -13,6 +13,7 @@ services:
     networks:
       - transcendence
     ports:
+      - "80:80"
       - "443:443"
 
   backend:
@@ -28,8 +29,8 @@ services:
     restart: always
     networks:
       - transcendence
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"
 
   frontend:
     container_name: frontend
