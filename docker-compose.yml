@@ -8,7 +8,7 @@ services:
       - ./nginx/certs/:/etc/nginx/ssl:ro
     restart: always
     depends_on:
-      - backend
+      - backend-user
       - frontend
     networks:
       - transcendence
@@ -16,13 +16,13 @@ services:
       - "80:80"
       - "443:443"
 
-  backend:
-    container_name: backend
+  backend-user:
+    container_name: backend-user
     build:
-      context: backend/
+      context: backend-user/
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/app
+      - ./backend-user:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
@@ -44,7 +44,7 @@ services:
       - NODE_ENV=development
     restart: always
     depends_on:
-      - backend
+      - backend-user
     networks:
       - transcendence
     ports:
