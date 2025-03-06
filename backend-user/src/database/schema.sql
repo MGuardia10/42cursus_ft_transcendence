@@ -13,8 +13,10 @@ CREATE TABLE IF NOT EXISTS friend_status (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE
 );
+INSERT OR IGNORE INTO friend_status(name) VALUES('Accepted');
+INSERT OR IGNORE INTO friend_status(name) VALUES('Pending');
 
--- Amigos:
+-- Friends table:
 CREATE TABLE IF NOT EXISTS friends (
   user_a INTEGER NOT NULL,
   user_b INTEGER NOT NULL,
