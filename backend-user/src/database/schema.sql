@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS friends (
   user_b INTEGER NOT NULL,
   status INTEGER NOT NULL,
 
+  PRIMARY KEY (user_a, user_b),
   FOREIGN KEY (user_a) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (user_b) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (status) REFERENCES friend_status(id)
