@@ -1,7 +1,6 @@
 import db from '../database/database.js'
 
-
-
+/* FIXME: add try-catch on the database querys */
 export default async function add_friend(request, reply)
 {
 	const { from, to } = request.body;
@@ -20,9 +19,25 @@ export default async function add_friend(request, reply)
 		return reply.code(500).send({ error: 'Error on the database config: top friend statuses missing' });
 
 	/* Check if the relation already exists (request or completed) */
+	const search = db.prepare("SELECT * FROM friends WHERE (user_a = ? and user_b = ?) or (user_a = ? and user_b = ?)").get(from, to, to, from);
+	if (search?.user_a)
+	{
+		const {user_a, status} = search;
 
+		/* Check if it is accepted */
+		if (status === accepted_id)
+			return reply.code(400).send({ error: "The relationship already exists" });
+
+		/* Check if the request was sent before */
+		if (user_a === from)
+			return reply.code(409).send({ error: "The request had already been sent" });
+
+		/* Update the relation, accepting it */
+		db.prepare("UPDATE friends SET status = ? WHERE user_a = ? AND user_b = ?").run(accepted_id, to, from);
+		return reply.code(200).send({status: "Accepted" })
+	}
 
 	/* If no relation is started, create one */
-
-	reply.send('Created!');
+	db.prepare("INSERT INTO friends(user_a, user_b, status) VALUES(?, ?, ?)").run(from, to, pending_id);
+	reply.code(201).send({ status: "Pending" });
 }
