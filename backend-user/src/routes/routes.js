@@ -1,4 +1,5 @@
 import add_user from './add_user.js'
+import add_friend from './add_friend.js';
 
 export default async function (fastify, options) {
   
@@ -15,5 +16,18 @@ export default async function (fastify, options) {
         }
       }
     }
-  }, add_user)
+  }, add_user);
+
+  fastify.post('/friend', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['from', 'to'],
+        properties: {
+          from: { type: 'string' },
+          to: { type: 'string' }
+        }
+      }
+    }
+  }, add_friend)
 };
