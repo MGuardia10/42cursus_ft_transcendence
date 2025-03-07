@@ -30,3 +30,6 @@ dist-ssr
 
 # Certs
 *.pem
+
+# Env file
+.env
