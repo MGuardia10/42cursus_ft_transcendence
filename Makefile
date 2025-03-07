@@ -12,10 +12,15 @@ up: certs
 down:
 	@docker-compose down
 
+# Rule to create the certs if there are not anyone
 certs:
 	@if [ ! -f nginx/certs/cert.pem ] || [ ! -f nginx/certs/key.pem ]; then \
 		cd nginx/certs && bash generate_certs.sh; \
 	fi
+
+# Rule to clean all the user data
+clean_data:
+	@cd backend-user; rm -rf database.sqlite avatars 
 
 # Targets
 .PHONY: up down certs
