@@ -4,18 +4,28 @@ import { randomBytes } from 'crypto';
 import 'dotenv/config'
 import fs from 'fs';
 
+async function generateName( base )
+{
+	let counter = 0;
+	let currentName = base;
+
+	while (db.prepare("SELECT id FROM users WHERE name = ?").get(currentName))
+	{
+		currentName = `${base}${counter}`;
+		counter++;
+	}
+	return currentName;
+}
+
 export default async function add_user(request, reply) {
 
 	/* Get the json values */
 	const { name, email, avatar_url } = request.body;
+	const username = await generateName( name );
 
-	/* Check if any user with that email or username exists */
+	/* Check if the mail is being used by another count */
 	try
 	{
-		const username_search = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
-		if (username_search)
-			return reply.code(409).send({ error: "The name is already used by another user" })
-
 		const email_search = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
 		if (email_search)
 			return reply.code(409).send({ error: "The email is already used by another user" })
@@ -47,12 +57,12 @@ export default async function add_user(request, reply) {
 	let user_id;
 	try
 	{
-		const queryStatus = db.prepare("INSERT INTO users (name, email, avatar) VALUES (?, ?, ?)").run(name, email, image_path);
+		const queryStatus = db.prepare("INSERT INTO users (name, email, avatar) VALUES (?, ?, ?)").run(username, email, image_path);
 		user_id = queryStatus.lastInsertRowid;
 	}
 	catch(err)
 	{
-		return reply.code(500).send({ error: err });
+		return reply.code(500).send({ error: err, name: username, email: email });
 	}
-	return reply.code(201).send({ id: user_id, name: name, email: email })
+	return reply.code(201).send({ id: user_id, name: username, email: email })
 }
