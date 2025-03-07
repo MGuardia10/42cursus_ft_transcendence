@@ -19,7 +19,7 @@ export default async function add_friend(request, reply)
 			return reply.code(500).send({ error: 'Error on the database config: top friend statuses missing' });
 
 		/* Check if the relation already exists (request or completed) */
-		const search = db.prepare("SELECT * FROM friends WHERE (user_a = ? and user_b = ?) or (user_a = ? and user_b = ?)").get(from, to, to, from);
+		const search = db.prepare("SELECT user_a, status FROM friends WHERE (user_a = ? and user_b = ?) or (user_a = ? and user_b = ?)").get(from, to, to, from);
 		if (search?.user_a)
 		{
 			const {user_a, status} = search;
