@@ -24,8 +24,8 @@ export default async function (fastify, options) {
         type: 'object',
         required: ['from', 'to'],
         properties: {
-          from: { type: 'string' },
-          to: { type: 'string' }
+          from: { type: 'integer' },
+          to: { type: 'integer' }
         }
       }
     }
