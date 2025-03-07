@@ -33,3 +33,6 @@ dist-ssr
 
 # Env file
 .env
+
+# Avatars folder
+backend-user/avatars/
