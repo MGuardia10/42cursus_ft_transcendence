@@ -10,13 +10,20 @@ export default async function add_user(request, reply) {
 	const { name, email, avatar_url } = request.body;
 
 	/* Check if any user with that email or username exists */
-	const username_search = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
-	if (username_search)
-		return reply.code(409).send({ error: "The name is already used by another user" })
+	try
+	{
+		const username_search = db.prepare("SELECT * FROM users WHERE name = ?").get(name);
+		if (username_search)
+			return reply.code(409).send({ error: "The name is already used by another user" })
 
-	const email_search = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-	if (email_search)
-		return reply.code(409).send({ error: "The email is already used by another user" })
+		const email_search = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+		if (email_search)
+			return reply.code(409).send({ error: "The email is already used by another user" })
+	}
+	catch( err )
+	{
+		return reply.code(500).send({ error: err });
+	}
 
 	/* Get the image, generate a name and save it on a file */
 	const image_name = randomBytes(16).toString('hex');
@@ -45,7 +52,7 @@ export default async function add_user(request, reply) {
 	}
 	catch(err)
 	{
-		return reply.code(500).send({ error: 'Erro while saving the info on the database' });
+		return reply.code(500).send({ error: err });
 	}
 	return reply.code(201).send({ id: user_id, name: name, email: email })
 }
