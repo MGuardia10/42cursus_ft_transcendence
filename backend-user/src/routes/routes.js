@@ -18,6 +18,7 @@ export default async function (fastify, options) {
     }
   }, add_user);
 
+  /* Endpoint to stablishe a connection between users */
   fastify.post('/friend', {
     schema: {
       body: {
@@ -29,5 +30,5 @@ export default async function (fastify, options) {
         }
       }
     }
-  }, add_friend)
+  }, add_friend);
 };
