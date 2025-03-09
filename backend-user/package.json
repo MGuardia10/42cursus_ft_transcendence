@@ -7,9 +7,12 @@
   "dependencies": {
     "@fastify/cors": "^10.0.2",
     "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
     "fastify": "^5.2.1"
   },
   "devDependencies": {
+    "eslint": "^9.22.0",
+    "globals": "^16.0.0",
     "nodemon": "^3.1.9"
   },
   "scripts": {
