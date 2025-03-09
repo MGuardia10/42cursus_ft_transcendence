@@ -1,4 +1,4 @@
-import add_user from './add_user.js'
+import add_user from './add_user.js';
 import add_friend from './add_friend.js';
 
 export default async function (fastify, options) {

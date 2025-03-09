@@ -1,7 +1,7 @@
 import path from 'path';
-import db from '../database/database.js'
+import db from '../database/database.js';
 import { randomBytes } from 'crypto';
-import 'dotenv/config'
+import 'dotenv/config';
 import fs from 'fs';
 
 async function generateName( base )
@@ -28,7 +28,7 @@ export default async function add_user(request, reply) {
 	{
 		const email_search = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
 		if (email_search)
-			return reply.code(409).send({ error: "The email is already used by another user" })
+			return reply.code(409).send({ error: "The email is already used by another user" });
 	}
 	catch( err )
 	{
@@ -37,7 +37,7 @@ export default async function add_user(request, reply) {
 
 	/* Get the image, generate a name and save it on a file */
 	const image_name = randomBytes(16).toString('hex');
-	const image_path = path.join(process.env.AVATAR_FOLDER, `${image_name}.jpg`)
+	const image_path = path.join(process.env.AVATAR_FOLDER, `${image_name}.jpg`);
 
 	try
 	{
@@ -64,5 +64,5 @@ export default async function add_user(request, reply) {
 	{
 		return reply.code(500).send({ error: err, name: username, email: email });
 	}
-	return reply.code(201).send({ id: user_id, name: username, email: email })
+	return reply.code(201).send({ id: user_id, name: username, email: email });
 }

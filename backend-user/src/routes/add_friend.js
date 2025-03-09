@@ -1,4 +1,4 @@
-import db from '../database/database.js'
+import db from '../database/database.js';
 
 export default async function add_friend(request, reply)
 {
@@ -34,7 +34,7 @@ export default async function add_friend(request, reply)
 
 			/* Update the relation, accepting it */
 			db.prepare("UPDATE friends SET status = ? WHERE user_a = ? AND user_b = ?").run(accepted_id, to, from);
-			return reply.code(200).send({status: "Accepted" })
+			return reply.code(200).send({status: "Accepted" });
 		}
 
 		/* If no relation is started, create one */

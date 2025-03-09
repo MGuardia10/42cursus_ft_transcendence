@@ -4,7 +4,7 @@ import cors from '@fastify/cors';
 import fs from 'fs';
 
 /* Database */
-import {initializeDB} from './database/database.js'
+import {initializeDB} from './database/database.js';
 
 /* Local files */
 import routes from './routes/routes.js';
