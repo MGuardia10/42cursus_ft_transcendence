@@ -8,7 +8,7 @@ export default async function (fastify, options) {
     schema: {
       body: {
         type: 'object',
-        required: ['name', 'email'],
+        required: ['name', 'email', 'avatar_url'],
         properties: {
           name: { type: 'string' },
           email: { type: 'string', format: 'email' },

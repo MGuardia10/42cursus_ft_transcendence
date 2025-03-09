@@ -62,7 +62,7 @@ export default async function add_user(request, reply) {
 	}
 	catch(err)
 	{
-		return reply.code(500).send({ error: err, name: username, email: email });
+		return reply.code(500).send({ error: err });
 	}
 	return reply.code(201).send({ id: user_id, name: username, email: email });
 }
