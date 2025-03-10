@@ -1,8 +1,32 @@
+import get_users from './get_users.js';
+
 import add_user from './add_user.js';
 import add_friend from './add_friend.js';
 
 export default async function (fastify, options) {
   
+  /***********************/
+  /* NOTE: GET endpoints */
+  /***********************/
+
+  fastify.get('/', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          limit: { type: 'integer' },
+          page: { type: 'integer' }
+        }
+      }
+    }
+  }, get_users);
+
+
+  /************************/
+  /* NOTE: POST endpoints */
+  /************************/
+
   /* Endpoint to add users */
   fastify.post('/', {
     schema: {
