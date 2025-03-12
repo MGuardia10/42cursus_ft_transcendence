@@ -1,4 +1,4 @@
 import { createContext } from 'react';
-import { LanguageContextProps } from '@/types/context';
+import { LanguageContextProps } from '@/types/languageContext';
 
 export const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
