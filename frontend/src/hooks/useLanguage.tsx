@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { LanguageContextProps } from '@/types/context';
+import { LanguageContextProps } from '@/types/languageContext';
 import { LanguageContext } from '@/context/Language/LanguageContext';
 
 export const useLanguage = (): LanguageContextProps => {

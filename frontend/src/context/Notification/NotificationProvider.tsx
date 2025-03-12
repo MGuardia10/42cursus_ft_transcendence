@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react';
-import { Notification } from '@/types/notification';
+import { Notification } from '@/types/notificationContext';
 import { NotificationContext } from '@/context/Notification/NotificationContext';
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

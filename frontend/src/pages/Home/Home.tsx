@@ -2,8 +2,9 @@ import React from 'react';
 
 const Home: React.FC = () => {
 	return (
-		<div>
-			<h1>Home</h1>
+		<div className=''>
+			<h1 className=''>Home</h1>
+			<p>Welcome to the Home page!</p>
 		</div>
 	);
 };
