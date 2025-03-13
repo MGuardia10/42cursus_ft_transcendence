@@ -1,11 +1,35 @@
-import React from 'react';
+import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router";
 
-const Login: React.FC = () => {
+const Login = () => {
+
+	// useNavigate hook to navigate to home page when login is successful
+	const navigate = useNavigate();
+
+	const handleGoogleSignIn = () => {
+		console.log("Iniciar sesión con Google");
+		navigate("/");
+	};
+
 	return (
-		<div>
-			<h1>Login</h1>
+		<div className="flex flex-col justify-center items-center bg-background-secondary p-8 md:p-16 rounded-xs text-center z-10">
+
+			{/* Title */}
+			<h1 className="md:text-3xl font-login mb-2 md:mb-3">FT_TRASCENDENCE</h1>
+
+			{/* Small paragraph */}
+			<p className="text-xs md:text-sm text-text-secondary mb-8 md:mb-10">Best pong experience</p>
+			
+			{/* Google Button */}
+			<button
+				onClick={handleGoogleSignIn}
+				className="flex items-center justify-center gap-2 md:gap-4 bg-white text-gray-900 px-3 py-2 md:px-6 md:py-3 rounded-xs shadow-md hover:cursor-pointer hover:bg-gray-300 transition duration-300"
+			>
+				<FcGoogle className="text-2xl" />
+				<span className="text-sm" >Sign In with Google</span>
+			</button>
 		</div>
-	);
+  );
 };
 
 export default Login;

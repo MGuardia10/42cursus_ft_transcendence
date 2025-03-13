@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -8,6 +9,23 @@
   --color-text-primary: #DADDE3;
   --color-text-secondary: #6a6fc3; /* 6369C8 */
   --color-text-tertiary: #4ACEAB; /* 558D90 */
+
+  --animate-ball: pong-move 2s linear infinite alternate;
+}
+
+@keyframes pong-move {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
+}
+
+@layer utilities {
+  .font-login {
+    font-family: 'Sixtyfour', sans-serif;
+  }
 }
 
 /* 1D293F */
