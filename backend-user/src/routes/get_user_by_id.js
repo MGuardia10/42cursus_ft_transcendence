@@ -28,12 +28,12 @@ export async function get_user_avatar_by_id(request, reply)
 	try
 	{
 		/* Get the avatar path */
-		const avatar_path = db.prepare("SELECT avatar FROM users WHERE id = ?").get(id).avatar;
-		if (!avatar_path || !fs.existsSync(avatar_path))
-			return reply.code(404).send({ error: `Avatar not found: ${avatar_path}` });
+		const avatar = db.prepare("SELECT avatar FROM users WHERE id = ?").get(id);
+		if (!avatar || !fs.existsSync(avatar.avatar))
+			return reply.code(404).send({ error: "Avatar not found" });
 
 		/* Return the file witg a read stream */
-		return reply.type('image/jpeg').code(200).send(fs.createReadStream(avatar_path));
+		return reply.type('image/jpeg').code(200).send(fs.createReadStream(avatar.avatar));
 	}
 	catch(err)
 	{
