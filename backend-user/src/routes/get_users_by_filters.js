@@ -6,7 +6,7 @@ function add_param(fragment, data, query, params)
 	return query + ` ${fragment}`;
 }
 
-export default async function get_users( request, reply )
+export default async function get_users_by_filters( request, reply )
 {
 	/* Get the filters */
 	const { name, limit, page } = request.query;

@@ -1,4 +1,4 @@
-import get_users from './get_users.js';
+import get_users_by_filters from './get_users_by_filters.js';
 import { get_user_by_id, get_user_avatar_by_id } from './get_user_by_id.js';
 
 import add_user from './add_user.js';
@@ -22,7 +22,7 @@ export default async function (fastify, options) {
         }
       }
     }
-  }, get_users);
+  }, get_users_by_filters);
 
   /* Get the information of an user, providing the id */
   fastify.get('/:id', {
