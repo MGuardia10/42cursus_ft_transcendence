@@ -1,4 +1,5 @@
 import get_users from './get_users.js';
+import { get_user_by_id } from './get_user_by_id.js';
 
 import add_user from './add_user.js';
 import add_friend from './add_friend.js';
@@ -9,6 +10,7 @@ export default async function (fastify, options) {
   /* NOTE: GET endpoints */
   /***********************/
 
+  /* Get all the users (just name and id), and some filters */
   fastify.get('/', {
     schema: {
       querystring: {
@@ -21,6 +23,19 @@ export default async function (fastify, options) {
       }
     }
   }, get_users);
+
+  /* Get the information of an user, providing the id */
+  fastify.get('/:id', {
+    schema: {
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'integer' }
+        }
+      }
+    }
+  }, get_user_by_id);
 
 
   /************************/
