@@ -3,6 +3,9 @@ vscode/
 .idea
 .DS_Store
 
+# Vite
+.vite
+
 # Database
 *sqlite
 
