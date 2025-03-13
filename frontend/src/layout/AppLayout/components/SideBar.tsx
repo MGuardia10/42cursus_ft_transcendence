@@ -45,7 +45,10 @@ const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
       		className={`fixed top-[62px] md:top-0 left-0 h-full w-full md:w-64 bg-background-secondary p-4 transform ${showSidebar ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300`}
     	>
 			<div>
-				<div className="hidden md:flex md:flex-col md:items-center md:my-18">
+				<div className='flex items-center justify-center md:items-center'>
+					<h1 className="text-xl md:text-sm font-login my-6 md:mt-2 md:mb-0">FT_TRASCENDENCE</h1>
+				</div>
+				<div className="hidden md:flex md:flex-col md:items-center md:my-12">
 					<img src='https://i.redd.it/c83vyz4t9b651.jpg' alt='avatar' className='md:block md:w-24 md:h-24 rounded-full' />
 					<h2 className="text-3xl font-bold mt-3">Miguel</h2>
 					<p className="mt-1 text-sm text-text-tertiary">mguardia</p>
