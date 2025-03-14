@@ -17,16 +17,17 @@ export default async function get_users_by_filters( request, reply )
 	/* Check filter by name */
 	if (name !== undefined)
 		query = add_param("WHERE name LIKE ?", `%${name}%`, query, params);
+	
+	/* Added default by id */
+	query = query + " ORDER BY id"; 
 
 	if (limit !== undefined)
 	{
 		query = add_param("LIMIT ?", limit, query, params);
 		if (page !== undefined)
-			query = add_param("OFFSET ?", page, query, params);
+			query = add_param("OFFSET ?", limit * (page - 1), query, params);
 	}
 
-	/* Added default by id */
-	query = query + " ORDER BY id"; 
 
 	/* Execute the query and return the result */
 	try
