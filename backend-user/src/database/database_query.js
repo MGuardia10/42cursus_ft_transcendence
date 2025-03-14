@@ -3,6 +3,7 @@ class DatabaseQuery
 	#table;
 	#select;
 	#where;
+	#order_by
 	#limit;
 	#offset;
 	/**
@@ -16,6 +17,7 @@ class DatabaseQuery
 		this.#select = fields || ["*"];
 		this.#table = table;
 		this.#where = [];
+		this.#order_by = [];
 		this.#limit = -1;
 		this.#offset = -1;
 	}
@@ -37,6 +39,20 @@ class DatabaseQuery
 		this.#where.push({
 			items: items,
 			operator: operator
+		});
+	}
+
+	/**
+	 * Adds an ORDER BY clause to the query.
+	 *
+	 * @param {string} column - The column name to sort by.
+	 * @param {string} mode - The sorting mode, either "ASC" (ascending) or "DESC" (descending). Optional.
+	 */
+	add_order_by(column, mode)
+	{
+		this.#order_by.push({
+			column: column,
+			mode: mode
 		});
 	}
 
@@ -114,6 +130,20 @@ class DatabaseQuery
 				query += `( ${condition} )`;
 				if (i < this.#where.length - 1)
 					query += " OR ";
+			}
+		}
+
+		/* Order by */
+		if (this.#order_by.length > 0)
+		{
+			query += " ORDER BY ";
+			for (let i = 0; i < this.#order_by.length; i++)
+			{
+				query += `${this.#order_by[i].column}`;
+				if (this.#order_by[i].mode)
+					query += ` ${this.#order_by[i].mode}`;
+				if (i < this.#order_by.length - 1)
+					query += ", ";
 			}
 		}
 
