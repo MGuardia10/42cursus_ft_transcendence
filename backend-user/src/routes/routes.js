@@ -1,6 +1,7 @@
 import get_users_by_filters from './get_users_by_filters.js';
 import { get_user_by_id, get_user_avatar_by_id } from './get_user_by_id.js';
 import get_friends_by_filters from './get_friends_by_filters.js';
+import get_friends_by_id from './get_friends_by_id.js';
 
 import add_user from './add_user.js';
 import add_friend from './add_friend.js';
@@ -66,6 +67,25 @@ export default async function (fastify, options) {
       }
     }
   }, get_friends_by_filters);
+
+  fastify.get('/friends/:id', {
+    schema: {
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'integer' }
+        }
+      },
+      querystring: {
+        type: 'object',
+        properties: {
+          status: { type: 'string' }
+        },
+        additionalProperties: false
+      }
+    }
+  }, get_friends_by_id)
 
   /************************/
   /* NOTE: POST endpoints */
