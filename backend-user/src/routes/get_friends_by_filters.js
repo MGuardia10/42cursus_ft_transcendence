@@ -6,7 +6,7 @@ function add_param(query_fragment, new_param, query, params)
 	return query + ` ${query_fragment}`;
 }
 
-export default async function get_all_friends_by_filters(request, reply)
+export default async function get_friends_by_filters(request, reply)
 {
 	/* Get the query params */
 	const { status, limit, page } = request.query;
