@@ -1,10 +1,5 @@
 import db from '../database/database.js';
-
-function add_param(query_fragment, new_param, query, params)
-{
-	params.push(new_param);
-	return query + ` ${query_fragment}`;
-}
+import DatabaseQuery from '../database/database_query.js';
 
 export default async function get_friends_by_filters(request, reply)
 {
@@ -12,8 +7,10 @@ export default async function get_friends_by_filters(request, reply)
 	const { status, limit, page } = request.query;
 
 	/* Prepare the query and the params */
-	let query = "SELECT * FROM friends";
-	let params = [];
+	const completeQuery = new DatabaseQuery(
+		"friends",
+		["*"]
+	)
 
 	/* Check status */
 	if (status)
@@ -26,7 +23,7 @@ export default async function get_friends_by_filters(request, reply)
 				return reply.code(404).send({ error: "Status not found" });
 			
 			/* Add it to the query and params */
-			query = add_param("WHERE status = ?", status_id.id, query, params);
+			completeQuery.add_where([{key: "status", action: '=', value: status_id.id}], undefined);
 		}
 		catch(err)
 		{
@@ -37,14 +34,15 @@ export default async function get_friends_by_filters(request, reply)
 	/* Check limit */
 	if (limit)
 	{
-		query = add_param("LIMIT ?", limit, query, params);
+		completeQuery.add_limit(limit);
 		if (page)
-			query = add_param("OFFSET ?", limit * (page - 1), query, params);
+			completeQuery.add_offset(limit * (page - 1));
 	}
 
 	/* Make the query and return the data */
 	try
 	{
+		const { query, params } = completeQuery.generate();
 		const users = db.prepare(query).all(...params);
 		return reply.code(200).send(users);
 	}

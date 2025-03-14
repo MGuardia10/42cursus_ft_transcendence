@@ -1,10 +1,5 @@
 import db from '../database/database.js'
-
-function add_param(query_fragment, new_param, query, params)
-{
-	params.push(new_param);
-	return query + ` ${query_fragment}`;
-}
+import DatabaseQuery from '../database/database_query.js'
 
 export default async function get_friends_by_id(request, reply)
 {
@@ -25,8 +20,11 @@ export default async function get_friends_by_id(request, reply)
 	}
 
 	/* Generate the initial query */
-	let query = "SELECT * FROM friends WHERE (user_a = ? OR user_b = ?)";
-	let params = [id, id]
+	const completeQuery = new DatabaseQuery(
+		"friends",
+		["*"]
+	);
+	completeQuery.add_where([{key: "user_a", action: '=', value: id}, {key: "user_b", action: '=', value: id}], "OR");
 
 	/* Check the filters applied */
 	if (status)
@@ -37,7 +35,7 @@ export default async function get_friends_by_id(request, reply)
 			const status_id = db.prepare("SELECT id FROM friend_status WHERE name = ?").get(status);
 			if (!status_id)
 				return reply.code(404).send({ error: "Friend status not found" });
-			query = add_param("AND status = ?", status_id.id, query, params);
+			completeQuery.add_where([{key: "status", action: '=', value: status_id.id}], undefined, "AND");
 		}
 		catch
 		{
@@ -48,6 +46,7 @@ export default async function get_friends_by_id(request, reply)
 	/* Make the query */
 	try
 	{
+		const { query, params } = completeQuery.generate();
 		const friends = db.prepare(query).all(...params);
 		return reply.code(200).send(friends);
 	}

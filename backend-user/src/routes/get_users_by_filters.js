@@ -1,38 +1,35 @@
 import db from '../database/database.js';
-
-function add_param(fragment, data, query, params)
-{
-	params.push(data);
-	return query + ` ${fragment}`;
-}
+import DatabaseQuery from '../database/database_query.js';
 
 export default async function get_users_by_filters( request, reply )
 {
 	/* Get the filters */
 	const { name, limit, page } = request.query;
 
-	let params = [];
-	let query = "SELECT id, name FROM users";
+	const completeQuery = new DatabaseQuery(
+		"users",
+		["id", "name"]
+	);
 
 	/* Check filter by name */
 	if (name !== undefined)
-		query = add_param("WHERE name LIKE ?", `%${name}%`, query, params);
+		completeQuery.add_where([{key: "name", action: 'LIKE', value: `%${name}%`}], undefined);
 	
 	/* Added default by id */
-	query = query + " ORDER BY id"; 
+	completeQuery.add_order_by("id");
 
 	if (limit !== undefined)
 	{
-		query = add_param("LIMIT ?", limit, query, params);
+		completeQuery.add_limit(limit);
 		if (page !== undefined)
-			query = add_param("OFFSET ?", limit * (page - 1), query, params);
+			completeQuery.add_offset(limit * (page - 1));
 	}
 
 
 	/* Execute the query and return the result */
 	try
 	{
-		// return reply.code(200).send({query: query, params: params});
+		const { query, params } = completeQuery.generate();
 		const users = db.prepare(query).all(...params);
 		return reply.code(200).send(users);
 	}
