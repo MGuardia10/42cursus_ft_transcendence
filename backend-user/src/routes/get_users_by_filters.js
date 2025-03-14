@@ -25,6 +25,9 @@ export default async function get_users_by_filters( request, reply )
 			query = add_param("OFFSET ?", page, query, params);
 	}
 
+	/* Added default by id */
+	query = query + " ORDER BY id"; 
+
 	/* Execute the query and return the result */
 	try
 	{
