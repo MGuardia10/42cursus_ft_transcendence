@@ -33,12 +33,15 @@ class DatabaseQuery
 	 * 
 	 * @param {string} operator - The logical operator to use in the WHERE condition ('=', 'AND', 'OR', ...).
 	 * If only one condition is provided, this parameter is ignored (provide undefined).
+	 * @param {string} [previous_operator] - The logical operator to use before the WHERE condition
+	 * ('=', 'AND', 'OR', ...) if there is another condition.
 	 */
-	add_where(items, operator)
+	add_where(items, operator, previous_operator)
 	{
 		this.#where.push({
 			items: items,
-			operator: operator
+			operator: operator,
+			previous_operator: previous_operator
 		});
 	}
 
@@ -129,7 +132,10 @@ class DatabaseQuery
 
 				query += `( ${condition} )`;
 				if (i < this.#where.length - 1)
-					query += " OR ";
+				{
+					let previous_operator = this.#where[i + 1].previous_operator || "OR"
+					query += ` ${previous_operator} `;
+				}
 			}
 		}
 
