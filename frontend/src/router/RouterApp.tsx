@@ -7,7 +7,7 @@ import Home from '@/pages/Home/Home';
 import LeaderBoard from '@/pages/Leaderboard/Leaderboard';
 import Login from '@/pages/Login/Login';
 import Profile from '@/pages/Profile/Profile';
-import Settings from '@/pages/Settings/Settings';
+import GameSettings from '@/pages/Settings/GameSettings';
 import SingleMatch from '@/pages/SingleMatch/SingleMatch';
 import Tournament from '@/pages/Tournament/Tournament';
 
@@ -27,7 +27,7 @@ const RouterApp: React.FC = () => {
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/leaderboard" element={<LeaderBoard />} />
 					<Route path="/profile" element={<Profile />} />
-					<Route path="/game-settings" element={<Settings />} />
+					<Route path="/game-settings" element={<GameSettings />} />
 				</Route>
 
 				<Route path="*" element={<h1>Not Found</h1>} />
