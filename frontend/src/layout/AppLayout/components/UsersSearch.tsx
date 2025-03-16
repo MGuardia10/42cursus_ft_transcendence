@@ -23,7 +23,7 @@ const UsersSearch: React.FC = () => {
 				placeholder={t("search_placeholder")}
 				value={query}
 				onChange={(e) => setQuery(e.target.value)}
-				className="py-1.5 px-2 md:py-2.5 md:px-3 w-32 md:w-full focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background-secondary text-xs"
+				className="py-1.5 px-2 md:py-2.5 md:px-3 w-32 md:w-full focus:outline-none focus:ring-2 focus:ring-text-tertiary bg-background-secondary text-xs"
 			/>
 
 			<HiSearch className="absolute top-1/2 right-2 md:right-3 transform -translate-y-1/2 text-sm md:text-base" />

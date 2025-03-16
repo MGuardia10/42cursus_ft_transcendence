@@ -38,11 +38,11 @@ const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
 		if ( showSidebar && window.innerWidth < 768 ) {
 		  setShowSidebar(false);
 	  }
-	  };
+	};
 
 	return (
 		<aside
-      		className={`fixed top-[62px] md:top-0 left-0 h-full w-full md:w-64 bg-background-secondary p-4 transform ${showSidebar ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300`}
+      		className={`z-10 fixed top-[62px] md:top-0 left-0 h-full w-full md:w-72 bg-background-secondary p-4 transform ${showSidebar ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300`}
     	>
 			<div>
 				<div className='flex items-center justify-center md:items-center'>
