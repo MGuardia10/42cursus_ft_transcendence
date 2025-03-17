@@ -109,7 +109,7 @@ const Profile: React.FC = () => {
 			<div className='flex flex-row gap-2 md:gap-3'>
 				<label
 					htmlFor="avatar"
-					className="text-sm md:text-base cursor-pointer flex items-center gap-2 p-1.5 md:p-2 rounded-xs border"
+					className="text-sm md:text-base cursor-pointer flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xs border"
 				>
 					{ avatar ? <VscFolderActive className='text-text-tertiary'/> : <VscFolder /> }
 					<p className='inline-block whitespace-nowrap'>{ t("user_settings_upload") }</p>
