@@ -68,6 +68,7 @@ export default async function (fastify, options) {
     }
   }, get_friends_by_filters);
 
+  /* Get the friend relationships of an user, by ID */
   fastify.get('/friends/:id', {
     schema: {
       params: {
