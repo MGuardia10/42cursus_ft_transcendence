@@ -1,5 +1,5 @@
-import db from '../database/database.js'
-import DatabaseQuery from '../database/database_query.js'
+import db from '../database/database.js';
+import DatabaseQuery from '../database/database_query.js';
 
 export default async function get_friends_by_id(request, reply)
 {

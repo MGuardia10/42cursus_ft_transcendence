@@ -3,7 +3,7 @@ class DatabaseQuery
 	#table;
 	#select;
 	#where;
-	#order_by
+	#order_by;
 	#limit;
 	#offset;
 	/**
@@ -102,7 +102,7 @@ class DatabaseQuery
 	generate()
 	{
 		/* Select */
-		let params = []
+		let params = [];
 		let query = "SELECT ";
 		for (let i = 0; i < this.#select.length; i++)
 		{
@@ -133,7 +133,7 @@ class DatabaseQuery
 				query += `( ${condition} )`;
 				if (i < this.#where.length - 1)
 				{
-					let previous_operator = this.#where[i + 1].previous_operator || "OR"
+					let previous_operator = this.#where[i + 1].previous_operator || "OR";
 					query += ` ${previous_operator} `;
 				}
 			}

@@ -17,7 +17,8 @@
   },
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon --watch src --legacy-watch --exec node src/app.js"
+    "dev": "nodemon --watch src --legacy-watch --exec node src/app.js",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
   },
   "keywords": [],
   "author": "",
