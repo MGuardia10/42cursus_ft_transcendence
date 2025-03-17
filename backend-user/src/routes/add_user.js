@@ -21,7 +21,7 @@ export default async function add_user(request, reply) {
 
 	/* Get the json values */
 	const { name, email, avatar_url } = request.body;
-	const username = await generateName( name );
+	const alias = await generateName( name );
 
 	/* Check if the mail is being used by another count */
 	try
@@ -57,12 +57,12 @@ export default async function add_user(request, reply) {
 	let user_id;
 	try
 	{
-		const queryStatus = db.prepare("INSERT INTO users (name, email, avatar) VALUES (?, ?, ?)").run(username, email, image_path);
+		const queryStatus = db.prepare("INSERT INTO users (name, alias, email, avatar) VALUES (?, ?, ?)").run(name, alias, email, image_path);
 		user_id = queryStatus.lastInsertRowid;
 	}
 	catch(err)
 	{
 		return reply.code(500).send({ error: err });
 	}
-	return reply.code(201).send({ id: user_id, name: username, email: email });
+	return reply.code(201).send({ id: user_id, name: name, alias: alias, email: email });
 }

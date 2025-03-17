@@ -4,24 +4,24 @@ import DatabaseQuery from '../database/database_query.js';
 export default async function get_users_by_filters( request, reply )
 {
 	/* Get the filters */
-	const { name, limit, page } = request.query;
+	const { alias, limit, page } = request.query;
 
 	const completeQuery = new DatabaseQuery(
 		"users",
-		["id", "name"]
+		["id", "alias"]
 	);
 
 	/* Check filter by name */
-	if (name !== undefined)
-		completeQuery.add_where([{key: "name", action: 'LIKE', value: `%${name}%`}], undefined);
+	if (alias)
+		completeQuery.add_where([{key: "alias", action: 'LIKE', value: `%${alias}%`}], undefined);
 	
 	/* Added default by id */
 	completeQuery.add_order_by("id");
 
-	if (limit !== undefined)
+	if (limit)
 	{
 		completeQuery.add_limit(limit);
-		if (page !== undefined)
+		if (page)
 			completeQuery.add_offset(limit * (page - 1));
 	}
 

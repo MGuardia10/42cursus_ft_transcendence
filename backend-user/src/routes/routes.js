@@ -18,7 +18,7 @@ export default async function (fastify, options) {
       querystring: {
         type: 'object',
         properties: {
-          name: { type: 'string' },
+          alias: { type: 'string' },
           limit: { type: 'integer', minimum: 1},
           page: { type: 'integer', minimum: 1 }
         }
@@ -85,7 +85,7 @@ export default async function (fastify, options) {
         additionalProperties: false
       }
     }
-  }, get_friends_by_id)
+  }, get_friends_by_id);
 
   /************************/
   /* NOTE: POST endpoints */

@@ -10,7 +10,7 @@ export default async function get_friends_by_filters(request, reply)
 	const completeQuery = new DatabaseQuery(
 		"friends",
 		["*"]
-	)
+	);
 
 	/* Check status */
 	if (status)

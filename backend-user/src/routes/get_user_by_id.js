@@ -9,9 +9,9 @@ export async function get_user_by_id(request, reply)
 	/* Get all the user information */
 	try
 	{
-		const user = db.prepare("SELECT name, email, tfa FROM users WHERE id = ?").get(id);
+		const user = db.prepare("SELECT name, alias, email, tfa FROM users WHERE id = ?").get(id);
 		return user
-			? reply.code(200).send({ name: user.name, email: user.email, tfa: user.tfa })
+			? reply.code(200).send({ name: user.name, alias: user.alias, email: user.email, tfa: user.tfa })
 			: reply.code(404).send({ error: "User not found" });
 	}
 	catch(err)
