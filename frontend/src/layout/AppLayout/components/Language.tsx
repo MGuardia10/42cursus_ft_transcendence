@@ -40,7 +40,7 @@ const Language: React.FC = () => {
 		<div className='relative w-14 md:w-32 flex items-center'>
 			{/* Select language */}
 			<select
-				className='py-1.5 px-2 md:py-2.5 md:px-3 appearance-none outline-none pointer-events-auto focus:ring-2 focus:ring-blue-500 hover:cursor-pointer w-full md:pr-6 text-xs bg-background-secondary'
+				className='py-1.5 px-2 md:py-2.5 md:px-3 appearance-none outline-none pointer-events-auto focus:ring-2 focus:ring-text-tertiary hover:cursor-pointer w-full md:pr-6 text-xs bg-background-secondary'
 				id='language'
 				onChange={(e) => {
 					// cast e.target.value to type Language

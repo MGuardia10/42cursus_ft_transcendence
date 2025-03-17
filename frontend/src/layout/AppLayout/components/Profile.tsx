@@ -55,7 +55,7 @@ const Profile: React.FC = () => {
 		>
 			<FiUser className='text-2xl' />
 			<ul
-				className={`absolute flex flex-col top-10 right-0 w-32 md:w-36 bg-background-secondary border border-border-primary shadow-lg overflow-hidden rounded-xs z-10 transition-all duration-200 ${ showProfileOptions ? "opacity-100 scale-100" : "opacity-0 scale-95 invisible" }`}
+				className={`absolute flex flex-col top-10 right-0 w-40 bg-background-secondary border border-border-primary shadow-lg overflow-hidden rounded-xs z-10 transition-all duration-200 ${ showProfileOptions ? "opacity-100 scale-100" : "opacity-0 scale-95 invisible" }`}
 			>
 				<Link 
 					to='/profile'

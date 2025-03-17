@@ -9,7 +9,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LanguageProvider>
       <NotificationProvider>
-        <main className='max-h-screen width-full'>
+        <main className='max-h-screen width-full font-primary'>
           <RouterApp />
         </main>
       </NotificationProvider>
