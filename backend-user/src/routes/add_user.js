@@ -9,7 +9,7 @@ async function generateName( base )
 	let counter = 0;
 	let currentName = base;
 
-	while (db.prepare("SELECT id FROM users WHERE name = ?").get(currentName))
+	while (db.prepare("SELECT id FROM users WHERE alias = ?").get(currentName))
 	{
 		currentName = `${base}${counter}`;
 		counter++;
@@ -21,7 +21,16 @@ export default async function add_user(request, reply) {
 
 	/* Get the json values */
 	const { name, email, avatar_url } = request.body;
-	const alias = await generateName( name );
+
+	let alias;
+	try
+	{
+		alias = await generateName( name );
+	}
+	catch(err)
+	{
+		return reply.code(500).send({ error: err });
+	}
 
 	/* Check if the mail is being used by another count */
 	try
@@ -57,7 +66,7 @@ export default async function add_user(request, reply) {
 	let user_id;
 	try
 	{
-		const queryStatus = db.prepare("INSERT INTO users (name, alias, email, avatar) VALUES (?, ?, ?)").run(name, alias, email, image_path);
+		const queryStatus = db.prepare("INSERT INTO users (name, alias, email, avatar) VALUES (?, ?, ?, ?)").run(name, alias, email, image_path);
 		user_id = queryStatus.lastInsertRowid;
 	}
 	catch(err)
