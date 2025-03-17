@@ -30,3 +30,9 @@ dist-ssr
 
 # Certs
 *.pem
+
+# Env file
+.env
+
+# Avatars folder
+backend-user/avatars/

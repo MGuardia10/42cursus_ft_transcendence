@@ -1,9 +1,10 @@
 /* fastify */
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import fs from 'fs';
 
 /* Database */
-import {initializeDB} from './database/database.js'
+import {initializeDB} from './database/database.js';
 
 /* Local files */
 import routes from './routes/routes.js';
@@ -18,10 +19,15 @@ app.register(cors, {
 });
 
 /* NOTE: Init the database */
-await initializeDB()
+await initializeDB();
 
 /* NOTE: Register the routes */
 app.register(routes);
+
+/* NOTE: Check if the avatars folder exists */
+const avatar_folder = process.env.AVATAR_FOLDER;
+if (!fs.existsSync(avatar_folder))
+  fs.mkdirSync(avatar_folder);
 
 /* NOTE: Start the server */
 const start = async () => {

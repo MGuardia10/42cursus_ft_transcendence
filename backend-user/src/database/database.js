@@ -1,11 +1,11 @@
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import Database from 'better-sqlite3'
-import fs from 'fs/promises'
+import Database from 'better-sqlite3';
+import fs from 'fs/promises';
 
 /* Load the database file */
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const dbPath = join(__dirname, '../../database.sqlite');
 const db = new Database( dbPath, {
 	fileMustExist: false,
@@ -23,7 +23,7 @@ const initializeDB = async () => {
 	catch (error) {
 		console.error("Error on the database init: ", error);
 	}
-}
+};
 
 /* Export the database object */
 export default db;
