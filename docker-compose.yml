@@ -60,6 +60,9 @@ services:
       dockerfile: Dockerfile
     environment:
       - USER_API_BASEURL=${USER_API_BASEURL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_URI=${GOOGLE_CALLBACK_URI}
     volumes:
       - ./backend-auth:/app
       - /app/node_modules

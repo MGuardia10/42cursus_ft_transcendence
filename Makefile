@@ -19,7 +19,6 @@ check_env:
 		echo "\e[31m[ ERROR ]\e[0m Some environment variables in the '.env' file have no value"; \
 		exit 1; \
 	fi
-	@exit 0
 
 
 # Rule to turn off the services and delete the containers
