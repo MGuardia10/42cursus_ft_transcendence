@@ -9,42 +9,12 @@ services:
       - ./nginx/certs/:/etc/nginx/ssl:ro
     restart: always
     depends_on:
-      - backend-user
       - frontend
     networks:
       - transcendence
     ports:
       - "80:80"
       - "443:443"
-
-  # NOTE: User API container
-  backend-user:
-    container_name: backend-user
-    build:
-      context: backend-user/
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend-user:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - AVATAR_FOLDER=${AVATAR_FOLDER}
-    restart: always
-    networks:
-      - transcendence
-
-  # NOTE: Auth API container
-  backend-auth:
-    container_name: backend-auth
-    build:
-      context: backend-auth/
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend-auth:/app
-      - /app/node_modules
-    restart: always
-    networks:
-      - transcendence
 
   # NOTE: Frontend container
   frontend:
@@ -60,12 +30,42 @@ services:
     restart: always
     depends_on:
       - backend-user
+      - backend-auth
     networks:
       - transcendence
     ports:
       - "5173:5173"
 
-# volumes:
+  # NOTE: User API container
+  backend-user:
+    container_name: backend-user
+    build:
+      context: backend-user/
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      - AVATAR_FOLDER=${AVATAR_FOLDER}
+    volumes:
+      - ./backend-user:/app
+      - /app/node_modules
+    restart: always
+    networks:
+      - transcendence
+
+  # NOTE: Auth API container
+  backend-auth:
+    container_name: backend-auth
+    build:
+      context: backend-auth/
+      dockerfile: Dockerfile
+    environment:
+      - USER_API_BASEURL=${USER_API_BASEURL}
+    volumes:
+      - ./backend-auth:/app
+      - /app/node_modules
+    restart: always
+    networks:
+      - transcendence
 
 networks:
   transcendence:
