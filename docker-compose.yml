@@ -1,5 +1,6 @@
 services:
 
+  # NOTE: Nginx container
   proxy:
     container_name: proxy
     image: nginx:latest
@@ -16,6 +17,7 @@ services:
       - "80:80"
       - "443:443"
 
+  # NOTE: User API container
   backend-user:
     container_name: backend-user
     build:
@@ -30,9 +32,21 @@ services:
     restart: always
     networks:
       - transcendence
-    # ports:
-    #   - "3000:3000"
 
+  # NOTE: Auth API container
+  backend-auth:
+    container_name: backend-auth
+    build:
+      context: backend-auth/
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend-auth:/app
+      - /app/node_modules
+    restart: always
+    networks:
+      - transcendence
+
+  # NOTE: Frontend container
   frontend:
     container_name: frontend
     build:
