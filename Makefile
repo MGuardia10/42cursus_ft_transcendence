@@ -1,12 +1,26 @@
 all: up
 
 # Rule to set up the system
-up: certs
+up: certs check_env
+	@docker compose up --build #-d
+
+check_env:
 	@if [ ! -f .env ]; then \
 		echo "\e[31m[ ERROR ]\e[0m A '.env' file must exist"; \
 		exit 1; \
 	fi
-	@docker compose up --build #-d
+
+	@python3 check_env.py; \
+	STATUS=$$?; \
+	if [ $$STATUS -eq 1 ]; then \
+		echo "\e[31m[ ERROR ]\e[0m Missing environment variables in the '.env' file"; \
+		exit 1; \
+	elif [ $$STATUS -eq 2 ]; then \
+		echo "\e[31m[ ERROR ]\e[0m Some environment variables in the '.env' file have no value"; \
+		exit 1; \
+	fi
+	@exit 0
+
 
 # Rule to turn off the services and delete the containers
 down:
@@ -23,4 +37,4 @@ clean_data:
 	@cd backend-user; rm -rf database.sqlite avatars 
 
 # Targets
-.PHONY: up down certs
+.PHONY: up check_env down certs clean_data
