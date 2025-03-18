@@ -134,34 +134,3 @@ const Leaderboard: React.FC = () => {
 };
 
 export default Leaderboard;
-
-
-
-
-
-
-
-// import { useState } from 'react';
-// import { useLanguage } from '@/hooks/useLanguage';
-
-// const Leaderboard: React.FC = () => {
-
-// 	// useLanguage hook
-// 	const { t } = useLanguage();
-
-// 	return (
-// 		<div className="w-full rounded-md mx-auto p-6 md:p-10 bg-background-secondary">
-// 			<h1 className="text-xl md:text-3xl font-bold mb-6">{ t("sidebar_leaderboard") }</h1>
-  
-// 		{/* Top 3 */}
-		
-  
-// 		{/* List of ranking with pagination */}
-  
-		
-	  
-// 	  </div>
-// 	);
-// };
-
-// export default Leaderboard;
