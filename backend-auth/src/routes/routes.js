@@ -1,7 +1,5 @@
-import login_endpoint from "./login.js";
+import google_callback from './google_callback.js';
 
 export default async function (fastify, options) {
-  
-  /* Login endpoint */
-  fastify.get('/login', login_endpoint);
+  fastify.get(process.env.GOOGLE_CALLBACK_ENDPOINT, google_callback);
 };
