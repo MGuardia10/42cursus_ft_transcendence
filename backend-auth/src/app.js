@@ -1,6 +1,7 @@
 /* fastify */
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import fastifyOauth2 from '@fastify/oauth2';
 
 /* Local files */
 import routes from './routes/routes.js';
@@ -13,6 +14,22 @@ app.register(cors, {
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 });
+
+/* NOTE: Register the OAuth2 config */
+app.register(fastifyOauth2, {
+  name: 'googleOAuth2',
+  scope: ['profile', 'email'],
+  credentials: {
+    client: {
+      id: process.env.GOOGLE_CLIENT_ID,
+      secret: process.env.GOOGLE_CLIENT_SECRET
+    },
+    auth: fastifyOauth2.GOOGLE_CONFIGURATION,
+  },
+  startRedirectPath: '/login',
+  callbackUri: process.env.GOOGLE_CALLBACK_URI,
+});
+
 
 /* NOTE: Register the routes */
 app.register(routes);
