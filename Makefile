@@ -13,10 +13,7 @@ check_env:
 	@python3 check_env.py; \
 	STATUS=$$?; \
 	if [ $$STATUS -eq 1 ]; then \
-		echo "\e[31m[ ERROR ]\e[0m Missing environment variables in the '.env' file"; \
-		exit 1; \
-	elif [ $$STATUS -eq 2 ]; then \
-		echo "\e[31m[ ERROR ]\e[0m Some environment variables in the '.env' file have no value"; \
+		echo "\e[31m[ ERROR ]\e[0m The system could not be started because the '.env' file is invalid or missing required environment variables"; \
 		exit 1; \
 	fi
 
