@@ -31,12 +31,13 @@ export const translations = {
 		sidebar_leaderboard: "Leaderboard",
 		sidebar_profile_settings: "Profile Settings",
 		sidebar_game_pref: "Game Preferences",
+		// Dashboard
+		dashboard_wins: "Wins",
+		dashboard_losses: "Losses",
 		// Leaderboard
 		leaderboard_top_3: "Top 3 Players",
 		leaderboard_ranking: "Ranking",
 		leaderboard_wins: "Wins",
-		leaderboard_prev: "Prev",
-		leaderboard_next: "Next",
 		// profile settings
 		user_settings_h1: "Profile Settings",
 		user_settings_name: "Name",
@@ -90,12 +91,13 @@ export const translations = {
 		sidebar_leaderboard: "Clasificación",
 		sidebar_profile_settings: "Ajustes de Perfil",
 		sidebar_game_pref: "Ajustes del Juego",
+		// Dashboard
+		dashboard_wins: "Vict.",
+		dashboard_losses: "Derr.",
 		// Leaderboard
 		leaderboard_top_3: "Top 3 Jugadores",
 		leaderboard_ranking: "Ranking",
 		leaderboard_wins: "Vict.",
-		leaderboard_prev: "Anterior",
-		leaderboard_next: "Siguiente",
 		// profile settings
 		user_settings_h1: "Ajustes de Perfil",
 		user_settings_name: "Nombre",
@@ -150,12 +152,13 @@ export const translations = {
 		sidebar_leaderboard: "Quadro de Líderes",
 		sidebar_profile_settings: "Configurações do perfil",
 		sidebar_game_pref: "Preferências de Jogo",
+		// Dashboard
+		dashboard_wins: "Vit.",
+		dashboard_losses: "Der.",
 		// Leaderboard
 		leaderboard_top_3: "Top 3 Jogadores",
 		leaderboard_ranking: "Ranking",
 		leaderboard_wins: "Vit.",
-		leaderboard_prev: "Anterior",
-		leaderboard_next: "Seguinte",
 		// profile settings
 		user_settings_h1: "Configurações do Usuário",
 		user_settings_name: "Nome",

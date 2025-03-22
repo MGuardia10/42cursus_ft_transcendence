@@ -66,6 +66,7 @@ const Profile: React.FC = () => {
 				placeholder="Miguel Guardia"
 				className="flex-1 p-1.5 md:p-2 text-sm md:text-base border rounded-xs focus:outline-none focus:ring focus:border-blue-300"
 				required
+				autoComplete='off'
 			/>
 			<button
 				type="submit"
@@ -103,9 +104,9 @@ const Profile: React.FC = () => {
       {/* Formulario para actualizar el avatar */}
       <form onSubmit={handleAvatarSubmit} className="flex flex-col mb-6">
 		<div className='flex flex-col gap-2.5'>
-			<label htmlFor="avatar" className="inline-block whitespace-nowrap text-sm font-medium hover:cursor-pointer">
+			<div className="inline-block whitespace-nowrap text-sm font-medium">
 			{ t('user_settings_avatar') }
-			</label>
+			</div>
 			<div className='flex flex-row gap-2 md:gap-3'>
 				<label
 					htmlFor="avatar"
@@ -147,6 +148,7 @@ const Profile: React.FC = () => {
 		  { t('user_settings_two_factor') }
 		  </label>
           <button
+		  	id='twoFactor'
             type="button"
             onClick={handleTwoFactorToggle}
             className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none hover:cursor-pointer ${
