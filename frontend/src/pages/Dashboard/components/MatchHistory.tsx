@@ -50,76 +50,76 @@ const gameResults = [
 		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
 		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
 	},
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// },
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// },
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// },
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// },
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// },
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// },
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// },
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// },
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// },
-	// {
-	// 	userPoints: 12,
-	// 	opponentPoints: 10,
-	// 	result: 'win', // o 'lose' según la lógica que definas para empates
-	// 	userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
-	// 	opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
-	// }
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	},
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	},
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	},
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	},
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	},
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	},
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	},
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	},
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	},
+	{
+		userPoints: 12,
+		opponentPoints: 10,
+		result: 'win', // o 'lose' según la lógica que definas para empates
+		userAvatar: "https://i.redd.it/c83vyz4t9b651.jpg",
+		opponentAvatar: "https://randomuser.me/api/portraits/women/30.jpg",
+	}
   ];
 
 const MatchHistory: React.FC = () => {

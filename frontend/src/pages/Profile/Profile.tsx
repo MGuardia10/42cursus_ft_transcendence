@@ -3,6 +3,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 
 import { VscFolderActive } from "react-icons/vsc";
 import { VscFolder } from "react-icons/vsc";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const Profile: React.FC = () => {
 
@@ -30,9 +31,9 @@ const Profile: React.FC = () => {
   const handleAvatarSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Lógica para actualizar el avatar en su endpoint
-    console.log('Actualizando avatar:', avatar);
+	if (!avatar) return;
 
-	// Manejar cuando llega null !!!!
+    console.log('Actualizando avatar:', avatar);
 
   };
 
@@ -123,8 +124,8 @@ const Profile: React.FC = () => {
 					className="hidden"
 				/>
 				<button
-				type="submit"
-				className="text-sm md:text-base text-white p-1.5 md:p-2 rounded-xs bg-text-secondary hover:bg-text-tertiary hover:cursor-pointer transition-all duration-300"
+					type="submit"
+					className="text-sm md:text-base text-white p-1.5 md:p-2 rounded-xs bg-text-secondary hover:bg-text-tertiary hover:cursor-pointer transition-all duration-300"
 				>
 					{ t('user_settings_submit') }
 				</button>
@@ -163,17 +164,18 @@ const Profile: React.FC = () => {
           </button>
         </div>
       </form>
+
+	  {/* Botón para eliminar la cuenta */}
+	  <div className='flex md:items-right md:justify-end'>
+		<button
+			className="flex items-center gap-2 text-sm md:text-base text-red-700 border border-red-700 p-1.5 md:px-3 md:py-2 rounded-xs bg-background-primary hover:bg-red-400 hover:cursor-pointer transition-all duration-300 mt-12 md:mt-6"
+		>
+			<FaRegTrashAlt className='inline-block text-sm text-red-700'/>
+			{ t('profile_delete_account') }
+		</button>
+	  </div>
     </div>
   );
 };
 
 export default Profile;
-
-
-
-/*
-	- Change username
-	- Change alias for tournaments
-	- Change profile picture
-	- Configure two-factor authentication
-*/
