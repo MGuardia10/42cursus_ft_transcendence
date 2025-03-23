@@ -1,6 +1,11 @@
 import React from 'react';
+import { useLanguage } from '@/hooks/useLanguage';
+
 
 const GameStats: React.FC = () => {
+
+	// useLanguage hook
+	const { t } = useLanguage();
 
 	// Datos fijos de ejemplo
 	const wins = 75;
@@ -22,7 +27,7 @@ const GameStats: React.FC = () => {
 
 			{/* Game stats */}
 			<div className='flex justify-between font-bold'>
-				<h2>Total Games</h2>
+				<h3>{ t("dashboard_games") }</h3>
 				<p>{total}</p>
 			</div>
 
@@ -30,7 +35,7 @@ const GameStats: React.FC = () => {
 
 			<div className='flex flex-col gap-2'>
 				<div className='flex justify-between text-sm md:text-base'>
-					<h3>Games Won</h3>
+					<p>{ t("dashboard_games_wins") }</p>
 					<p className='text-sm'>{wins}</p>
 				</div>
 				<div className="w-full bg-background-secondary rounded-full h-1.5 md:h-2">
@@ -43,7 +48,7 @@ const GameStats: React.FC = () => {
 
 			<div className='flex flex-col gap-2'>
 				<div className='flex justify-between text-sm md:text-base'>
-					<h2>Games Lost</h2>
+					<p>{ t("dashboard_games_lost") }</p>
 					<p className='text-sm'>{losses}</p>
 				</div>
 				<div className="w-full bg-background-secondary rounded-full h-1.5 md:h-2">
@@ -58,7 +63,7 @@ const GameStats: React.FC = () => {
 
 			{/* Points stats */}
 			<div className='flex justify-between font-bold mt-4'>
-				<h2>Total Points</h2>
+				<h3>{ t("dashboard_points") }</h3>
 				<p>{totalPoints}</p>
 			</div>
 
@@ -66,7 +71,7 @@ const GameStats: React.FC = () => {
 
 			<div className='flex flex-col gap-2'>
 				<div className='flex justify-between text-sm'>
-					<h2>Points Won</h2>
+					<p>{ t("dashboard_points_won") }</p>
 					<p>{pointsWon}</p>
 				</div>
 				<div className="w-full bg-background-secondary rounded-full h-1.5 md:h-2">
@@ -79,7 +84,7 @@ const GameStats: React.FC = () => {
 
 			<div className='flex flex-col gap-2'>
 				<div className='flex justify-between text-sm'>
-					<h2>Points Lost</h2>
+					<p>{ t("dashboard_points_lost") }</p>
 					<p>{pointsLost}</p>
 				</div>
 				<div className="w-full bg-background-secondary rounded-full h-1.5 md:h-2">

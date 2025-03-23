@@ -1,4 +1,4 @@
-import React from 'react';
+import { useLanguage } from '@/hooks/useLanguage';
 
 const gameResults = [
 	{
@@ -123,10 +123,14 @@ const gameResults = [
   ];
 
 const MatchHistory: React.FC = () => {
+
+	// useLanguage hook
+	const { t } = useLanguage();
+
 	return (
 		<div className="flex flex-col gap-3 w-full p-6 h-full">
 			{/* Title */}
-			<h1 className="text-xl mb-2">Match History</h1>
+			<h2 className="md:text-xl mb-2">{ t("dashboard_match_history") }</h2>
 			{/* Matches */}
 			<div className='flex flex-col gap-3 max-h-auto overflow-y-auto scrollbar scrollbar-thumb-background-secondary scrollbar-track-background-primary'>
 				{gameResults && gameResults.map((game, index) => (

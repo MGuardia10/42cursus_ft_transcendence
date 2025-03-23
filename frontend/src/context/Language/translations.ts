@@ -34,6 +34,13 @@ export const translations = {
 		// Dashboard
 		dashboard_wins: "Wins",
 		dashboard_losses: "Losses",
+		dashboard_games: "Total Games",
+		dashboard_games_wins: "Games Won",
+		dashboard_games_lost: "Games Lost",
+		dashboard_points: "Total Points",
+		dashboard_points_won: "Points Won",
+		dashboard_points_lost: "Points Lost",
+		dashboard_match_history: "Match History",
 		// Leaderboard
 		leaderboard_top_3: "Top 3 Players",
 		leaderboard_ranking: "Ranking",
@@ -94,6 +101,13 @@ export const translations = {
 		// Dashboard
 		dashboard_wins: "Vict.",
 		dashboard_losses: "Derr.",
+		dashboard_games: "Partidas Totales",
+		dashboard_games_wins: "Partidas Ganadas",
+		dashboard_games_lost: "Partidas Perdidas",
+		dashboard_points: "Puntos Totales",
+		dashboard_points_won: "Puntos Ganados",
+		dashboard_points_lost: "Puntos Perdidos",
+		dashboard_match_history: "Historial de partidas",
 		// Leaderboard
 		leaderboard_top_3: "Top 3 Jugadores",
 		leaderboard_ranking: "Ranking",
@@ -155,6 +169,13 @@ export const translations = {
 		// Dashboard
 		dashboard_wins: "Vit.",
 		dashboard_losses: "Der.",
+		dashboard_games: "Jogos Totais",
+		dashboard_games_wins: "Jogos Ganhos",
+		dashboard_games_lost: "Jogos Perdidos",
+		dashboard_points: "Pontos Totais",
+		dashboard_points_won: "Pontos Ganhos",
+		dashboard_points_lost: "Pontos Perdidos",
+		dashboard_match_history: "Histórico de Jogos",
 		// Leaderboard
 		leaderboard_top_3: "Top 3 Jogadores",
 		leaderboard_ranking: "Ranking",
