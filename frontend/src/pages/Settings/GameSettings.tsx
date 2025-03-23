@@ -95,7 +95,7 @@ const GameSettings: React.FC = () => {
 				className={`${ custom ? 'flex flex-col gap-2 md:gap-2.5 mt-4' : 'hidden' }`}
 			>
 				{/* Points to win game */}
-				<label className="block text-sm font-medium">
+				<label htmlFor='score' className="block text-sm font-medium">
 					{ t("game_settings_points") }
 				</label>
 				<div className='relative'>
@@ -103,7 +103,7 @@ const GameSettings: React.FC = () => {
 						id="score"
 						value={score}
 						onChange={(e) => setScore(e.target.value)}
-						className="w-full text-sm md:text-base p-1.5 md:p-2 border rounded-xs appearance-none outline-text-tertiary"
+						className="w-full text-sm md:text-base p-1.5 md:p-2 border rounded-xs appearance-none outline-text-tertiary hover:cursor-pointer"
 					>
 						<option value="3">3 { t("game_settings_points_opt") }</option>
 						<option value="5">5 { t("game_settings_points_opt") }</option>
@@ -116,7 +116,7 @@ const GameSettings: React.FC = () => {
 				
 
 				{/* Seconds to wait when a goal is scored */}
-				<label className="block text-sm font-medium mt-4">
+				<label htmlFor='serveDelay' className="block text-sm font-medium mt-4">
 				{ t("game_settings_serve_delay") }
 				</label>
 				<div className='relative'>
@@ -124,7 +124,7 @@ const GameSettings: React.FC = () => {
 						id="serveDelay"
 						value={serveDelay}
 						onChange={(e) => setServeDelay(e.target.value)}
-						className="w-full text-sm md:text-base p-1.5 md:p-2 border rounded-xs appearance-none outline-text-tertiary"
+						className="w-full text-sm md:text-base p-1.5 md:p-2 border rounded-xs appearance-none outline-text-tertiary hover:cursor-pointer"
 					>
 						<option value="no">{ t("game_settings_no_delay") }</option>
 						<option value="1">1 { t("game_settings_seconds") }</option>
@@ -138,27 +138,30 @@ const GameSettings: React.FC = () => {
 				<div className="flex flex-col items-center gap-4 py-8 md:py-10">
 					<canvas ref={canvasRef} width={500} height={300} className='w-[250px] h-[150px] md:w-[300px] md:h-[200px] lg:w-[500px] lg:h-[300px]'/>
 					<div className="flex gap-2  md:gap-4 lg:gap-10">
-						<label className="flex items-center gap-1 md:gap-2 text-sm">
+						<label className="flex items-center gap-1 md:gap-2 text-sm hover:cursor-pointer">
 						{ t("game_settings_bg") }
 						<input
 							type="color"
 							value={bgColor}
+							className='hover:cursor-pointer'
 							onChange={(e) => setBgColor(e.target.value)}
 						/>
 						</label>
-						<label className="flex items-center gap-1 md:gap-2 text-sm">
+						<label className="flex items-center gap-1 md:gap-2 text-sm hover:cursor-pointer">
 						{ t("game_settings_bar") }
 						<input
 							type="color"
 							value={barColor}
+							className='hover:cursor-pointer'
 							onChange={(e) => setBarColor(e.target.value)}
 						/>
 						</label>
-						<label className="flex items-center gap-1 md:gap-2 text-sm">
+						<label className="flex items-center gap-1 md:gap-2 text-sm hover:cursor-pointer">
 						{ t("game_settings_ball") }
 						<input
 							type="color"
 							value={ballColor}
+							className='hover:cursor-pointer'
 							onChange={(e) => setBallColor(e.target.value)}
 						/>
 						</label>
@@ -176,16 +179,3 @@ const GameSettings: React.FC = () => {
 };
 
 export default GameSettings;
-
-/*
-
-	- Boton para elegir entre default settings o custom settings
-
-	Cosas a personalizar:
-		- fondo del juego personalizable (ya sea el color o imagen como queramos hacerlo)
-		- color del balon
-		- color de las barras de los jugadores
-		- Score to win 3/5/10
-		- Serve delay
-
-*/

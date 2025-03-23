@@ -3,6 +3,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 
 import { VscFolderActive } from "react-icons/vsc";
 import { VscFolder } from "react-icons/vsc";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const Profile: React.FC = () => {
 
@@ -30,9 +31,9 @@ const Profile: React.FC = () => {
   const handleAvatarSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Lógica para actualizar el avatar en su endpoint
-    console.log('Actualizando avatar:', avatar);
+	if (!avatar) return;
 
-	// Manejar cuando llega null !!!!
+    console.log('Actualizando avatar:', avatar);
 
   };
 
@@ -66,6 +67,7 @@ const Profile: React.FC = () => {
 				placeholder="Miguel Guardia"
 				className="flex-1 p-1.5 md:p-2 text-sm md:text-base border rounded-xs focus:outline-none focus:ring focus:border-blue-300"
 				required
+				autoComplete='off'
 			/>
 			<button
 				type="submit"
@@ -103,9 +105,9 @@ const Profile: React.FC = () => {
       {/* Formulario para actualizar el avatar */}
       <form onSubmit={handleAvatarSubmit} className="flex flex-col mb-6">
 		<div className='flex flex-col gap-2.5'>
-			<label htmlFor="avatar" className="inline-block whitespace-nowrap text-sm font-medium hover:cursor-pointer">
+			<div className="inline-block whitespace-nowrap text-sm font-medium">
 			{ t('user_settings_avatar') }
-			</label>
+			</div>
 			<div className='flex flex-row gap-2 md:gap-3'>
 				<label
 					htmlFor="avatar"
@@ -122,8 +124,8 @@ const Profile: React.FC = () => {
 					className="hidden"
 				/>
 				<button
-				type="submit"
-				className="text-sm md:text-base text-white p-1.5 md:p-2 rounded-xs bg-text-secondary hover:bg-text-tertiary hover:cursor-pointer transition-all duration-300"
+					type="submit"
+					className="text-sm md:text-base text-white p-1.5 md:p-2 rounded-xs bg-text-secondary hover:bg-text-tertiary hover:cursor-pointer transition-all duration-300"
 				>
 					{ t('user_settings_submit') }
 				</button>
@@ -147,6 +149,7 @@ const Profile: React.FC = () => {
 		  { t('user_settings_two_factor') }
 		  </label>
           <button
+		  	id='twoFactor'
             type="button"
             onClick={handleTwoFactorToggle}
             className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none hover:cursor-pointer ${
@@ -161,17 +164,18 @@ const Profile: React.FC = () => {
           </button>
         </div>
       </form>
+
+	  {/* Botón para eliminar la cuenta */}
+	  <div className='flex md:items-right md:justify-end'>
+		<button
+			className="flex items-center gap-2 text-sm md:text-base text-red-700 border border-red-700 p-1.5 md:px-3 md:py-2 rounded-xs bg-background-primary hover:bg-red-400 hover:cursor-pointer transition-all duration-300 mt-12 md:mt-6"
+		>
+			<FaRegTrashAlt className='inline-block text-sm text-red-700'/>
+			{ t('profile_delete_account') }
+		</button>
+	  </div>
     </div>
   );
 };
 
 export default Profile;
-
-
-
-/*
-	- Change username
-	- Change alias for tournaments
-	- Change profile picture
-	- Configure two-factor authentication
-*/
