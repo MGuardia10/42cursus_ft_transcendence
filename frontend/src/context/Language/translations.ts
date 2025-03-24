@@ -31,6 +31,9 @@ export const translations = {
 		sidebar_leaderboard: "Leaderboard",
 		sidebar_profile_settings: "Profile Settings",
 		sidebar_game_pref: "Game Preferences",
+		//home
+		home_play_match: "Play Match",
+		home_play_tournament: "Play Tournament",
 		// Dashboard
 		dashboard_wins: "Wins",
 		dashboard_losses: "Losses",
@@ -98,6 +101,9 @@ export const translations = {
 		sidebar_leaderboard: "Clasificación",
 		sidebar_profile_settings: "Ajustes de Perfil",
 		sidebar_game_pref: "Ajustes del Juego",
+		//home
+		home_play_match: "Jugar Partida",
+		home_play_tournament: "Jugar Torneo",
 		// Dashboard
 		dashboard_wins: "Vict.",
 		dashboard_losses: "Derr.",
@@ -166,6 +172,9 @@ export const translations = {
 		sidebar_leaderboard: "Quadro de Líderes",
 		sidebar_profile_settings: "Configurações do perfil",
 		sidebar_game_pref: "Preferências de Jogo",
+		//home
+		home_play_match: "Jogar Jogo",
+		home_play_tournament: "Jogar Torneio",
 		// Dashboard
 		dashboard_wins: "Vit.",
 		dashboard_losses: "Der.",
