@@ -18,12 +18,12 @@ const Dashboard: React.FC = () => {
       </div>
       
       {/* GameStats */}
-      <div className="max-h-[500px] lg:max-h-[500px] xl:max-h-max col-span-full row-span-2 lg:col-span-2 lg:row-span-1 xl:col-span-4 xl:row-span-3 xl:col-start-1 xl:row-start-4 bg-background-primary flex rounded-md overflow-y-auto min-h-0">
+      <div className="max-h-[500px] xl:max-h-max col-span-full row-span-2 lg:col-span-2 lg:row-span-1 xl:col-span-4 xl:row-span-3 xl:col-start-1 xl:row-start-4 bg-background-primary flex rounded-md overflow-y-auto min-h-0">
         <GameStats />
       </div>
       
       {/* MatchHistory */}
-      <div className="max-h-[500px] lg:max-h-[500px] xl:max-h-max col-span-full row-span-2 lg:col-span-2 lg:row-span-1 xl:col-span-2 xl:row-span-6 xl:col-start-5 xl:row-start-1 bg-background-primary rounded-md overflow-y-auto min-h-0">
+      <div className="max-h-[500px] xl:max-h-full xl:h-full col-span-full row-span-2 lg:col-span-2 lg:row-span-1 xl:col-span-2 xl:row-span-6 xl:col-start-5 xl:row-start-1 bg-background-primary rounded-md overflow-y-auto min-h-0">
         <MatchHistory />
       </div>
       

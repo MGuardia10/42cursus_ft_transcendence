@@ -10,7 +10,10 @@ const Rank: React.FC = () => {
 
 			{/* % Wins */}
 			{/* <p className='text-xl inline-block'><span className='text-6xl text-text-tertiary'>75</span>% Wins</p> */}
-			<p className='text-xl inline-block'><span className='text-6xl text-red-500'>49</span>% { t("dashboard_wins") }</p>
+			<p className='text-xl inline-block items-center'>
+				<span className='text-6xl text-red-500'>49</span>
+				% { t("dashboard_wins") }
+			</p>
 			
 			{/* Rank */}
 			<p>Rank <span className='font-bold text-text-tertiary'>3</span></p>

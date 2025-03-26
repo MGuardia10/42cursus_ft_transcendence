@@ -10,11 +10,11 @@ const Play: React.FC = () => {
 	const { t } = useLanguage();
 
 	return (
-		<div className='flex flex-col items-center justify-center gap-4 md:gap-6 h-full p-6 md:p-10'>
+		<div className='flex flex-col items-center justify-center gap-4 md:gap-6 h-full p-6 md:p-8'>
 
 			{/* Single Match */}
 			<Link 
-				className='flex items-center justify-center gap-3 p-2 md:p-3 w-48 xl:w-64 bg-text-secondary hover:bg-text-tertiary hover:cursor-pointer transition-all duration-300'
+				className='flex items-center justify-center gap-3 p-2 md:p-3 w-50 bg-text-secondary hover:bg-text-tertiary hover:cursor-pointer transition-all duration-300'
 				to={'/single-match'}
 				>
 				<PiPingPong className="text-xl" />
@@ -23,7 +23,7 @@ const Play: React.FC = () => {
 
 			{/* Tournament */}
 			<Link 
-				className='flex items-center justify-center gap-2 p-2 md:p-3 w-48 xl:w-64 bg-text-secondary hover:bg-text-tertiary hover:cursor-pointer transition-all duration-300'
+				className='flex items-center justify-center gap-2 p-2 md:p-3 w-50 bg-text-secondary hover:bg-text-tertiary hover:cursor-pointer transition-all duration-300'
 				to={'/tournament'}
 			>
 				<PiRanking className="text-xl" />	

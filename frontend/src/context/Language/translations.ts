@@ -34,6 +34,14 @@ export const translations = {
 		//home
 		home_play_match: "Play Match",
 		home_play_tournament: "Play Tournament",
+		home_welcome: "Welcome,",
+		home_edit: "Edit",
+		home_username: "Username:",
+		home_email: "Email:",
+		home_friends: "Friends",
+		home_requests: "Requests",
+		home_online: "Online",
+		home_offline: "Offline",
 		// Dashboard
 		dashboard_wins: "Wins",
 		dashboard_losses: "Losses",
@@ -104,6 +112,14 @@ export const translations = {
 		//home
 		home_play_match: "Jugar Partida",
 		home_play_tournament: "Jugar Torneo",
+		home_welcome: "Bienvenido,",
+		home_edit: "Editar",
+		home_username: "Nombre:",
+		home_email: "Email:",
+		home_friends: "Amigos",
+		home_requests: "Solicitudes",
+		home_online: "Conectado",
+		home_offline: "Desconectado",
 		// Dashboard
 		dashboard_wins: "Vict.",
 		dashboard_losses: "Derr.",
@@ -175,6 +191,14 @@ export const translations = {
 		//home
 		home_play_match: "Jogar Jogo",
 		home_play_tournament: "Jogar Torneio",
+		home_welcome: "Bem-vindo,",
+		home_edit: "Editar",
+		home_username: "Nome:",
+		home_email: "Email:",
+		home_friends: "Amigos",
+		home_requests: "Solicitações",
+		home_online: "Online",
+		home_offline: "Offline",
 		// Dashboard
 		dashboard_wins: "Vit.",
 		dashboard_losses: "Der.",
