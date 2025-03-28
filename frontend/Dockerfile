@@ -7,7 +7,7 @@ WORKDIR	/app
 
 # Copy the dependencies and install them
 COPY	package.json package-lock.json ./
-RUN		npm install
+RUN		npm install 2> /dev/null 
 
 # Container port. It is not util with docker-compose
 EXPOSE	5173

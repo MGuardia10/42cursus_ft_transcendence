@@ -23,7 +23,7 @@ const GameStats: React.FC = () => {
 	const pointsLossWidth = (pointsLost / totalPoints) * 100;
 
 	return (
-		<div className="flex flex-col justify-center gap-3 w-full px-8 py-10 md:p-10">
+		<div className="flex flex-col justify-center gap-2 w-full px-8 py-10 md:px-10">
 
 			{/* Game stats */}
 			<div className='flex justify-between font-bold'>
