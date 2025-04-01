@@ -39,7 +39,7 @@ const Profile: React.FC = () => {
 	  }, []);
 
 	// Function to handle the delete account
-	const handleDeleteAccount = () => {
+	const handleLogOut = () => {
 		setShowLastCall(false);
 
 		// Delete account logic here
@@ -75,7 +75,7 @@ const Profile: React.FC = () => {
 			</ul>
 		</div>
 
-		{/* Component to confirm deleting account */}
+		{/* Component to confirm logout */}
 		<div
 			className={`absolute top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-20 transition-all duration-200 ${ showLastCall ? "opacity-100 scale-100" : "opacity-0 scale-95 invisible" }`}
 			onClick={ () => setShowLastCall(false) }	
@@ -87,7 +87,7 @@ const Profile: React.FC = () => {
 				<p className='text-sm'>{t("logout_string_1")} <b>{t("logout_string_2")}</b> {t("logout_string_3")}</p>
 				<div className='flex items-center justify-center gap-4 pt-6'>
 					<button
-						className='bg-background-primary px-6 py-3 rounded-sm transition-all duration-300 hover:cursor-pointer hover:bg-background-hover'
+						className='bg-background-primary w-32 md:w-40 flex items-center justify-center px-4 py-2 md:py-3 rounded-xs transition-all duration-300 hover:cursor-pointer hover:bg-background-hover'
 						onClick={ () => setShowLastCall(false) }
 					>
 						<div className='flex items-center text-sm'>
@@ -96,8 +96,8 @@ const Profile: React.FC = () => {
 						</div>
 					</button>
 					<button
-						className='bg-[#9a0101] px-6 py-3 rounded-sm transition-all duration-300 hover:cursor-pointer hover:bg-red-600'
-						onClick={ () => handleDeleteAccount() }
+						className='bg-[#9a0101] w-32 md:w-40 flex items-center justify-center px-4 py-2 md:py-3 rounded-xs transition-all duration-300 hover:cursor-pointer hover:bg-red-600'
+						onClick={ () => handleLogOut() }
 					>
 						<div className='flex items-center text-sm'>
 							<RiLogoutBoxLine className='mr-2 md:text-base' />
