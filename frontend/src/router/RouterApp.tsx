@@ -10,6 +10,7 @@ import Profile from '@/pages/Profile/Profile';
 import GameSettings from '@/pages/Settings/GameSettings';
 import SingleMatch from '@/pages/SingleMatch/SingleMatch';
 import Tournament from '@/pages/Tournament/Tournament';
+import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 
 
 const RouterApp: React.FC = () => {
@@ -30,7 +31,7 @@ const RouterApp: React.FC = () => {
 					<Route path="/game-settings" element={<GameSettings />} />
 				</Route>
 
-				<Route path="*" element={<h1>Not Found</h1>} />
+				<Route path="*" element={<NotFoundPage />} />
 			</Routes>
 		</BrowserRouter>
 	);
