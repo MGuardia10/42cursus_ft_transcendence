@@ -5,7 +5,7 @@ import MatchHistory from "@/pages/Dashboard/components/MatchHistory";
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="grid lg:grid-cols-2 lg:grid-rows-3 xl:grid-cols-6 xl:grid-rows-6 gap-4 w-full xl:max-h-screen p-6 md:p-10 bg-background-secondary rounded-md">
+    <div className="relative grid lg:grid-cols-2 lg:grid-rows-3 xl:grid-cols-6 xl:grid-rows-6 gap-4 w-full xl:max-h-screen p-6 md:p-10 bg-background-secondary rounded-md">
       
       {/* UserRank */}
       <div className="max-h-[500px] xl:max-h-max col-span-full row-span-1 lg:col-span-1 lg:row-span-1 xl:col-span-2 xl:row-span-3 bg-background-primary rounded-md overflow-y-auto min-h-0">
