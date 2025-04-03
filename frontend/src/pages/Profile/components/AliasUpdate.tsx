@@ -1,19 +1,26 @@
 import { useState } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useNotification } from '@/hooks/useNotification';
 
 const AliasUpdate: React.FC = () => {
-
+	
 	// useLanguage hook
 	const { t } = useLanguage();
-
+	
+	// useNotification hook
+	const { addNotification } = useNotification();
+	
 	// useState hook
 	const [alias, setAlias] = useState<string>('');
-
+	
 	// handle alias submit function
 	const handleAliasSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		// Logic to update the alias in your endpoint
 		console.log('Updating alias:', alias);
+		
+		addNotification("Alias updated!", 'success');
+		// addNotification("Error updating alias", 'error');
 	};
 
 	return (

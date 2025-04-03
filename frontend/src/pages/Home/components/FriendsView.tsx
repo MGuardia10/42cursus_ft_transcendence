@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FaCheck } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { useLanguage } from '@/hooks/useLanguage';
+import { useNotification } from '@/hooks/useNotification';
 
 interface Friend {
   id: number;
@@ -20,6 +21,9 @@ const FriendsView: React.FC = () => {
 
   // useLanguage hook
   const { t } = useLanguage();
+
+  // useNotification hook
+  const { addNotification } = useNotification();
 
   // Estado para cambiar entre vista de amigos y solicitudes.
   const [view, setView] = useState<'friends' | 'requests'>('friends');
@@ -48,6 +52,14 @@ const FriendsView: React.FC = () => {
   const acceptRequest = (id: number) => {
     console.log(`Solicitud de amistad aceptada: ${id}`);
     // Aquí iría la lógica para aceptar la solicitud.
+    addNotification('Friend request accepted!', 'success');
+  };
+
+  // Función para rechazar una solicitud.
+  const rejectRequest = (id: number) => {
+    console.log(`Solicitud de amistad rechazada: ${id}`);
+    // Aquí iría la lógica para rechazar la solicitud.
+    addNotification('Friend request rejected!', 'error');
   };
 
   return (
@@ -104,7 +116,7 @@ const FriendsView: React.FC = () => {
                 />
                 <ImCross
                   className="text-red-500 hover:cursor-pointer hover:text-red-300 transition-all duration-300"
-                  onClick={() => console.log(`Solicitud de amistad rechazada: ${request.id}`)}
+                  onClick={() => rejectRequest(request.id)}
                 />
               </div>
             </div>

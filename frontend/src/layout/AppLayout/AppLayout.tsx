@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router';
 import TopBar from '@/layout/AppLayout/components/TopBar';
 import SideBar from '@/layout/AppLayout/components/SideBar';
+import NotificationsLayout from '../NotificationsLayout/NotificationsLayout';
 
 const AppLayout: React.FC = () => {
   // useState to toggle the sidebar
@@ -19,6 +20,8 @@ const AppLayout: React.FC = () => {
       >
         {/* TopBar */}
         <TopBar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+
+        <NotificationsLayout />
 
         {/* Main content que ocupa el resto de la altura */}
         <section className='flex p-4 md:py-4 md:px-6'>

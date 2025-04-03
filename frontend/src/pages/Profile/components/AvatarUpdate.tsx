@@ -3,11 +3,16 @@ import { useLanguage } from '@/hooks/useLanguage';
 
 import { VscFolderActive } from "react-icons/vsc";
 import { VscFolder } from "react-icons/vsc";
+import { useNotification } from '@/hooks/useNotification';
+
 
 const AvatarUpdate: React.FC = () => {
 
 	// useLanguage hook
 	const { t } = useLanguage();
+
+	// useNotification hook
+	const { addNotification } = useNotification();
 
 	// useState hook
 	const [avatar, setAvatar] = useState<File | null>(null);
@@ -19,6 +24,10 @@ const AvatarUpdate: React.FC = () => {
 		if (!avatar) return;
 	
 		console.log('Actualizando avatar:', avatar);
+		
+		// Show notification
+		addNotification("Avatar updated!", 'success');
+		// addNotification("Error updating avatar", 'error');
 	
 	  };
 	  

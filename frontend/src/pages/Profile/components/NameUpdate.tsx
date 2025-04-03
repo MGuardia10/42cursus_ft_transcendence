@@ -1,19 +1,24 @@
 import { useState, FormEvent } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useNotification } from '@/hooks/useNotification';
 
 const NameUpdate: React.FC = () => {
 
 	// useLanguage hook
 	const { t } = useLanguage();
 
+	// useNotification hook
+	const { addNotification } = useNotification();
+
 	// useState hook
 	const [name, setName] = useState<string>('');
 	
 	// handle name submit function
 	const handleNameSubmit = (e: FormEvent<HTMLFormElement>) => {
-	e.preventDefault();
-	// Lógica para actualizar el nombre en su endpoint
-	console.log('Actualizando nombre:', name);
+		e.preventDefault();
+		// Lógica para actualizar el nombre en su endpoint
+		console.log('Actualizando nombre:', name);
+		addNotification("Name updated!", 'success');
 	};
 
 	return (

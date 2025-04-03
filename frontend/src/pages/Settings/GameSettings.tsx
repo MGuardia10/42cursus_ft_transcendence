@@ -1,9 +1,13 @@
 import { FormEvent, useState, useEffect, useRef } from 'react';
 import { FaChevronDown } from "react-icons/fa";
 import { useLanguage } from '@/hooks/useLanguage';
+import { useNotification } from '@/hooks/useNotification';
 
 
 const GameSettings: React.FC = () => {
+
+	// useNotification hook
+	const { addNotification } = useNotification();
 
 	// Variable to check if Default or Custom settings are enabled
 	const [custom, setCustom] = useState<boolean>(false);
@@ -65,8 +69,13 @@ const GameSettings: React.FC = () => {
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		
 		// Lógica para actualizar el nombre en su endpoint
 		console.log('Propiedades:', score, serveDelay, bgColor, barColor, ballColor);
+
+		// Show notification
+		addNotification("Game settings updated!", 'success');
+		// addNotification("Error updating settings", 'error');
 	};
 
 	return (
