@@ -74,8 +74,8 @@ const GameSettings: React.FC = () => {
 		console.log('Propiedades:', score, serveDelay, bgColor, barColor, ballColor);
 
 		// Show notification
-		addNotification("Game settings updated!", 'success');
-		// addNotification("Error updating settings", 'error');
+		addNotification(`${t("notifications_game_settings_success")}`, 'success');
+		// addNotification(`${t("notifications_game_settings_error")}`, 'error');
 	};
 
 	return (

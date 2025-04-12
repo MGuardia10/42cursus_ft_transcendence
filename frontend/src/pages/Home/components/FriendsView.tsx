@@ -52,14 +52,14 @@ const FriendsView: React.FC = () => {
   const acceptRequest = (id: number) => {
     console.log(`Solicitud de amistad aceptada: ${id}`);
     // Aquí iría la lógica para aceptar la solicitud.
-    addNotification('Friend request accepted!', 'success');
+    addNotification(`${t("notifications_friend_request_accepted")}`, 'success');
   };
 
   // Función para rechazar una solicitud.
   const rejectRequest = (id: number) => {
     console.log(`Solicitud de amistad rechazada: ${id}`);
     // Aquí iría la lógica para rechazar la solicitud.
-    addNotification('Friend request rejected!', 'error');
+    addNotification(`${t("notifications_friend_request_rejected")}`, 'error');
   };
 
   return (

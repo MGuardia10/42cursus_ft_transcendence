@@ -19,8 +19,8 @@ const AliasUpdate: React.FC = () => {
 		// Logic to update the alias in your endpoint
 		console.log('Updating alias:', alias);
 		
-		addNotification("Alias updated!", 'success');
-		// addNotification("Error updating alias", 'error');
+		addNotification(`${t("notifications_alias_success")}`, 'success');
+		// addNotification(`${t("notifications_alias_error")}`, 'error');
 	};
 
 	return (

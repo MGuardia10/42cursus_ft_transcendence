@@ -18,7 +18,8 @@ const NameUpdate: React.FC = () => {
 		e.preventDefault();
 		// Lógica para actualizar el nombre en su endpoint
 		console.log('Actualizando nombre:', name);
-		addNotification("Name updated!", 'success');
+		addNotification(`${t("notifications_name_success")}`, 'success');
+		// addNotification(`${t("notifications_name_error")}`, 'error');
 	};
 
 	return (

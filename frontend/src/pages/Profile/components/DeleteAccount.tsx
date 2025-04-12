@@ -4,17 +4,11 @@ import { useLanguage } from '@/hooks/useLanguage';
 
 import { MdOutlineCancel } from 'react-icons/md';
 import { RiLogoutBoxLine } from 'react-icons/ri';
-import { useNotification } from '@/hooks/useNotification';
-
-
 
 const DeleteAccount: React.FC = () => {
 
 	// useLanguage hook
 	const { t } = useLanguage();
-
-	// useNotification hook
-	const { addNotification } = useNotification();
 
 	// useState hook
 	const [showLastCall, setShowLastCall] = useState(false);
@@ -22,8 +16,6 @@ const DeleteAccount: React.FC = () => {
 	const handleDeleteAccount = () => {
 		// Add logic to handle account deletion
 		console.log('Account deletion initiated');
-		// Show notification
-		addNotification('Account deleted', 'success');
 	};
 
 	return (

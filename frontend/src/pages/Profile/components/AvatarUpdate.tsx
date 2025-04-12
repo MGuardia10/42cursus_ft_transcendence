@@ -26,8 +26,8 @@ const AvatarUpdate: React.FC = () => {
 		console.log('Actualizando avatar:', avatar);
 		
 		// Show notification
-		addNotification("Avatar updated!", 'success');
-		// addNotification("Error updating avatar", 'error');
+		addNotification(`${t("notifications_avatar_success")}`, 'success');
+		// addNotification(`${t("notifications_avatar_error")}`, 'error');
 	
 	  };
 	  
