@@ -26,7 +26,7 @@ const Login = () => {
 				className="flex items-center justify-center gap-2 md:gap-4 bg-white text-gray-900 px-3 py-2 md:px-6 md:py-3 rounded-xs shadow-md hover:cursor-pointer hover:bg-gray-300 transition duration-300"
 			>
 				<FcGoogle className="text-2xl" />
-				<span className="text-sm" >Sign In with Google</span>
+				<span className="text-xs md:text-sm font-bold" >Sign In with Google</span>
 			</button>
 		</div>
   );

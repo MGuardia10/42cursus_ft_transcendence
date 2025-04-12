@@ -27,11 +27,11 @@ const ProfileView: React.FC = () => {
 
 			<hr className='md:-mt-2 text-gray-700 w-full'/>
 
-			<div className='flex flex-col sm:flex-row sm:items-center justify-baseline pl-1 sm:pl-4 py-2 md:pt-0 gap-3 md:gap-8 lg:gap-10 sm:gap-8 w-full overflow-x-scroll scrollbar-thin'>
+			<div className='flex flex-col sm:flex-row sm:items-center justify-baseline pl-1 sm:pl-4 py-2 md:pt-0 gap-3 sm:gap-8 md:gap-8 w-full overflow-x-scroll scrollbar-thin'>
 
 				{/* Image + Avatar */}
 				<div className='flex flex-col sm:items-center align-middle justify-center sm:gap-2'>
-					<img src='https://i.redd.it/c83vyz4t9b651.jpg' alt='profile' className='h-20 w-20 md:w-20 md:h-20 lg:w-26 lg:h-26 border-2 text-text-tertiary rounded-sm sm:rounded-full'/>
+					<img src='https://i.redd.it/c83vyz4t9b651.jpg' alt='profile' className='h-20 w-20 md:min-w-20 md:h-20 lg:w-24 lg:min-w-24 lg:h-24 border-2 text-text-tertiary rounded-sm sm:rounded-full object-cover'/>
 					<p className='hidden sm:inline-block text-text-tertiary text-sm md:text-base'>mguardia</p>
 				</div>
 
