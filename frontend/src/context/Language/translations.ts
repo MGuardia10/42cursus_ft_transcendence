@@ -76,6 +76,23 @@ export const translations = {
 		game_settings_bar: "Bars",
 		game_settings_ball: "Ball",
 		game_settings_submit: "Update Settings",
+		// notifications
+		notifications_friends_error: "Error on friend request",
+		notifications_friend_remove: "Friend removed!",
+		notifications_friend_request: "Request sent!",
+		notifications_friend_request_accepted: "Friend request accepted!",
+		notifications_friend_request_rejected: "Friend request rejected!",
+		notifications_name_error: "Error updating name",
+		notifications_name_success: "Name updated!",
+		notifications_avatar_error: "Error uploading avatar",
+		notifications_avatar_success: "Avatar updated!",
+		notifications_alias_error: "Error updating alias",
+		notifications_alias_success: "Alias updated!",
+		notifications_two_factor_error: "Error enabling 2FA",
+		notifications_two_factor_success: "2FA enabled!",
+		notifications_two_factor_disabled: "2FA disabled!",
+		notifications_game_settings_error: "Error updating game settings",
+		notifications_game_settings_success: "Game settings updated!",
 	},
 	es: {
 		// languages
@@ -154,7 +171,23 @@ export const translations = {
 		game_settings_bar: "Barras",
 		game_settings_ball: "Balón",
 		game_settings_submit: "Actualizar Ajustes",
-
+		// notifications
+		notifications_friends_error: "Error en la solicitud",
+		notifications_friend_remove: "¡Amigo eliminado!",
+		notifications_friend_request: "¡Solicitud enviada!",
+		notifications_friend_request_accepted: "¡Solicitud aceptada!",
+		notifications_friend_request_rejected: "¡Solicitud rechazada!",
+		notifications_name_error: "Error al actualizar el nombre",
+		notifications_name_success: "¡Nombre actualizado!",
+		notifications_avatar_error: "Error al actualizar foto de perfil",
+		notifications_avatar_success: "¡Foto de perfil actualizada!",
+		notifications_alias_error: "Error al actualizar el alias",
+		notifications_alias_success: "¡Alias actualizado!",
+		notifications_two_factor_error: "Error al habilitar 2FA",
+		notifications_two_factor_success: "¡2FA habilitada!",
+		notifications_two_factor_disabled: "¡2FA deshabilitada!",
+		notifications_game_settings_error: "Error al actualizar los ajustes del juego",
+		notifications_game_settings_success: "¡Ajustes del juego actualizados!",
 	},
 	pt: {
 		// languages
@@ -233,6 +266,23 @@ export const translations = {
 		game_settings_bar: "Barras",
 		game_settings_ball: "Bola",
 		game_settings_submit: "Atualizar Configurações",
-
+		// notifications
+		notifications_friends_error: "Erro na solicitação",
+		notifications_friend_remove: "Amigo removido!",
+		notifications_friend_request: "Solicitação enviada!",
+		notifications_friend_request_accepted: "Solicitação aceita!",
+		notifications_friend_request_rejected: "Solicitação rejeitada!",
+		notifications_name_error: "Erro ao atualizar o nome",
+		notifications_name_success: "Nome atualizado!",
+		notifications_avatar_error: "Erro ao fazer upload da imagem de perfil",
+		notifications_avatar_success: "Imagem de perfil atualizada!",
+		notifications_alias_error: "Erro ao atualizar o alias",
+		notifications_alias_success: "Alias atualizado!",
+		notifications_two_factor_error: "Erro ao habilitar 2FA",
+		notifications_two_factor_success: "2FA habilitada!",
+		notifications_two_factor_disabled: "2FA desabilitada!",
+		notifications_game_settings_error: "Erro ao atualizar as configurações do jogo",
+		notifications_game_settings_success: "Configurações do jogo atualizadas!",
+		
 	},
 };
