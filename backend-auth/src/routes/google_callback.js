@@ -14,65 +14,66 @@ async function create_user(baseurl, name, email, avatar_url)
 			email,
 			avatar_url
 		})
-	})
+	});
 
 	return id;
 }
 
-export default async function google_callback(request, reply)
+async function manage_user(users_api, name, email, picture)
+{
+	/* Get the list */
+	const users_response = await fetch (
+		`${users_api}/?email=${email}`
+	);
+	const users_found = await users_response.json();
+
+	/* Take action taking acoount if the user exists */
+	return users_found.length == 0
+		? create_user(users_api, name, email, picture)
+		: users_found[0].id;
+}
+
+async function google_authentication(request, reply)
 {
 	/* Parse the link, divide it into parts */
 	let q = url.parse(request.url, true).query;
 	if (q.error)
-		return reply.code(500).send(q.error);
+		throw new Error(q.error);
 
 	/* Get the tokens and send a request to get the info */
-	let { tokens } = await oauth2client.getToken(q.code);
+	const { tokens } = await oauth2client.getToken(q.code);
 	oauth2client.setCredentials(tokens);
 
-	let google_response;
-	try {
-		google_response = await fetch (`https://www.googleapis.com/oauth2/v3/userinfo`, {
-			headers: {
-				'Authorization': `Bearer ${tokens.access_token}`,
-			}
-		})
-	}
-	catch(e)
-	{
-		return reply.code(500).send(`Error while fetching to google: ${e}`)
-	}
+	const google_response = await fetch (`https://www.googleapis.com/oauth2/v3/userinfo`, {
+		headers: {
+			'Authorization': `Bearer ${tokens.access_token}`,
+		}
+	});
+	return await google_response.json();
+}
 
-	/* Check if the user is registered */
-	const { name, email, picture } = await google_response.json();
+export default async function google_callback(request, reply)
+{
 	const users_api = process.env.USER_API_BASEURL_INTERNAL;
 
-	let user_id;
 	try {
-		/* Get the list */
-		const users_response = await fetch (
-			`${users_api}/?email=${email}`
-		)
-		const users_found = await users_response.json()
+		/* Get the tokens and send a request to get the info */
+		const { name, email, picture } = await google_authentication(request, reply);
 
-		/* Take action taking acoount if the user exists */
-		if (users_found.length == 0)
-			user_id = create_user(users_api, name, email, picture)
-		else
-			user_id = users_found.id;
+		/* Manage the user creation or search */
+		const user_id = await manage_user(users_api, name, email, picture);
+
+		/* Create the user init token and return it */
+		const token = create_jwt({
+			id: user_id,
+			language: process.env.DEFAULT_LANGUAGE
+		});
+		return reply
+			.header('Authorization', token)
+			.redirect(process.env.FRONTEND_BASEURL_INTERNAL);
 	}
 	catch (e)
 	{
-		return reply.code(500).send(`Error fetching the user API: ${e}`)
+		return reply.code(500).send({ error: e.message });
 	}
-
-	/* Create the token */
-	const token = create_jwt({
-		id: user_id,
-		language: process.env.DEFAULT_LANGUAGE
-	});
-
-	return reply
-		.header('Authorization', token)
-		.redirect(process.env.FRONTEND_BASEURL_INTERNAL);
 }
