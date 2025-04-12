@@ -18,7 +18,11 @@ app.register(cors, {
 /* NOTE: Register the OAuth2 config */
 app.register(fastifyOauth2, {
   name: 'googleOAuth2',
-  scope: ['profile', 'email'],
+  scope: [
+    'openid',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email'
+  ],
   credentials: {
     client: {
       id: process.env.GOOGLE_CLIENT_ID,
