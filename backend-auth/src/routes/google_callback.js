@@ -1,37 +1,26 @@
+import url from 'url';
+import { oauth2client } from '../google_oauth.js';
+
 export default async function google_callback(request, reply)
 {
-	try
-	{
-		/* Get the google validated token */
-		const token = await request.server.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request)
+	/* Parse the link, divide it into parts */
+	console.log("Request: ", request.url)
+	let q = url.parse(request.url, true).query;
+	if (q.error)
+		return reply.code(500).send(q.error);
 
-		/* Make the query to Google to get the data */
-		const googleResponse = await fetch(
-			'https://openidconnect.googleapis.com/v1/userinfo',
-			{
-			  headers: {
-				Authorization: `Bearer ${token.access_token}`,
-				Accept: 'application/json'
-			  }
-			}
-		  );
-		const tokenInfo = await googleResponse.json()
-		console.log("Token data: ", tokenInfo)
+	/* Get the tokens and send a request to get the info */
+	let { tokens } = oauth2client.getToken(q.code);
+	oauth2client.setCredentials(tokens);
+	await fetch (`https://www.googleapis.com/oauth2/v3/userinfo`, {
+		headers: {
+			'Authorization': `Bearer ${tokens.access_token}`,
+		}
+	})
+		.then(response => response.json())
+		.then(data => {
+			console.log("Token data: ", data)
+		})
 
-		if (!googleResponse.ok)
-			return reply.send(await googleResponse.text())
-		
-		/* Get the fields */
-		const userData = await googleResponse.json()
-		const { name, email, picture } = userData;
-
-		console.log(`Data:\n\t· Name: ${name}\n\t· Email: ${email}\n\t· Picture: ${picture}`)
-	}
-	catch(err)
-	{
-		return reply.code(500).send(err);
-	}
-
-
-	return reply.redirect('https://localhost');
+	return reply.redirect('https://localhost:8080');
 }
