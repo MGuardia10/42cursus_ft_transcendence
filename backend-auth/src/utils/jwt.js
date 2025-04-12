@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 
 function create_jwt(payload)
 {
@@ -6,7 +6,7 @@ function create_jwt(payload)
 		payload,
 		process.env.TOKEN_SECRET_KEY,
 		{ expiresIn: '1d'}
-	)
+	);
 }
 
 function get_jwt(token)
@@ -17,7 +17,7 @@ function get_jwt(token)
 		return {
 			valid: true,
 			payload: decoded
-		}
+		};
 	}
 	catch(e)
 	{
@@ -27,14 +27,14 @@ function get_jwt(token)
 			msg: e.name == 'TokenExpiredError'
 				? "Token expired"
 				: "Invalid token"
-		}
+		};
 	}
 }
 
 function modify_jwt(token, key, value)
 {
 	/* Decode the token */
-	const decoded = get_jwt(token)
+	const decoded = get_jwt(token);
 
 	/* If the token is invalid, error */
 	if (!decoded.valid)
@@ -44,11 +44,11 @@ function modify_jwt(token, key, value)
 	let payload = decoded.payload;
 	payload[key] = value;
 
-	const new_token = create_jwt(payload)
+	const new_token = create_jwt(payload);
 	return {
 		valid: true,
 		token: new_token
-	}
+	};
 }
 
-export { create_jwt, get_jwt, modify_jwt }
+export { create_jwt, get_jwt, modify_jwt };

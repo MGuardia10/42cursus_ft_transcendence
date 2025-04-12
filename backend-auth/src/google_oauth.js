@@ -9,6 +9,6 @@ const oauth2client = new google.auth.OAuth2(
 const scopes = [
   'https://www.googleapis.com/auth/userinfo.profile',
   'https://www.googleapis.com/auth/userinfo.email'
-]
+];
 
 export { oauth2client, scopes };

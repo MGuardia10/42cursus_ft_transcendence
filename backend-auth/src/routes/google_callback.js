@@ -1,6 +1,6 @@
 import url from 'url';
 import { oauth2client } from '../google_oauth.js';
-import { create_jwt } from '../utils/jwt.js'
+import { create_jwt } from '../utils/jwt.js';
 
 async function create_user(baseurl, name, email, avatar_url)
 {
