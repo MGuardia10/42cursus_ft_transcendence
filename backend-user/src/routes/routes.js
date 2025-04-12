@@ -19,6 +19,7 @@ export default async function (fastify, options) {
         type: 'object',
         properties: {
           alias: { type: 'string' },
+          email: { type: 'string', format: 'email' },
           limit: { type: 'integer', minimum: 1},
           page: { type: 'integer', minimum: 1 }
         }
