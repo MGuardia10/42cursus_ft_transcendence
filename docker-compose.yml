@@ -13,8 +13,8 @@ services:
     networks:
       - transcendence
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:8080"
+      - "8081:8081"
 
   # NOTE: Frontend container
   frontend:
@@ -59,9 +59,15 @@ services:
       context: backend-auth/
       dockerfile: Dockerfile
     environment:
-      - USER_API_BASEURL=${USER_API_BASEURL}
+      - USER_API_BASEURL_INTERNAL=${USER_API_BASEURL_INTERNAL}
+      - FRONTEND_BASEURL_INTERNAL=${FRONTEND_BASEURL_INTERNAL}
+
+      - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
+      - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE}
+
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_ENDPOINT=${GOOGLE_CALLBACK_ENDPOINT}
       - GOOGLE_CALLBACK_URI=${GOOGLE_CALLBACK_URI}
     volumes:
       - ./backend-auth:/app

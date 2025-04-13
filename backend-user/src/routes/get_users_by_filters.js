@@ -4,17 +4,19 @@ import DatabaseQuery from '../database/database_query.js';
 export default async function get_users_by_filters( request, reply )
 {
 	/* Get the filters */
-	const { alias, limit, page } = request.query;
+	const { alias, email, limit, page } = request.query;
 
 	const completeQuery = new DatabaseQuery(
 		"users",
-		["id", "alias"]
+		["id", "alias", "email"]
 	);
 
 	/* Check filter by name */
 	if (alias)
 		completeQuery.add_where([{key: "alias", action: 'LIKE', value: `%${alias}%`}], undefined);
-	
+	else if (email)
+		completeQuery.add_where([{key: "email", action: '=', value: email}], undefined);
+
 	/* Added default by id */
 	completeQuery.add_order_by("id");
 

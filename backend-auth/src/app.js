@@ -6,7 +6,7 @@ import cors from '@fastify/cors';
 import routes from './routes/routes.js';
 
 /* NOTE: Create the server object */
-const app = Fastify({ logger: true });
+const app = Fastify({ logger: false });
 
 /* NOTE: Register the valid methods and IPs */
 app.register(cors, {
@@ -28,4 +28,4 @@ const start = async () => {
     process.exit(1);
   }
 };
-start();  
+start();
