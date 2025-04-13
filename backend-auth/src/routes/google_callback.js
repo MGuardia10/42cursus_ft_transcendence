@@ -65,7 +65,7 @@ export default async function google_callback(request, reply)
 
 		/* Create the user init token and return it */
 		const token = create_jwt({
-			id: user_id,
+			user_id: user_id,
 			language: process.env.DEFAULT_LANGUAGE
 		});
 		return reply
