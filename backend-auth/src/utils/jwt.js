@@ -21,12 +21,9 @@ function get_jwt(token)
 	}
 	catch(e)
 	{
-		const type = e.name;
 		return {
 			valid: false,
-			msg: e.name == 'TokenExpiredError'
-				? "Token expired"
-				: "Invalid token"
+			msg: e.message
 		};
 	}
 }
@@ -42,6 +39,8 @@ function modify_jwt(token, key, value)
 
 	/* Create a new one with the provided data */
 	let payload = decoded.payload;
+	delete payload.iat;
+	delete payload.exp;
 	payload[key] = value;
 
 	const new_token = create_jwt(payload);
