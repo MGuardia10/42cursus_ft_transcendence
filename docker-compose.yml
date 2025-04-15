@@ -1,5 +1,6 @@
 services:
 
+  # NOTE: Nginx container
   proxy:
     container_name: proxy
     image: nginx:latest
@@ -8,31 +9,14 @@ services:
       - ./nginx/certs/:/etc/nginx/ssl:ro
     restart: always
     depends_on:
-      - backend-user
       - frontend
     networks:
       - transcendence
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:8080"
+      - "8081:8081"
 
-  backend-user:
-    container_name: backend-user
-    build:
-      context: backend-user/
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend-user:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - AVATAR_FOLDER=${AVATAR_FOLDER}
-    restart: always
-    networks:
-      - transcendence
-    # ports:
-    #   - "3000:3000"
-
+  # NOTE: Frontend container
   frontend:
     container_name: frontend
     build:
@@ -46,12 +30,51 @@ services:
     restart: always
     depends_on:
       - backend-user
+      - backend-auth
     networks:
       - transcendence
     ports:
       - "5173:5173"
 
-# volumes:
+  # NOTE: User API container
+  backend-user:
+    container_name: backend-user
+    build:
+      context: backend-user/
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      - AVATAR_FOLDER=${AVATAR_FOLDER}
+    volumes:
+      - ./backend-user:/app
+      - /app/node_modules
+    restart: always
+    networks:
+      - transcendence
+
+  # NOTE: Auth API container
+  backend-auth:
+    container_name: backend-auth
+    build:
+      context: backend-auth/
+      dockerfile: Dockerfile
+    environment:
+      - USER_API_BASEURL_INTERNAL=${USER_API_BASEURL_INTERNAL}
+      - FRONTEND_BASEURL_INTERNAL=${FRONTEND_BASEURL_INTERNAL}
+
+      - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
+      - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE}
+
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_ENDPOINT=${GOOGLE_CALLBACK_ENDPOINT}
+      - GOOGLE_CALLBACK_URI=${GOOGLE_CALLBACK_URI}
+    volumes:
+      - ./backend-auth:/app
+      - /app/node_modules
+    restart: always
+    networks:
+      - transcendence
 
 networks:
   transcendence:

@@ -46,7 +46,7 @@ export default async function add_user(request, reply) {
 
 	/* Get the image, generate a name and save it on a file */
 	const image_name = randomBytes(16).toString('hex');
-	const image_path = path.join(process.env.AVATAR_FOLDER, `${image_name}.jpg`);
+	const image_path = path.join(process.env.AVATAR_FOLDER, `${image_name}.png`);
 
 	try
 	{
