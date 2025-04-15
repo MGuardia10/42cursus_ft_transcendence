@@ -68,8 +68,12 @@ export default async function google_callback(request, reply)
 			user_id: user_id,
 			language: process.env.DEFAULT_LANGUAGE
 		});
+
+		/* Save the token as a cookie */
+		reply.header('set-cookie', `token=${token}; SameSite=None; Secure; HttpOnly; Path=/`);
+
 		return reply
-			.redirect(`${process.env.FRONTEND_BASEURL_INTERNAL}?token=${token}&tfa=false`);
+			.redirect(`${process.env.FRONTEND_BASEURL_INTERNAL}?tfa=false`);
 	}
 	catch (e)
 	{
