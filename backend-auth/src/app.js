@@ -13,7 +13,6 @@ app.register(cors, {
   origin: 'https://localhost:8080',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Authorization', 'Content-Type', 'Set-Cookie'],
 });
 
 /* NOTE: Register the routes */
