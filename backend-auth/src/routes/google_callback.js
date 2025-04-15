@@ -69,8 +69,7 @@ export default async function google_callback(request, reply)
 			language: process.env.DEFAULT_LANGUAGE
 		});
 		return reply
-			.header('Authorization', token)
-			.redirect(process.env.FRONTEND_BASEURL_INTERNAL);
+			.redirect(`${process.env.FRONTEND_BASEURL_INTERNAL}?token=${token}&tfa=false`);
 	}
 	catch (e)
 	{
