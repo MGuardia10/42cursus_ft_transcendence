@@ -10,8 +10,10 @@ const app = Fastify({ logger: false });
 
 /* NOTE: Register the valid methods and IPs */
 app.register(cors, {
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+  origin: 'https://localhost:8080',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Authorization', 'Content-Type', 'Set-Cookie'],
 });
 
 /* NOTE: Register the routes */
