@@ -2,7 +2,7 @@ import { get_jwt } from '../utils/jwt.js';
 
 export default async function me(request, reply) {
 	/* Get the token from the header */
-	const token = request.headers.authorization;
+	const { token } = request.cookies
 
 	/* Get the token information */
 	const jwt = get_jwt(token);
