@@ -69,10 +69,16 @@ export default async function google_callback(request, reply)
 			language: process.env.DEFAULT_LANGUAGE
 		});
 
-		/* Save the token as a cookie */
-		reply.header('set-cookie', `token=${token}; SameSite=None; Secure; HttpOnly; Path=/`);
-
+		/* Redirect with the new cookie */
+		// reply.header('set-cookie', `token=${token}; SameSite=None; Secure; HttpOnly; Path=/`);
 		return reply
+			.setCookie('token', token, {
+				sameSite: 'None',
+				secure: true,
+				httpOnly: true,
+				path: '/',
+				expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
+			})
 			.redirect(`${process.env.FRONTEND_BASEURL_INTERNAL}?tfa=false`);
 	}
 	catch (e)

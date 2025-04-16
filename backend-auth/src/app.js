@@ -1,6 +1,7 @@
 /* fastify */
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import cookie from '@fastify/cookie';
 
 /* Local files */
 import routes from './routes/routes.js';
@@ -14,6 +15,9 @@ app.register(cors, {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 });
+
+/* NOTE: Register the cookie plugin */
+app.register(cookie);
 
 /* NOTE: Register the routes */
 app.register(routes);
