@@ -4,6 +4,13 @@ import logout from './logout.js';
 import me from './me.js';
 import update from './update.js';
 
+/* This function is used to check if the cookie is present in the request */
+function cookieChecker(request, reply, done) {
+  if (!request.cookies || typeof request.cookies.token !== 'string')
+    return reply.status(400).send({ error: 'The "token" cookie is mandatory' });
+  done();
+}
+
 export default async function (fastify, options) {
   /* Endpoint to init the login with google */
   fastify.get('/login', google_login);
@@ -13,40 +20,17 @@ export default async function (fastify, options) {
 
   /* Endpoint to logout */
   fastify.get('/logout',{
-    schema: {
-      headers: {
-        type: 'object',
-        required: ['authorization'],
-        properties: {
-          authorization: { type: 'string' }
-        }
-      }
-    }
+    preValidation: cookieChecker
   }, logout);
 
   /* Endpoint to get the information about a token */
   fastify.get('/me', {
-    schema: {
-      headers: {
-        type: 'object',
-        required: ['authorization'],
-        properties: {
-          authorization: { type: 'string' }
-        }
-      }
-    }
+    preValidation: cookieChecker
   }, me);
 
   /* Endpoint to update the user information */
   fastify.post('/update', {
     schema: {
-      headers: {
-        type: 'object',
-        required: ['authorization'],
-        properties: {
-          authorization: { type: 'string' }
-        }
-      },
       body: {
         type: 'object',
         required: ['language'],
@@ -54,7 +38,8 @@ export default async function (fastify, options) {
           language: { type: 'string' }
         }
       }
-    }
+    },
+    preValidation: cookieChecker
   }
   , update);
 };
