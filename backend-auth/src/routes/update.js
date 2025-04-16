@@ -3,7 +3,7 @@ import { modify_jwt } from '../utils/jwt.js';
 export default async function update (request, reply)
 {
 	/* Get the token and the language to change*/
-	const token = request.headers.authorization;
+	const { token } = request.cookies;
 	const { language } = request.body;
 
 	/* Try to modify the token */
