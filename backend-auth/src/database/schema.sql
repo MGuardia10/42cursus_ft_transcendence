@@ -1,0 +1,6 @@
+-- TFA codes
+CREATE TABLE IF NOT EXISTS tfa_codes (
+  hash TEXT PRIMARY KEY,
+  code INTEGER NOT NULL,
+  tries INTEGER NOT NULL DEFAULT 0
+);
