@@ -5,6 +5,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  envDir: '/etc', // Cambia la ruta del directorio de variables de entorno
   server: {
     watch: {
       usePolling: true, // Permite que Vite detecte cambios en Docker
