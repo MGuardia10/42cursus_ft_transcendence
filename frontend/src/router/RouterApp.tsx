@@ -4,14 +4,15 @@ import AuthLayout from '@/layout/AuthLayout/AuthLayout';
 import AppLayout from '@/layout/AppLayout/AppLayout';
 import PrivateRoute from '@/router/PrivateRoute';
 import PublicRoute from '@/router/PublicRoute';
-import Dashboard from '@/pages/Dashboard/Dashboard';
-import Home from '@/pages/Home/Home';
-import LeaderBoard from '@/pages/Leaderboard/Leaderboard';
 import Login from '@/pages/Login/Login';
-import Profile from '@/pages/Profile/Profile';
-import GameSettings from '@/pages/Settings/GameSettings';
+import TwoFactorAuth from '@/pages/TwoFactorAuth/TwoFactorAuth';
+import Home from '@/pages/Home/Home';
 import SingleMatch from '@/pages/SingleMatch/SingleMatch';
 import Tournament from '@/pages/Tournament/Tournament';
+import Dashboard from '@/pages/Dashboard/Dashboard';
+import LeaderBoard from '@/pages/Leaderboard/Leaderboard';
+import Profile from '@/pages/Profile/Profile';
+import GameSettings from '@/pages/Settings/GameSettings';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 
 
@@ -21,7 +22,8 @@ const RouterApp: React.FC = () => {
 			<Routes>
 				<Route element={<AuthLayout />}>
 					<Route element={<PublicRoute />}>
-						<Route path="login" element={<Login />} />
+						<Route path="/login" element={<Login />} />
+						<Route path="/login/tfa" element={<TwoFactorAuth />} />
 					</Route>
 				</Route>
 

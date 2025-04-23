@@ -40,8 +40,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	/* Function to logout removing cookie */
 	const logout = useCallback(async () => {
 		await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/logout`, {
-		credentials: 'include'
+			credentials: 'include'
 		});
+
 		setUser(null);
 	}, []);
 
@@ -63,5 +64,5 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		>
 		{children}
 		</AuthContext.Provider>
-);
+	);
 };
