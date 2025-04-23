@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'react-router';
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineCancel } from "react-icons/md";
@@ -8,8 +9,9 @@ import { FiUser } from "react-icons/fi";
 
 const Profile: React.FC = () => {
 
-	// useLanguage hook
+	// language and auth hooks
 	const { t } = useLanguage();
+	const { logout } = useAuth();
 
 	// useRef to handle the menu
 	const profileMenuRef = useRef<HTMLDivElement | null>(null);
@@ -40,10 +42,12 @@ const Profile: React.FC = () => {
 
 	// Function to handle the delete account
 	const handleLogOut = () => {
+
+		// Close the last call modal
 		setShowLastCall(false);
 
-		// Delete account logic here
-		// ...
+		// Call the logout function
+		logout();
 	};
 	
 	return (
