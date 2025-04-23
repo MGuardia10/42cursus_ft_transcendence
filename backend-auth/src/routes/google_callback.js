@@ -1,5 +1,5 @@
 import url from 'url';
-import { oauth2client } from '../google_oauth.js';
+import { oauth2client } from '../utils/google_oauth.js';
 import { create_jwt } from '../utils/jwt.js';
 import db from '../database/database.js'
 import { randomBytes } from 'crypto';
