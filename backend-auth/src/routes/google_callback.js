@@ -3,7 +3,7 @@ import { oauth2client } from '../utils/google_oauth.js';
 import { create_jwt } from '../utils/jwt.js';
 import db from '../database/database.js'
 import { randomBytes } from 'crypto';
-
+import send_mail from '../utils/mail_config.js';
 
 async function create_user(baseurl, name, email, avatar_url)
 {
@@ -19,7 +19,7 @@ async function create_user(baseurl, name, email, avatar_url)
 		})
 	});
 
-	return { user_id: id, tfa: false };
+	return { user_id: id, user_name: name, user_email: email, tfa: false };
 }
 
 async function search_user(baseurl, user_id)
@@ -27,9 +27,9 @@ async function search_user(baseurl, user_id)
 	const data = await fetch (`${baseurl}/${user_id}`, {
 		method: "GET"
 	});
-	const { tfa } = await data.json()
+	const { name, email, tfa } = await data.json()
 	const response = tfa == 0 ? false : true
-	return { user_id, tfa: response };
+	return { user_id: user_id, user_name: name, user_email: email, tfa: response };
 }
 
 async function manage_user(users_api, name, email, picture)
@@ -74,7 +74,7 @@ export default async function google_callback(request, reply)
 		const { name, email, picture } = await google_authentication(request, reply);
 
 		/* Manage the user creation or search */
-		const { user_id, tfa } = await manage_user(users_api, name, email, picture);
+		const { user_id, user_name, user_email, tfa } = await manage_user(users_api, name, email, picture);
 
 		/* Create the user init token and return it */
 		const token = create_jwt({
@@ -100,6 +100,7 @@ export default async function google_callback(request, reply)
 		db.prepare("INSERT INTO tfa_codes(hash, user_id, code) VALUES(?, ?, ?)").run(hash, user_id, code);
 
 		/* Send the mail */
+		await send_mail(user_email, user_name, code);
 
 		/* Redirect with tfa true and the temporal code */
 		return reply.redirect(`${process.env.FRONTEND_BASEURL_EXTERNAL}/tfa?hash=${hash}`);
