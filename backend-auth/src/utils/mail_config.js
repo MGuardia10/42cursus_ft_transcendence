@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer';
-import SendmailTransport from 'nodemailer/lib/sendmail-transport';
 
 /* Set the Gmail configuration */
 const transporter = nodemailer.createTransport({
@@ -10,7 +9,7 @@ const transporter = nodemailer.createTransport({
 	}
 });
 
-function build_mail(code) {
+function build_mail(name, code) {
 	return `<!DOCTYPE html>
   <html>
   <head>
@@ -60,7 +59,7 @@ function build_mail(code) {
 			</tr>
 			<tr>
 			  <td>
-				<p>Hola,</p>
+				<p>Hola ${name},</p>
 				<p>Tu código de autenticación en dos pasos es:</p>
 				<p align="center">
 				  <span class="code-box">${code}</span>
@@ -80,14 +79,14 @@ function build_mail(code) {
   </html>`;
 }
 
-export default async function send_mail(dest, code)
+export default async function send_mail(mail, name, code)
 {
 	/* Set the mail config */
 	const options = {
 		from: '"Transcendence TFA" <no-reply@transcendence.com>',
-		to: dest,
+		to: mail,
 		subject: "Login on Transcendence - TFA Code",
-		html: build_mail(code)
+		html: build_mail(name, code)
 	}
 
 	/* Send the mail */
