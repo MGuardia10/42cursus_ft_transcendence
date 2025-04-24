@@ -6,11 +6,7 @@ import {
 	ClipboardEvent,
 } from 'react';
 import Spinner from '@/layout/Spinner/Spinner';
-  
-interface TwoFactorInputProps {
-	length?: number;
-	onComplete: (code: string) => Promise<void>;
-  }
+import { TwoFactorInputProps} from '@/types/twoFactorAuth';
 
   const TwoFactorInput: React.FC<TwoFactorInputProps> = ({ length = 6, onComplete }) => {
 
@@ -80,7 +76,6 @@ interface TwoFactorInputProps {
 
 	/* Check all numbers filled and call function to handle 2FA */
 	useEffect(() => {
-		// cuando ya tenemos todos los dígitos
 		if (values.every((v) => v !== '')) {
 		  (async () => {
 			setLoading(true);
