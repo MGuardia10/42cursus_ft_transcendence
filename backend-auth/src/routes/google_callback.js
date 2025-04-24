@@ -1,6 +1,9 @@
 import url from 'url';
-import { oauth2client } from '../google_oauth.js';
+import { oauth2client } from '../utils/google_oauth.js';
 import { create_jwt } from '../utils/jwt.js';
+import db from '../database/database.js'
+import { randomBytes } from 'crypto';
+import send_mail from '../utils/mail_config.js';
 
 async function create_user(baseurl, name, email, avatar_url)
 {
@@ -16,7 +19,17 @@ async function create_user(baseurl, name, email, avatar_url)
 		})
 	});
 
-	return id;
+	return { user_id: id, user_name: name, user_email: email, tfa: false };
+}
+
+async function search_user(baseurl, user_id)
+{
+	const data = await fetch (`${baseurl}/${user_id}`, {
+		method: "GET"
+	});
+	const { name, email, tfa } = await data.json()
+	const response = tfa == 0 ? false : true
+	return { user_id: user_id, user_name: name, user_email: email, tfa: response };
 }
 
 async function manage_user(users_api, name, email, picture)
@@ -30,7 +43,7 @@ async function manage_user(users_api, name, email, picture)
 	/* Take action taking acoount if the user exists */
 	return users_found.length == 0
 		? create_user(users_api, name, email, picture)
-		: users_found[0].id;
+		: search_user(users_api, users_found[0].id);
 }
 
 async function google_authentication(request, reply)
@@ -61,7 +74,7 @@ export default async function google_callback(request, reply)
 		const { name, email, picture } = await google_authentication(request, reply);
 
 		/* Manage the user creation or search */
-		const user_id = await manage_user(users_api, name, email, picture);
+		const { user_id, user_name, user_email, tfa } = await manage_user(users_api, name, email, picture);
 
 		/* Create the user init token and return it */
 		const token = create_jwt({
@@ -69,17 +82,28 @@ export default async function google_callback(request, reply)
 			language: process.env.DEFAULT_LANGUAGE
 		});
 
-		/* Redirect with the new cookie */
-		// reply.header('set-cookie', `token=${token}; SameSite=None; Secure; HttpOnly; Path=/`);
-		return reply
-			.setCookie('token', token, {
-				sameSite: 'None',
-				secure: true,
-				httpOnly: true,
-				path: '/',
-				expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
-			})
-			.redirect(`${process.env.FRONTEND_BASEURL_INTERNAL}?tfa=false`);
+		/* Check if the user has TFA enabled */
+		if (tfa == false)
+			return reply
+				.setCookie('token', token, {
+					sameSite: 'None',
+					secure: true,
+					httpOnly: true,
+					path: '/',
+					expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
+				})
+				.redirect(`${process.env.FRONTEND_BASEURL_EXTERNAL}`);
+		
+		/* TFA activated: Register a new code and a hash */
+		const code = Math.floor(Math.random() * (1000000 - 100000) + 100000);
+		const hash = randomBytes(32).toString('hex');
+		db.prepare("INSERT INTO tfa_codes(hash, user_id, code) VALUES(?, ?, ?)").run(hash, user_id, code);
+
+		/* Send the mail */
+		await send_mail(user_email, user_name, code);
+
+		/* Redirect with tfa true and the temporal code */
+		return reply.redirect(`${process.env.FRONTEND_BASEURL_EXTERNAL}/tfa?hash=${hash}`);
 	}
 	catch (e)
 	{
