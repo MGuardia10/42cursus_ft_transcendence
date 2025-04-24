@@ -1,4 +1,4 @@
-import { oauth2client, scopes } from '../google_oauth.js';
+import { oauth2client, scopes } from '../utils/google_oauth.js';
 import { randomBytes } from 'crypto';
 
 export default async function google_login(request, reply)

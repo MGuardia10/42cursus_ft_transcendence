@@ -30,7 +30,8 @@ certs:
 
 # Rule to clean all the user data
 clean_data:
-	@cd backend-user; rm -rf database.sqlite avatars 
+	@cd backend-user; rm -rf database.sqlite avatars
+	@cd backend-auth; rm -rf database.sqlite
 
 # Targets
 .PHONY: up check_env down certs clean_data
