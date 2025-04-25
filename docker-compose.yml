@@ -51,6 +51,7 @@ services:
     environment:
       - NODE_ENV=development
       - AVATAR_FOLDER=${AVATAR_FOLDER}
+      - FRONTEND_BASEURL_EXTERNAL=${FRONTEND_BASEURL_EXTERNAL}
     volumes:
       - ./backend-user:/app
       - /app/node_modules
@@ -66,7 +67,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - USER_API_BASEURL_INTERNAL=${USER_API_BASEURL_INTERNAL}
-      - FRONTEND_BASEURL_INTERNAL=${FRONTEND_BASEURL_INTERNAL}
+      - FRONTEND_BASEURL_EXTERNAL=${FRONTEND_BASEURL_EXTERNAL}
 
       - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
       - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE}
@@ -75,6 +76,8 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_CALLBACK_ENDPOINT=${GOOGLE_CALLBACK_ENDPOINT}
       - GOOGLE_CALLBACK_URI=${GOOGLE_CALLBACK_URI}
+      - GOOGLE_GMAIL_USER=${GOOGLE_GMAIL_USER}
+      - GOOGLE_GMAIL_PASSWORD=${GOOGLE_GMAIL_PASSWORD}
     volumes:
       - ./backend-auth:/app
       - /app/node_modules

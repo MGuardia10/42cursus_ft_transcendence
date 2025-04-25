@@ -6,12 +6,18 @@ import cookie from '@fastify/cookie';
 /* Local files */
 import routes from './routes/routes.js';
 
+/* Database */
+import { initializeDB } from './database/database.js';
+
 /* NOTE: Create the server object */
 const app = Fastify({ logger: false });
 
+/* NOTE: Init the database */
+await initializeDB();
+
 /* NOTE: Register the valid methods and IPs */
 app.register(cors, {
-  origin: 'https://localhost:8080',
+  origin: process.env.FRONTEND_BASEURL_EXTERNAL,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 });

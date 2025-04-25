@@ -14,8 +14,9 @@ const app = Fastify({ logger: true });
 
 /* NOTE: Register the valid methods and IPs */
 app.register(cors, {
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+  origin: process.env.FRONTEND_BASEURL_EXTERNAL,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 });
 
 /* NOTE: Init the database */

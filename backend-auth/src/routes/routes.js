@@ -3,6 +3,7 @@ import google_login from './google_login.js';
 import logout from './logout.js';
 import me from './me.js';
 import update from './update.js';
+import tfa from './tfa.js';
 
 /* This function is used to check if the cookie is present in the request */
 function cookieChecker(request, reply, done) {
@@ -42,4 +43,18 @@ export default async function (fastify, options) {
     preValidation: cookieChecker
   }
   , update);
+
+  /* TFA route, where the user temp hash and code are sent to be validated */
+  fastify.post('/tfa',{
+    schema: {
+      body: {
+        type: 'object',
+        required: ['hash', 'code'],
+        properties: {
+          hash: { type: 'string' },
+          code: { type: 'integer' }
+        }
+      }
+    }
+  }, tfa);
 };
