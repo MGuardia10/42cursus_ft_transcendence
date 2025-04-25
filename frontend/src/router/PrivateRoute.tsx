@@ -1,18 +1,24 @@
-import { Navigate, Outlet } from 'react-router';
+import { Navigate } from 'react-router';
 import { useAuth } from '@/hooks/useAuth';
+import { routeProps } from '@/types/authContext';
 import Spinner from '@/layout/Spinner/Spinner';
 
-const PrivateRoute: React.FC = () => {
+const PrivateRoute: React.FC<routeProps> = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) return (
-    <div className='min-h-32 md:min-h-48 flex items-center justify-center'>
-      <Spinner />
-    </div>
-    
-  );
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-background-primary z-50">
+        <Spinner />
+      </div>
+    );
+  }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
 };
 
 export default PrivateRoute;

@@ -1,20 +1,30 @@
-import { useEffect } from 'react';
-import { useNavigate, Outlet } from 'react-router';
+import { Navigate } from 'react-router';
 import { useAuth } from '@/hooks/useAuth';
+import { routeProps } from '@/types/authContext';
+import Spinner from '@/layout/Spinner/Spinner';
+import NotificationsLayout from '@/layout/NotificationsLayout/NotificationsLayout';
 
-const PublicRoute: React.FC = () => {
+const PublicRoute: React.FC<routeProps> = ({ children }) => {
 
-  // hooks
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated, loading } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/', { replace: true });
-    }
-  }, [isAuthenticated, navigate]);
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-background-primary z-50">
+        <Spinner />
+      </div>
+    );
+  }
 
-  return <Outlet />;
+  if (isAuthenticated)
+    return <Navigate to="/" replace />;
+
+  return (
+    <>
+      <NotificationsLayout />
+      {children}
+    </>
+  )
 };
 
 export default PublicRoute;

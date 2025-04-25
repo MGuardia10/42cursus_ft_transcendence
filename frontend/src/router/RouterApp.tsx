@@ -20,15 +20,12 @@ const RouterApp: React.FC = () => {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route element={<AuthLayout />}>
-					<Route element={<PublicRoute />}>
-						<Route path="/login" element={<Login />} />
-						<Route path="/login/tfa" element={<TwoFactorAuth />} />
-					</Route>
+				<Route element={<PublicRoute><AuthLayout /></PublicRoute>}>
+					<Route path="/login" element={<Login />} />
+					<Route path="/login/tfa" element={<TwoFactorAuth />} />
 				</Route>
 
-				<Route element={<AppLayout />}>
-					<Route element={<PrivateRoute />}>
+				<Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
 						<Route path="/" element={<Home />} />
 						<Route path="/single-match" element={<SingleMatch />} />
 						<Route path="/tournament" element={<Tournament />} />
@@ -36,7 +33,6 @@ const RouterApp: React.FC = () => {
 						<Route path="/leaderboard" element={<LeaderBoard />} />
 						<Route path="/profile" element={<Profile />} />
 						<Route path="/game-settings" element={<GameSettings />} />
-					</Route>
 				</Route>
 
 				<Route path="*" element={<NotFoundPage />} />
