@@ -8,7 +8,7 @@ import {
 import Spinner from '@/layout/Spinner/Spinner';
 import { TwoFactorInputProps} from '@/types/twoFactorAuth';
 
-  const TwoFactorInput: React.FC<TwoFactorInputProps> = ({ length = 6, onComplete }) => {
+  const TwoFactorInput: React.FC<TwoFactorInputProps> = ({ length = 6, onComplete, resetKey = 0 }) => {
 
 	/* useState hook for numbers */
 	const [values, setValues] = useState<string[]>(Array(length).fill(''));
@@ -73,6 +73,12 @@ import { TwoFactorInputProps} from '@/types/twoFactorAuth';
 		newVals[idx] = val;
 		setValues(newVals);
 	};
+
+	/* Reset if resetKey change */
+	useEffect(() => {
+		setValues(Array(length).fill(''));
+		focusInput(0);
+	}, [resetKey, length]);
 
 	/* Check all numbers filled and call function to handle 2FA */
 	useEffect(() => {

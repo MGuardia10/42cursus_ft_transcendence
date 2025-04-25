@@ -1,43 +1,91 @@
+import { useState, useCallback } from "react";
+import { useSearchParams, useNavigate } from "react-router";
+import { useNotification } from "@/hooks/useNotification";
 import TwoFactorInput from '@/pages/TwoFactorAuth/components/TwoFactorInput';
 
 const TwoFactorAuth: React.FC = () => {
 
+	/* useParams hook to get the params from the URL */
+	const [searchParams] = useSearchParams();
+	const hash = searchParams.get('hash') || '';
+
+	/* useNavigate hook to redirect */
+	const navigate = useNavigate();
+
+	/* useNotification hook */
+	const { addNotification } = useNotification();
+
+	/* useState hook to reset the input */
+	const [resetKey, setResetKey] = useState(0);
+
+	/* Make setTimeout a promise to manage set cookie from backend correctly */
+	const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 	/* Function to handle 2FA */
-	const handleCodeComplete = async (code: string) => {
+	const handleCodeComplete = useCallback(async (code: string) => {
 
-		// try {
-		// 	const response = await fetch('/login/tfa', {
-		// 	  method: 'POST',
-		// 	  headers: {
-		// 		'Content-Type': 'application/json',
-		// 	  },
-		// 	  credentials: 'include', // si usas cookies
-		// 	  body: JSON.stringify({ code }),
-		// 	});
+		try {
+			const response = await fetch(`${ import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL }/tfa`, {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'application/json',
+			  },
+			  credentials: 'include',
+			  body: JSON.stringify({ hash, code }),
+			});
+
+			console.log('Response:', response.status);
 	  
-		// 	if (response.status === 200) {
-		// 	  console.log('Autenticación 2FA exitosa');
-		// 	  // redirige al dashboard u otra página
-		// 	} else if (response.status === 401) {
-		// 	  alert('Código incorrecto. Inténtalo de nuevo.');
-		// 	} else if (response.status === 429) {
-		// 	  alert('Límite de intentos alcanzado. Inténtalo más tarde.');
-		// 	} else {
-		// 	  alert('Error inesperado. Intenta nuevamente.');
-		// 	}
-		// } catch (error) {
-		// 	console.error('Error al verificar 2FA:', error);
-		// 	alert('Error de red. Verifica tu conexión.');
-		// }
+			if (response.status === 200) {
 
-		await new Promise((resolve) => setTimeout(resolve, 2000));
-		console.log('Código 2FA ingresado:', code);
-		// aquí llamas a tu API para verificar el 2FA...
-	};
+				/* Wait 3 seconds */
+				await sleep(1500);
+				addNotification('Login Successful!', 'success');
+				await sleep(1000);
+				/* Redirect to the home page */
+				window.location.assign(`${import.meta.env.VITE_FRONTEND_BASEURL_EXTERNAL}/`);
+
+			} else if (response.status === 401) {
+
+				/* Write error */
+				await sleep(1000);
+				addNotification('Invalid code! Try again.', 'error');
+				setResetKey((k) => k + 1);
+				
+			} else if (response.status === 429) {
+				
+				/* Write errors */
+				await sleep(1000);
+				addNotification('Too many attemps!', 'error');
+				await sleep(500);
+				addNotification('Redirecting to login...', 'error');
+				await sleep(2000);
+
+				/* Redirect to login page */
+				navigate('/login', { replace: true });
+
+			} else {
+
+				/* Write errors */
+				await sleep(1000);
+				addNotification('Error checking code!', 'error');
+				await sleep(500);
+				addNotification('Redirecting to login...', 'error');
+				await sleep(1000);
+
+				/* redirect to login */
+				navigate('/login', { replace: true });
+			}
+
+		} catch (error) {
+			console.error('Error al verificar 2FA:', error);
+			alert('Error de red. Verifica tu conexión.');
+		}
+	}, [hash, addNotification, navigate]);
 
 	return (
 		<div className="min-h-screen flex items-center justify-center">
-			<TwoFactorInput onComplete={handleCodeComplete} />
+			<TwoFactorInput onComplete={handleCodeComplete} resetKey={resetKey} />
 		</div>
 	);
 };
