@@ -17,14 +17,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	/* Function to refresh actual user */
 	const refreshUser = useCallback(async () => {
 		try {
+
+			/* Check JWT with /me to obtain language and id */
 			const res = await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/me`, {
 				credentials: 'include',
 			});
 
 			if (!res.ok) throw new Error('No autorizado');
 
-			const data = (await res.json()) as User;
-			setUser(data);
+			const { user_id: id, language } = await res.json();
+			
+			/* Check for user data */
+			const data = await fetch(`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${id}`, {
+				credentials: 'include',
+			});
+			
+			if (!data.ok) throw new Error('No autorizado');
+
+			/* extract data from user */
+			const { name, email, tfa } = (await data.json());
+
+			/* Set user data */
+			setUser({
+				id,
+				language,
+				name,
+				email,
+				tfa: tfa === 0 ? false : true,
+				avatar: `${ import.meta.env.VITE_USER_API_BASEURL_EXTERNAL }/${id}/avatar`,
+			} as User);
 		} catch {
 			setUser(null);
 		} finally {

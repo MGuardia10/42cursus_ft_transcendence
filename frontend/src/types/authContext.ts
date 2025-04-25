@@ -1,12 +1,16 @@
-// Define la forma de tu usuario
+export interface routeProps {
+	children?: React.ReactNode;
+  }
+
 export interface User {
 	id: string;
+	language: string;
 	name: string;
 	email: string;
 	avatar?: string;
+	tfa: boolean;
 }
 
-// Qué ofrece el contexto
 export interface AuthContextType {
 	user: User | null;
 	loading: boolean;
