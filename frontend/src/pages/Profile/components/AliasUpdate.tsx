@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useNotification } from '@/hooks/useNotification';
+import { useAuth } from '@/hooks/useAuth';
 
 const AliasUpdate: React.FC = () => {
 	
+	// useAuth hook
+	const { user } = useAuth();
+
 	// useLanguage hook
 	const { t } = useLanguage();
 	
@@ -34,7 +38,7 @@ const AliasUpdate: React.FC = () => {
 				type="text"
 				value={alias}
 				onChange={(e) => setAlias(e.target.value)}
-				placeholder="mguardia"
+				placeholder={ user?.alias || 'loading...' }
 				className="flex-1 p-1.5 md:p-2 text-sm md:text-base border rounded-xs focus:outline-none focus:ring focus:border-blue-300"
 				required
 			/>

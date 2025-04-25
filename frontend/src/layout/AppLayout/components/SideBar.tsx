@@ -62,8 +62,8 @@ const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
 						alt='avatar'
 						className='md:block md:w-24 md:h-24 rounded-full border-2 border-text-tertiary'
 					/>
-					<h2 className="text-3xl font-bold mt-3">Miguel</h2>
-					<p className="mt-1 text-sm text-text-tertiary">mguardia</p>
+					<h2 className="text-3xl font-bold mt-3">{ user?.name?.split(' ')[0] || 'loading...' }</h2>
+					<p className="mt-1 text-sm text-text-tertiary">{ user?.alias?.split(' ')[0] || 'loading...' }</p>
 				</div>
 				<nav className='mt-6 md:-mt-6'>
 					<ul>

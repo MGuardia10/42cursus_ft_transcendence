@@ -33,8 +33,6 @@ const TwoFactorAuth: React.FC = () => {
 			  credentials: 'include',
 			  body: JSON.stringify({ hash, code }),
 			});
-
-			console.log('Response:', response.status);
 	  
 			if (response.status === 200) {
 
@@ -77,9 +75,18 @@ const TwoFactorAuth: React.FC = () => {
 				navigate('/login', { replace: true });
 			}
 
-		} catch (error) {
-			console.error('Error al verificar 2FA:', error);
-			alert('Error de red. Verifica tu conexión.');
+		} catch (e) {
+
+			/* Write errors */
+			await sleep(1000);
+			addNotification(`Error: ${e}`, 'error');
+			await sleep(500);
+			addNotification('Redirecting to login...', 'error');
+			await sleep(1000);
+
+			/* redirect to login */
+			navigate('/login', { replace: true });
+
 		}
 	}, [hash, addNotification, navigate]);
 

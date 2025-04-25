@@ -1,8 +1,12 @@
 import { useState, FormEvent } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useNotification } from '@/hooks/useNotification';
+import { useAuth } from '@/hooks/useAuth';
 
 const NameUpdate: React.FC = () => {
+
+	// useAuth hook
+	const { user } = useAuth();
 
 	// useLanguage hook
 	const { t } = useLanguage();
@@ -33,7 +37,7 @@ const NameUpdate: React.FC = () => {
 				type="text"
 				value={name}
 				onChange={(e) => setName(e.target.value)}
-				placeholder="Miguel Guardia"
+				placeholder={ user?.name || 'loading...' }
 				className="flex-1 p-1.5 md:p-2 text-sm md:text-base border rounded-xs focus:outline-none focus:ring focus:border-blue-300"
 				required
 				autoComplete='off'
