@@ -51,6 +51,7 @@ services:
     environment:
       - NODE_ENV=development
       - AVATAR_FOLDER=${AVATAR_FOLDER}
+      - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE}
       - FRONTEND_BASEURL_EXTERNAL=${FRONTEND_BASEURL_EXTERNAL}
     volumes:
       - ./backend-user:/app
