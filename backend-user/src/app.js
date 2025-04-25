@@ -2,6 +2,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import fs from 'fs';
+import multipart from '@fastify/multipart';
 
 /* Database */
 import {initializeDB} from './database/database.js';
@@ -18,6 +19,9 @@ app.register(cors, {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 });
+
+/* NOTE: Register the multipart plugin */
+app.register(multipart);
 
 /* NOTE: Init the database */
 await initializeDB();
