@@ -35,13 +35,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			if (!data.ok) throw new Error('No autorizado');
 
 			/* extract data from user */
-			const { name, email, tfa } = (await data.json());
+			const { name, alias, email, tfa } = (await data.json());
 
 			/* Set user data */
 			setUser({
 				id,
 				language,
 				name,
+				alias,
 				email,
 				tfa: tfa === 0 ? false : true,
 				avatar: `${ import.meta.env.VITE_USER_API_BASEURL_EXTERNAL }/${id}/avatar`,

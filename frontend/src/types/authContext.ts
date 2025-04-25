@@ -6,6 +6,7 @@ export interface User {
 	id: string;
 	language: string;
 	name: string;
+	alias: string;
 	email: string;
 	avatar?: string;
 	tfa: boolean;
