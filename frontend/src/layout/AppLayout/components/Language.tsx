@@ -6,7 +6,7 @@ import { FaChevronDown } from "react-icons/fa";
 const Language: React.FC = () => {
 
 	// extract setLanguage and traduction function t from useLanguage hook
-	const { setLanguage, t } = useLanguage();
+	const { language, setLanguage, t } = useLanguage();
 
 	// useState to handle the window width and options in select
 	const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
@@ -42,6 +42,7 @@ const Language: React.FC = () => {
 			<select
 				className='py-1.5 px-2 md:py-2.5 md:px-3 appearance-none outline-none pointer-events-auto focus:ring-2 focus:ring-text-tertiary hover:cursor-pointer w-full md:pr-6 text-xs bg-background-secondary'
 				id='language'
+				value={language}
 				onChange={(e) => {
 					// cast e.target.value to type Language
 					const selectedLanguage = e.target.value as Language;

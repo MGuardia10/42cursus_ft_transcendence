@@ -7,14 +7,18 @@ import { GrGamepad } from "react-icons/gr";
 import { TbTournament } from "react-icons/tb";
 
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
 import { MenuItem } from '@/types/sidebarTypes';
 
 type SideBarProps = {
 	showSidebar: boolean;
 	setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
-  }; 
+  };
 
 const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
+
+	// useAuth hook
+	const { user } = useAuth();
 
 	// useLanguage hook
 	const { t } = useLanguage();
@@ -49,7 +53,15 @@ const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
 					<h1 className="text-xl md:text-sm font-login my-6 md:mt-2 md:mb-0">FT_TRASCENDENCE</h1>
 				</div>
 				<div className="hidden md:flex md:flex-col md:items-center md:my-12">
-					<img src='https://i.redd.it/c83vyz4t9b651.jpg' alt='avatar' className='md:block md:w-24 md:h-24 rounded-full border-2 border-text-tertiary' />
+					<img
+						src={user?.avatar}
+						onError={(e) => {
+							e.currentTarget.src = '/placeholder.webp';
+						  }}
+						crossOrigin="use-credentials"
+						alt='avatar'
+						className='md:block md:w-24 md:h-24 rounded-full border-2 border-text-tertiary'
+					/>
 					<h2 className="text-3xl font-bold mt-3">Miguel</h2>
 					<p className="mt-1 text-sm text-text-tertiary">mguardia</p>
 				</div>

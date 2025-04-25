@@ -1,16 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
-import { useLanguage } from '@/hooks/useLanguage';
-import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'react-router';
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineCancel } from "react-icons/md";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { FiUser } from "react-icons/fi";
+import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
+import { useNotification } from '@/hooks/useNotification';
 
 const Profile: React.FC = () => {
 
-	// language and auth hooks
+	// language, notification and auth hooks
 	const { t } = useLanguage();
+	const { addNotification } = useNotification();
 	const { logout } = useAuth();
 
 	// useRef to handle the menu
@@ -45,6 +47,9 @@ const Profile: React.FC = () => {
 
 		// Close the last call modal
 		setShowLastCall(false);
+
+		// addNotification goodbye
+		addNotification('Goodbye!', 'success');
 
 		// Call the logout function
 		logout();

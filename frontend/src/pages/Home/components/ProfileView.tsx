@@ -2,12 +2,17 @@ import React from 'react';
 import { Link } from 'react-router';
 import { AiFillEdit } from "react-icons/ai";
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
+
 
 
 const ProfileView: React.FC = () => {
 
-	// useLanguage hook
+	/* useLanguage hook */
 	const { t } = useLanguage();
+
+	/* useAuth hook */
+	const { user } = useAuth();
 
 	return (
 		<div className='flex flex-col items-center gap-3 md:gap-6 h-full p-5 sm:p-6 md:p-8'>
@@ -31,7 +36,16 @@ const ProfileView: React.FC = () => {
 
 				{/* Image + Avatar */}
 				<div className='flex flex-col sm:items-center align-middle justify-center sm:gap-2'>
-					<img src='https://i.redd.it/c83vyz4t9b651.jpg' alt='profile' className='h-20 w-20 md:min-w-20 md:h-20 lg:w-24 lg:min-w-24 lg:h-24 border-2 text-text-tertiary rounded-sm sm:rounded-full object-cover'/>
+					<img
+						src={user?.avatar}
+						onError={(e) => {
+							e.currentTarget.src = '/placeholder.webp';
+						}}
+						crossOrigin="use-credentials"
+						alt='avatar'
+						className='h-20 w-20 md:min-w-20 md:h-20 lg:w-24 lg:min-w-24 lg:h-24 border-2 text-text-tertiary rounded-sm sm:rounded-full object-cover'
+					/>
+					{/* <img src='https://i.redd.it/c83vyz4t9b651.jpg' alt='profile' className=''/> */}
 					<p className='hidden sm:inline-block text-text-tertiary text-sm md:text-base'>mguardia</p>
 				</div>
 
