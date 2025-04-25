@@ -1,4 +1,5 @@
 import db from "../database/database.js";
+import fs from "fs/promises";
 
 function update_field(id, field, value)
 {
@@ -53,4 +54,34 @@ async function update_user_data_by_id(request, reply) {
 	return reply.code(200).send({ updated_fields: fields });
 }
 
-export { update_user_data_by_id };
+
+async function update_user_avatar_by_id(request, reply)
+{
+	/* Get the id */
+	const { id } = request.params;
+
+	/* Check if the user exists */
+	try
+	{
+		const user = db.prepare("SELECT avatar FROM users WHERE id = ?").get(id);
+		if (!user)
+			return reply.code(404).send({ error: "User not found" });
+		
+		/* Get the file */
+		const data = await request.file();
+		if (!data)
+			return reply.code(400).send({ error: "No file provided" });
+		
+		/* Save the file */
+		const buffer = await data.toBuffer();
+		await fs.writeFile(user.avatar, buffer)
+
+		return reply.code(200).send();
+	}
+	catch(err)
+	{
+		return reply.code(500).send({ error: err });
+	}
+}
+
+export { update_user_data_by_id, update_user_avatar_by_id };

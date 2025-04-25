@@ -6,7 +6,7 @@ import get_friends_by_id from './get_friends_by_id.js';
 import add_user from './add_user.js';
 import add_friend from './add_friend.js';
 
-import { update_user_data_by_id } from './update_user_by_id.js';
+import { update_user_data_by_id, update_user_avatar_by_id } from './update_user_by_id.js';
 
 export default async function (fastify, options) {
   
@@ -147,4 +147,16 @@ export default async function (fastify, options) {
       }
     }
   }, update_user_data_by_id);
+
+  fastify.put('/:id/avatar', {
+    schema: {
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'integer' }
+        }
+      },
+    }
+  }, update_user_avatar_by_id);
 };
