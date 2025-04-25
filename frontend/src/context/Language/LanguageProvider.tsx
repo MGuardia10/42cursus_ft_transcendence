@@ -8,48 +8,52 @@ import { useAuth } from '@/hooks/useAuth';
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
 	/* useAuth hook */
-	const { user, isAuthenticated } = useAuth();
-	
-	/* default language */
-	const defaultLang: Language =
-    	(isAuthenticated && user?.language as Language) || 
-    	(localStorage.getItem('lang') as Language) ||
-    	(import.meta.env.VITE_DEFAULT_LANGUAGE as Language) || 
-		'en';
+	const { user, isAuthenticated, loading } = useAuth();
 
-		console.log("default: ", defaultLang);
+	/* Set one language as a fallback */
+	const FALLBACK: Language = 'en';
 		
-	const [language, setLanguageState] = useState<Language>(defaultLang);
+	const [language, setLanguageState] = useState<Language>(FALLBACK);
 		
 	/* Syncronize user language */
 	useEffect(() => {
-		// Si el usuario trae un idioma, lo uso
+
+		// if loading, return
+		if (loading) return ;
+
+		// If user is authenticated and has a language, set it
 		if (isAuthenticated && user?.language) {
 			setLanguageState(user.language as Language);
+			return ;
 		}
-	}, [isAuthenticated, user?.language])
-		
-		console.log("languaje after useeffect: ", language);
-		
-		/* Set language function */
-		const setLanguage = useCallback(
-			async (lang: Language) => {
-				console.log("languaje setLanguage: ", language);
-				setLanguageState(lang)
-				localStorage.setItem('lang', lang)
+
+		// If no User data for language, read localstorage or set default lang
+		const saved = localStorage.getItem('lang') as Language | null
+		const envDefault = import.meta.env.VITE_DEFAULT_LANGUAGE as Language | undefined
+	
+		setLanguageState(
+		  saved
+		  || (envDefault && ['en','es','pt'].includes(envDefault) ? envDefault : FALLBACK)
+		)
+	}, [loading, isAuthenticated, user?.language])
 				
-				if (isAuthenticated) {
-					await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/update`, {
-						method: 'POST',
-						credentials: 'include',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ language: lang }),
-					}
-				)
-			}
-		}, [isAuthenticated, language]);
+		/* Set language function */
+	const setLanguage = useCallback(
+		async (lang: Language) => {
+			setLanguageState(lang)
+			localStorage.setItem('lang', lang)
+			
+			if (isAuthenticated) {
+				await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/update`, {
+					method: 'POST',
+					credentials: 'include',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ language: lang }),
+				}
+			)
+		}
+	}, [isAuthenticated]);
 		
-		console.log("languaje: ", language);
 	/* use translations */
 	const t = (key: keyof typeof translations["es"]) => translations[language][key];
 
