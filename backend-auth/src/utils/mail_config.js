@@ -87,7 +87,7 @@ export default async function send_mail(mail, name, code)
 		to: mail,
 		subject: "Login on Transcendence - TFA Code",
 		html: build_mail(name, code)
-	}
+	};
 
 	/* Send the mail */
 	await transporter.sendMail(options);

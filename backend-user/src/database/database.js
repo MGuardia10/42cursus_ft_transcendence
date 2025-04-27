@@ -16,6 +16,10 @@ const db = new Database( dbPath, {
 /* Execute the init database scripts */
 const initializeDB = async () => {
 	try {
+		/* Activate the ON CASCADE atributes */
+		db.pragma('foreign_keys = ON');
+
+		/* Read and execute the schema file */
 		const schemaPath = join(__dirname, 'schema.sql');
 		const schemaFile = await fs.readFile(schemaPath, 'utf8');
 		db.exec(schemaFile);

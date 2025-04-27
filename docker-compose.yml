@@ -22,6 +22,12 @@ services:
     build:
       context: frontend/
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASEURL: ${API_BASEURL}
+        VITE_AUTH_API_BASEURL_EXTERNAL: ${AUTH_API_BASEURL_EXTERNAL}
+        VITE_USER_API_BASEURL_EXTERNAL: ${USER_API_BASEURL_EXTERNAL}
+        VITE_GOOGLE_CALLBACK_URI: ${GOOGLE_CALLBACK_URI}
+        VITE_AVATAR_FOLDER: ${AVATAR_FOLDER}
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -45,6 +51,8 @@ services:
     environment:
       - NODE_ENV=development
       - AVATAR_FOLDER=${AVATAR_FOLDER}
+      - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE}
+      - FRONTEND_BASEURL_EXTERNAL=${FRONTEND_BASEURL_EXTERNAL}
     volumes:
       - ./backend-user:/app
       - /app/node_modules

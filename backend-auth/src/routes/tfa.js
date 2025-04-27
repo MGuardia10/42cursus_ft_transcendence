@@ -47,5 +47,5 @@ export default async function tfa(request, reply)
 			path: '/',
 			expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
 		})
-		.code(200).send()
+		.code(200).send();
 }
