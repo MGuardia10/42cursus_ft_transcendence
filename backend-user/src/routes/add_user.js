@@ -46,7 +46,7 @@ export default async function add_user(request, reply) {
 
 	/* Get the image, generate a name and save it on a file */
 	const image_name = randomBytes(16).toString('hex');
-	const image_path = path.join(process.env.AVATAR_FOLDER, `${image_name}.jpg`);
+	const image_path = path.join(process.env.AVATAR_FOLDER, `${image_name}.png`);
 
 	try
 	{
@@ -66,7 +66,7 @@ export default async function add_user(request, reply) {
 	let user_id;
 	try
 	{
-		const queryStatus = db.prepare("INSERT INTO users (name, alias, email, avatar) VALUES (?, ?, ?, ?)").run(name, alias, email, image_path);
+		const queryStatus = db.prepare("INSERT INTO users (name, alias, email, avatar, language) VALUES (?, ?, ?, ?, ?)").run(name, alias, email, image_path, process.env.DEFAULT_LANGUAGE);
 		user_id = queryStatus.lastInsertRowid;
 	}
 	catch(err)

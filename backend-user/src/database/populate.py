@@ -2,7 +2,7 @@ import requests
 import sys
 import sqlite3
 
-API_BASE_URL = 'http://localhost/api/user'
+API_BASE_URL = 'http://localhost:8081/api/user'
 DATABASE_PATH = '../../database.sqlite'
 
 def error_code(msg: str, code: int) -> None:
