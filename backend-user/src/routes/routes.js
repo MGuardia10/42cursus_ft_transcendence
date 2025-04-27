@@ -130,7 +130,23 @@ export default async function (fastify, options) {
   /* NOTE: PUT endpoints */
   /***********************/
 
-  fastify.put('/:id', {
+  fastify.put('/:id/avatar', {
+    schema: {
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'integer' }
+        }
+      },
+    }
+  }, update_user_avatar_by_id);
+
+  /*************************/
+  /* NOTE: PATCH endpoints */
+  /*************************/
+
+  fastify.patch('/:id', {
     schema: {
       params: {
         type: 'object',
@@ -149,19 +165,6 @@ export default async function (fastify, options) {
       }
     }
   }, update_user_data_by_id);
-
-  fastify.put('/:id/avatar', {
-    schema: {
-      params: {
-        type: 'object',
-        required: ['id'],
-        properties: {
-          id: { type: 'integer' }
-        }
-      },
-    }
-  }, update_user_avatar_by_id);
-
 
   /**************************/
   /* NOTE: DELETE endpoints */
