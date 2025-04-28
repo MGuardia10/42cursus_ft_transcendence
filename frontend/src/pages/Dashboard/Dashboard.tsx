@@ -1,9 +1,42 @@
+import { useNavigate, useParams } from "react-router";
+
 import UserRank from "@/pages/Dashboard/components/UserRank";
 import WinRate from "@/pages/Dashboard/components/WinRate";
 import GameStats from "@/pages/Dashboard/components/GameStats";
 import MatchHistory from "@/pages/Dashboard/components/MatchHistory";
+import { useAuth } from "@/hooks/useAuth";
+import NotFoundPage from "../NotFoundPage/NotFoundPage";
 
 const Dashboard: React.FC = () => {
+
+  /* useParams */
+	const { id } = useParams<{ id: string }>()
+
+  /* useNavigate */
+  const Navigate = useNavigate();
+
+  /* useAuth */
+  const { user } = useAuth();
+
+  /* Set userId */
+  const userId = id ? id : user?.id;
+
+  // If userId is not found, redirect to login
+  if (!userId) {
+    Navigate('/login', { replace: true });
+    return ;
+  }
+
+  // If userId is not a number, return NotFoundPage
+  const userIdNumber = Number(userId)
+  if (isNaN(userIdNumber) || !Number.isInteger(userIdNumber) || userIdNumber < 1) return <NotFoundPage />;
+
+  // If userId equals user.id, redirect to Dashboard
+  if ( id && id == user?.id) {
+    Navigate('/dashboard');
+    return ;
+  }
+
   return (
     <div className="relative grid lg:grid-cols-2 lg:grid-rows-3 xl:grid-cols-6 xl:grid-rows-6 gap-4 w-full xl:max-h-screen p-6 md:p-10 bg-background-secondary rounded-md">
       
