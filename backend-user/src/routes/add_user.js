@@ -25,7 +25,7 @@ export default async function add_user(request, reply) {
 	let alias;
 	try
 	{
-		alias = await generateName( name );
+		alias = await generateName( name.split(" ")[0] );
 	}
 	catch(err)
 	{
@@ -66,7 +66,7 @@ export default async function add_user(request, reply) {
 	let user_id;
 	try
 	{
-		const queryStatus = db.prepare("INSERT INTO users (name, alias, email, avatar) VALUES (?, ?, ?, ?)").run(name, alias, email, image_path);
+		const queryStatus = db.prepare("INSERT INTO users (name, alias, email, avatar, language) VALUES (?, ?, ?, ?, ?)").run(name, alias, email, image_path, process.env.DEFAULT_LANGUAGE);
 		user_id = queryStatus.lastInsertRowid;
 	}
 	catch(err)

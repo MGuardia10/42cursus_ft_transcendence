@@ -1,21 +1,53 @@
 import { useState } from 'react';
+// import { useNavigate } from 'react-router';
 import { FaRegTrashAlt } from "react-icons/fa";
 import { useLanguage } from '@/hooks/useLanguage';
+import { useNotification } from '@/hooks/useNotification';
+import { useAuth } from '@/hooks/useAuth';
 
 import { MdOutlineCancel } from 'react-icons/md';
 import { RiLogoutBoxLine } from 'react-icons/ri';
 
 const DeleteAccount: React.FC = () => {
 
-	// useLanguage hook
+	/* useNavigate hook */
+	// const navigate = useNavigate();
+
+	/* useAuth hook */
+	const { deleteUser, deleteError } = useAuth();
+
+	/* useNotification hook */
+	const { addNotification } = useNotification();
+	
+	/* useLanguage hook */
 	const { t } = useLanguage();
 
-	// useState hook
+	/* useState hook */
 	const [showLastCall, setShowLastCall] = useState(false);
 	
-	const handleDeleteAccount = () => {
-		// Add logic to handle account deletion
-		console.log('Account deletion initiated');
+	const handleDeleteAccount = async () => {
+
+		// delete account
+		await deleteUser();
+
+		if (deleteError) {
+			// Notify error
+			addNotification(t('notifications_delete_account_error'), 'error');
+			return;
+		}
+
+		// Notify success
+		addNotification(t('notifications_delete_account_success'), 'success');
+
+		// Close confirmation modal
+		setShowLastCall(false);
+
+		// localstorage remove
+		localStorage.removeItem('lang');
+
+
+		// Redirect to login page
+		// navigate('/login', { replace: true });
 	};
 
 	return (

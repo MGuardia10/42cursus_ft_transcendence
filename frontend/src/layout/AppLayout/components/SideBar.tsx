@@ -60,7 +60,7 @@ const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
 						  }}
 						crossOrigin="use-credentials"
 						alt='avatar'
-						className='md:block md:w-24 md:h-24 rounded-full border-2 border-text-tertiary'
+						className='md:block md:w-24 md:h-24 rounded-full border-2 border-text-tertiary object-cover'
 					/>
 					<h2 className="text-3xl font-bold mt-3">{ user?.name?.split(' ')[0] || 'loading...' }</h2>
 					<p className="mt-1 text-sm text-text-tertiary">{ user?.alias?.split(' ')[0] || 'loading...' }</p>

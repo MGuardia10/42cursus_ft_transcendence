@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
 	useEffect,
 	useState,
@@ -13,6 +14,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	/* useStates for auth provider */
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [logoutError, setLogoutError] = useState<boolean>(false);
+	const [deleteError, setdeleteError] = useState<boolean>(false);
 
 	/* Function to refresh actual user */
 	const refreshUser = useCallback(async () => {
@@ -37,6 +40,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			/* extract data from user */
 			const { name, alias, email, tfa } = (await data.json());
 
+			/* Refresh avatar */
+			const avatarRes = await fetch(`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${id}/avatar`, {
+				credentials: 'include',
+				headers: {
+					'Access-Control-Allow-Origin': `${import.meta.env.VITE_FRONTEND_BASEURL_EXTERNAL}`,
+				},
+			});
+			const avatarBlob = await avatarRes.blob();
+			const avatarUrl = URL.createObjectURL(avatarBlob);
+	
+			if (user?.avatar) {
+				URL.revokeObjectURL(user.avatar);
+			}
+
 			/* Set user data */
 			setUser({
 				id,
@@ -45,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				alias,
 				email,
 				tfa: tfa === 0 ? false : true,
-				avatar: `${ import.meta.env.VITE_USER_API_BASEURL_EXTERNAL }/${id}/avatar`,
+				avatar: avatarUrl,
 			} as User);
 		} catch {
 			setUser(null);
@@ -61,12 +78,52 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 	/* Function to logout removing cookie */
 	const logout = useCallback(async () => {
-		await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/logout`, {
-			credentials: 'include'
-		});
 
-		setUser(null);
+		try {
+			setLogoutError(false);
+			const res = await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/logout`, {
+				credentials: 'include'
+			});
+
+			if (!res.ok) {
+				throw new Error('Error logging out');
+			}
+
+			setUser(null);
+
+		}
+		catch (err: any) {
+			if (err) setLogoutError(true);
+		}
+		
+
 	}, []);
+
+	/* Function to delete user */
+	const deleteUser = useCallback(async () => {
+		
+		if (!user) return;
+
+		try {
+			setdeleteError(false);
+
+			const res = await fetch(`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${user.id}`, {
+				method: 'DELETE',
+				credentials: 'include',
+			});
+
+			if (!res.ok) {
+				throw new Error('Error deleting account');
+			}
+			
+			setUser(null);
+
+		} catch (err: any) {
+			if (err) setdeleteError(true);
+		}
+
+
+	}, [user]);
 
 	// Refresh user when the component mounts and when the refreshUser function changes
 	useEffect(() => {
@@ -81,7 +138,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			isAuthenticated: !!user,
 			login,
 			logout,
+			deleteUser,
 			refreshUser,
+			logoutError,
+			deleteError,
 		}}
 		>
 		{children}
