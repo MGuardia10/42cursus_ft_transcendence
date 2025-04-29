@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 
 import UserRank from "@/pages/Dashboard/components/UserRank";
 import WinRate from "@/pages/Dashboard/components/WinRate";
@@ -9,33 +9,49 @@ import NotFoundPage from "../NotFoundPage/NotFoundPage";
 
 const Dashboard: React.FC = () => {
 
-  /* useParams */
-	const { id } = useParams<{ id: string }>()
-
   /* useNavigate */
   const Navigate = useNavigate();
 
+  /* useLocation hook */
+  const { pathname } = useLocation();
+
   /* useAuth */
   const { user } = useAuth();
+  const { id: paramID } = useParams<{ id: string }>()
 
-  /* Set userId */
-  const userId = id ? id : user?.id;
+  /* Obtain id */
+  let id;
+  if ( pathname === '/dashboard' ) {
+    id = user?.id;
+  } else {
+    id = paramID;
+  }
 
-  // If userId is not found, redirect to login
-  if (!userId) {
+  /* If no id, return to login */
+  if (!id) {
     Navigate('/login', { replace: true });
     return ;
   }
 
-  // If userId is not a number, return NotFoundPage
-  const userIdNumber = Number(userId)
+  /* If userId is not a number, return NotFoundPage */
+  const userIdNumber = Number(id)
   if (isNaN(userIdNumber) || !Number.isInteger(userIdNumber) || userIdNumber < 1) return <NotFoundPage />;
 
-  // If userId equals user.id, redirect to Dashboard
-  if ( id && id == user?.id) {
+  /* If pahtname equals same user, redirect to Dashboard */
+  if (pathname === `/users/${user?.id}`) {
     Navigate('/dashboard');
     return ;
   }
+
+  /**
+   * Faltaria enviar el id como props a cada componente
+   * y hacer hooks para cada endopoint diferente
+   * 
+   * Añadir a types la siguiente interfaz de props
+   * export interface DashboardProps {
+   *   id: string;
+   * }
+   */
 
   return (
     <div className="relative grid lg:grid-cols-2 lg:grid-rows-3 xl:grid-cols-6 xl:grid-rows-6 gap-4 w-full xl:max-h-screen p-6 md:p-10 bg-background-secondary rounded-md">
