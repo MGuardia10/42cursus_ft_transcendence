@@ -74,7 +74,7 @@ async function update_user_avatar_by_id(request, reply)
 		
 		/* Save the file */
 		const buffer = await data.toBuffer();
-		await fs.writeFile(user.avatar, buffer)
+		await fs.writeFile(user.avatar, buffer);
 
 		return reply.code(200).send();
 	}
