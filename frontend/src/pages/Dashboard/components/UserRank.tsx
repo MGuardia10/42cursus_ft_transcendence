@@ -17,9 +17,9 @@ const UserRank: React.FC = () => {
 					}}
 					crossOrigin="use-credentials"
 					alt='avatar'
-					className='md:block w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-text-tertiary'
+					className='md:block w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-text-tertiary object-cover'
 				/>
-				<h2 className="text-center md:text-xl font-bold mt-2 md:mt-3">Miguel Guardia</h2>
+				<h2 className="text-center md:text-xl font-bold mt-2 md:mt-3">{ user?.alias || '' }</h2>
 			</div>
 
 			{/* Ranking of user */}

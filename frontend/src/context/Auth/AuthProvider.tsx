@@ -37,6 +37,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			/* extract data from user */
 			const { name, alias, email, tfa } = (await data.json());
 
+			/* Refresh avatar */
+			const avatarRes = await fetch(`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${id}/avatar`, {
+				credentials: 'include',
+				headers: {
+					'Access-Control-Allow-Origin': `${import.meta.env.VITE_FRONTEND_BASEURL_EXTERNAL}`,
+				},
+			});
+			const avatarBlob = await avatarRes.blob();
+			const avatarUrl = URL.createObjectURL(avatarBlob);
+	
+			if (user?.avatar) {
+				URL.revokeObjectURL(user.avatar);
+			}
+
 			/* Set user data */
 			setUser({
 				id,
@@ -45,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				alias,
 				email,
 				tfa: tfa === 0 ? false : true,
-				avatar: `${ import.meta.env.VITE_USER_API_BASEURL_EXTERNAL }/${id}/avatar`,
+				avatar: avatarUrl,
 			} as User);
 		} catch {
 			setUser(null);
