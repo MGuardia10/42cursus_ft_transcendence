@@ -40,7 +40,7 @@ async function update_user_data_by_id(request, reply) {
 			fields.push("language");
 		}
 
-		if (tfa)
+		if (bool_tfa !== undefined)
 		{
 			update_field(id, "tfa", tfa);
 			fields.push("tfa");
