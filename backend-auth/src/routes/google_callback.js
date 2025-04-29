@@ -7,7 +7,7 @@ import send_mail from '../utils/mail_config.js';
 
 async function create_user(baseurl, name, email, avatar_url)
 {
-	const { id } = await fetch (`${baseurl}/`, {
+	const res = await fetch (`${baseurl}/`, {
 		method: "POST",
 		headers: {
 			'Content-Type': 'application/json'
@@ -18,6 +18,11 @@ async function create_user(baseurl, name, email, avatar_url)
 			avatar_url
 		})
 	});
+
+	if (!res.ok)
+		throw new Error(`Error creating user: ${res.statusText}`);
+
+	const { id } = await res.json();
 
 	return { user_id: id, user_name: name, user_email: email, tfa: false };
 }
