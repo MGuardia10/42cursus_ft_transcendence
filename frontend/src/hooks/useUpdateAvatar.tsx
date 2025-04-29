@@ -29,7 +29,6 @@ export function useUpdateAvatar() {
 			setError(null);
 
 			const formData = new FormData();
-			console.log(formData);
 			formData.append('avatar', file);
 
 			const res = await fetch(`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${id}/avatar`, {
