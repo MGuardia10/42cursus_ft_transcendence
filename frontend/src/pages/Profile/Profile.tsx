@@ -15,9 +15,6 @@ const Profile: React.FC = () => {
     <div className="w-full rounded-md mx-auto p-6 md:p-10 bg-background-secondary">
       <h1 className="text-xl md:text-3xl font-bold mb-6">{ t('user_settings_h1') }</h1>
 
-      {/* Formulario para actualizar el nombre */}
-      {/* <NameUpdate /> */}
-
       {/* Formulario para actualizar el alias */}
 	  <AliasUpdate />
 

@@ -97,6 +97,10 @@ export const translations = {
 		notifications_two_factor_disabled: "2FA disabled!",
 		notifications_game_settings_error: "Error updating game settings",
 		notifications_game_settings_success: "Game settings updated!",
+		notifications_delete_account_error: "Error deleting account",
+		notifications_delete_account_success: "Account deleted!",
+		notifications_logout_error: "Error logging out",
+		notifications_logout_success: "Good Bye!",
 	},
 	es: {
 		// languages
@@ -196,6 +200,10 @@ export const translations = {
 		notifications_two_factor_disabled: "¡2FA deshabilitada!",
 		notifications_game_settings_error: "Error al actualizar los ajustes del juego",
 		notifications_game_settings_success: "¡Ajustes del juego actualizados!",
+		notifications_delete_account_error: "Error al eliminar la cuenta",
+		notifications_delete_account_success: "¡Cuenta eliminada!",
+		notifications_logout_error: "Error al cerrar sesión",
+		notifications_logout_success: "¡Adiós!",
 	},
 	pt: {
 		// languages
@@ -295,6 +303,9 @@ export const translations = {
 		notifications_two_factor_disabled: "2FA desabilitada!",
 		notifications_game_settings_error: "Erro ao atualizar as configurações do jogo",
 		notifications_game_settings_success: "Configurações do jogo atualizadas!",
-		
+		notifications_delete_account_error: "Erro ao excluir a conta",
+		notifications_delete_account_success: "Conta excluída!",
+		notifications_logout_error: "Erro ao sair",
+		notifications_logout_success: "Adeus!",		
 	},
 };
