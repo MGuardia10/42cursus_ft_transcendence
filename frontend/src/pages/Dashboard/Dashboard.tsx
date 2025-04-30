@@ -1,4 +1,5 @@
 import { useLocation, useNavigate, useParams } from "react-router";
+import { useEffect, useMemo } from "react";
 
 import UserRank from "@/pages/Dashboard/components/UserRank";
 import WinRate from "@/pages/Dashboard/components/WinRate";
@@ -6,6 +7,7 @@ import GameStats from "@/pages/Dashboard/components/GameStats";
 import MatchHistory from "@/pages/Dashboard/components/MatchHistory";
 import { useAuth } from "@/hooks/useAuth";
 import NotFoundPage from "../NotFoundPage/NotFoundPage";
+import Spinner from "@/layout/Spinner/Spinner";
 
 const Dashboard: React.FC = () => {
 
@@ -16,31 +18,57 @@ const Dashboard: React.FC = () => {
   const { pathname } = useLocation();
 
   /* useAuth */
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { id: paramID } = useParams<{ id: string }>()
 
-  /* Obtain id */
-  let id;
-  if ( pathname === '/dashboard' ) {
-    id = user?.id;
-  } else {
-    id = paramID;
+  /* Decide user id to show */
+  const id = useMemo<string | undefined>(() => {
+
+    // return id from params if it is not the dashboard
+    return (pathname === "/dashboard") ? user?.id : paramID;
+
+  }, [pathname, user?.id, paramID]);
+
+  /* Check id is valid */
+  const userIdNumber = id ? Number(id) : NaN;
+  const invalidId =
+    !id ||
+    isNaN(userIdNumber) ||
+    !Number.isInteger(userIdNumber) ||
+    userIdNumber < 1;
+
+  /* useEffect to handle user is authenticated */
+  useEffect(() => {
+
+    // if loading is true, return
+    if (loading) return;
+
+    // if user is not authenticated, redirect to /login
+    if (invalidId || !user) {
+      Navigate("/login", { replace: true });
+    }
+  }, [loading, invalidId, user, Navigate]);
+  
+  /* useEffect to redirect to /dashboard when user is visiting his own profile */
+  useEffect(() => {
+
+    // if loading is true, return
+    if (loading) return;
+
+    // if user is authenticated and visiting his own profile, redirect to /dashboard
+    if (paramID && user && paramID == user.id) {
+      Navigate("/dashboard", { replace: true });
+    }
+  }, [loading, paramID, user, Navigate]);
+
+  /* If loading false and not valid id */
+  if (!loading && invalidId) {
+    return <NotFoundPage />;
   }
 
-  /* If no id, return to login */
-  if (!id) {
-    Navigate('/login', { replace: true });
-    return ;
-  }
-
-  /* If userId is not a number, return NotFoundPage */
-  const userIdNumber = Number(id)
-  if (isNaN(userIdNumber) || !Number.isInteger(userIdNumber) || userIdNumber < 1) return <NotFoundPage />;
-
-  /* If pahtname equals same user, redirect to Dashboard */
-  if (pathname === `/users/${user?.id}`) {
-    Navigate('/dashboard');
-    return ;
+  // 6) Mientras authLoading o id indefinido, puedes mostrar un loader
+  if (loading || !id) {
+    return <Spinner />;
   }
 
   /**
