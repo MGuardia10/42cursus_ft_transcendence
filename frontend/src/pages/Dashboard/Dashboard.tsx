@@ -1,9 +1,58 @@
+import { useLocation, useNavigate, useParams } from "react-router";
+
 import UserRank from "@/pages/Dashboard/components/UserRank";
 import WinRate from "@/pages/Dashboard/components/WinRate";
 import GameStats from "@/pages/Dashboard/components/GameStats";
 import MatchHistory from "@/pages/Dashboard/components/MatchHistory";
+import { useAuth } from "@/hooks/useAuth";
+import NotFoundPage from "../NotFoundPage/NotFoundPage";
 
 const Dashboard: React.FC = () => {
+
+  /* useNavigate */
+  const Navigate = useNavigate();
+
+  /* useLocation hook */
+  const { pathname } = useLocation();
+
+  /* useAuth */
+  const { user } = useAuth();
+  const { id: paramID } = useParams<{ id: string }>()
+
+  /* Obtain id */
+  let id;
+  if ( pathname === '/dashboard' ) {
+    id = user?.id;
+  } else {
+    id = paramID;
+  }
+
+  /* If no id, return to login */
+  if (!id) {
+    Navigate('/login', { replace: true });
+    return ;
+  }
+
+  /* If userId is not a number, return NotFoundPage */
+  const userIdNumber = Number(id)
+  if (isNaN(userIdNumber) || !Number.isInteger(userIdNumber) || userIdNumber < 1) return <NotFoundPage />;
+
+  /* If pahtname equals same user, redirect to Dashboard */
+  if (pathname === `/users/${user?.id}`) {
+    Navigate('/dashboard');
+    return ;
+  }
+
+  /**
+   * Faltaria enviar el id como props a cada componente
+   * y hacer hooks para cada endopoint diferente
+   * 
+   * Añadir a types la siguiente interfaz de props
+   * export interface DashboardProps {
+   *   id: string;
+   * }
+   */
+
   return (
     <div className="relative grid lg:grid-cols-2 lg:grid-rows-3 xl:grid-cols-6 xl:grid-rows-6 gap-4 w-full xl:max-h-screen p-6 md:p-10 bg-background-secondary rounded-md">
       
