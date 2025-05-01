@@ -73,5 +73,5 @@ export default async function add_user(request, reply) {
 	{
 		return reply.code(500).send({ error: err });
 	}
-	return reply.code(201).send({ id: user_id, name: name, alias: alias, email: email });
+	return reply.code(201).send({ id: user_id, name: name, alias: alias, email: email, language: process.env.DEFAULT_LANGUAGE });
 }
