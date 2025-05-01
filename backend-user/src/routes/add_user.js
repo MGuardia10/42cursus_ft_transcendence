@@ -25,7 +25,7 @@ export default async function add_user(request, reply) {
 	let alias;
 	try
 	{
-		alias = await generateName( name );
+		alias = await generateName( name.split(" ")[0].toLowerCase() );
 	}
 	catch(err)
 	{

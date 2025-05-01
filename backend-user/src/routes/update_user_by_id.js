@@ -21,7 +21,8 @@ function update_alias(id, value)
 async function update_user_data_by_id(request, reply) {
 	/* Get the params and the body data */
 	const { id } = request.params;
-	const { alias, language, tfa: bool_tfa } = request.body;
+	const { alias: pre_alias, language, tfa: bool_tfa } = request.body;
+	const alias = pre_alias.toLowerCase();
 	const tfa = bool_tfa ? 1 : 0;
 
 	/* Check if the user exists */
