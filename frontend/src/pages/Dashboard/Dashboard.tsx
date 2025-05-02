@@ -8,6 +8,7 @@ import MatchHistory from "@/pages/Dashboard/components/MatchHistory";
 import { useAuth } from "@/hooks/useAuth";
 import NotFoundPage from "../NotFoundPage/NotFoundPage";
 import Spinner from "@/layout/Spinner/Spinner";
+import { useGetUserName } from "@/hooks/useGetUserName";
 
 const Dashboard: React.FC = () => {
 
@@ -16,26 +17,29 @@ const Dashboard: React.FC = () => {
 
   /* useLocation hook */
   const { pathname } = useLocation();
-
+  
   /* useAuth */
   const { user, loading } = useAuth();
   const { id: paramID } = useParams<{ id: string }>()
-
+  
   /* Decide user id to show */
   const id = useMemo<string | undefined>(() => {
-
+    
     // return id from params if it is not the dashboard
     return (pathname === "/dashboard") ? user?.id : paramID;
-
+    
   }, [pathname, user?.id, paramID]);
-
+  
   /* Check id is valid */
   const userIdNumber = id ? Number(id) : NaN;
   const invalidId =
-    !id ||
-    isNaN(userIdNumber) ||
-    !Number.isInteger(userIdNumber) ||
-    userIdNumber < 1;
+  !id ||
+  isNaN(userIdNumber) ||
+  !Number.isInteger(userIdNumber) ||
+  userIdNumber < 1;
+  
+  /* useGetUserName hook */
+  const { userName, error } = useGetUserName(Number(id));
 
   /* useEffect to handle user is authenticated */
   useEffect(() => {
@@ -44,7 +48,7 @@ const Dashboard: React.FC = () => {
     if (loading) return;
 
     // if user is not authenticated, redirect to /login
-    if (invalidId || !user) {
+    if (!user) {
       Navigate("/login", { replace: true });
     }
   }, [loading, invalidId, user, Navigate]);
@@ -62,7 +66,7 @@ const Dashboard: React.FC = () => {
   }, [loading, paramID, user, Navigate]);
 
   /* If loading false and not valid id */
-  if (!loading && invalidId) {
+  if ((!loading && invalidId) || error) {
     return <NotFoundPage />;
   }
 
@@ -71,22 +75,12 @@ const Dashboard: React.FC = () => {
     return <Spinner />;
   }
 
-  /**
-   * Faltaria enviar el id como props a cada componente
-   * y hacer hooks para cada endopoint diferente
-   * 
-   * Añadir a types la siguiente interfaz de props
-   * export interface DashboardProps {
-   *   id: string;
-   * }
-   */
-
   return (
     <div className="relative grid lg:grid-cols-2 lg:grid-rows-3 xl:grid-cols-6 xl:grid-rows-6 gap-4 w-full xl:max-h-screen p-6 md:p-10 bg-background-secondary rounded-md">
       
       {/* UserRank */}
       <div className="max-h-[500px] xl:max-h-max col-span-full row-span-1 lg:col-span-1 lg:row-span-1 xl:col-span-2 xl:row-span-3 bg-background-primary rounded-md overflow-y-auto min-h-0">
-        <UserRank />
+        <UserRank  id={Number(id)} alias={userName} />
       </div>
       
       {/* WinRate */}

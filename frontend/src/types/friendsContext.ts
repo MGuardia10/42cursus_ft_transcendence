@@ -8,12 +8,11 @@ export interface FriendsContextType {
 	friends: Friend[];
 	pending: Friend[];
 	loading: boolean;
-	error: string | null;
 	refreshFriends: () => Promise<void>;
-	sendRequest: (toUserId: number) => Promise<boolean>;
-	acceptRequest: (toUserId: number) => Promise<boolean>;
-	declineRequest: (toUserId: number) => Promise<boolean>;
-	removeFriend: (friendId: number) => Promise<boolean>;
+	sendRequest: (toUserId: number) => Promise<{ ok: boolean; message?: string }>;
+	acceptRequest: (toUserId: number) => Promise<{ ok: boolean; message?: string }>;
+	declineRequest: (toUserId: number) => Promise<{ ok: boolean; message?: string }>;
+	removeFriend: (friendId: number) => Promise<{ ok: boolean; message?: string }>;
 }
 
 export interface Friend {

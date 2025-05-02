@@ -26,7 +26,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				credentials: 'include',
 			});
 
-			if (!res.ok) throw new Error('No autorizado');
+			if (!res.ok)
+				throw new Error('No autorizado');
 
 			const { user_id: id, language } = await res.json();
 			
@@ -66,6 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			} as User);
 		} catch {
 			setUser(null);
+			console.warn('User is not authenticated. Redirecting to login...');
 		} finally {
 			setLoading(false);
 		}

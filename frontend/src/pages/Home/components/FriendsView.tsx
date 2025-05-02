@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { FaCheck } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
+import { IoPersonRemoveSharp } from "react-icons/io5";
 
-// import { useAuth } from '@/hooks/useAuth';
+
 import { useLanguage } from '@/hooks/useLanguage';
 import { useNotification } from '@/hooks/useNotification';
 import { useFriends } from '@/hooks/useFriends';
@@ -23,13 +24,22 @@ const FriendsView: React.FC = () => {
   const [view, setView] = useState<'friends' | 'requests'>('friends');
 
   /* useFriends hook */
-  const { friends, pending, acceptRequest, declineRequest }: { friends: Friend[], pending: Friend[], acceptRequest: (toUserId: number) => Promise<boolean>, declineRequest: (toUserId: number) => Promise<boolean> } = useFriends();
+  const { friends, pending, acceptRequest, declineRequest, removeFriend, refreshFriends } = useFriends();
 
   /* Function to handle accept a friend request */
   const handleAcceptRequest = async (id: number) => {
     
     // send request to accept
-    await acceptRequest(id);
+    const { ok, message } = await acceptRequest(id);
+   
+		if (!ok) {
+			// add notification of error
+			addNotification(`${message}`, 'error');
+			return ;
+		}
+
+    // refresh friends and pending requests
+		await refreshFriends();
 
     // add notification of success
     addNotification(`${t("notifications_friend_request_accepted")}`, 'success');
@@ -39,11 +49,39 @@ const FriendsView: React.FC = () => {
   const handleDeclineRequest = async (id: number) => {
 
     // send request to accept
-    await declineRequest(id);
+    const { ok, message } = await declineRequest(id);
+
+		if (!ok) {
+			// add notification of error
+			addNotification(`${message}`, 'error');
+			return ;
+		}
+
+    // refresh friends and pending requests
+		await refreshFriends();
 
     // add notification of success
     addNotification(`${t("notifications_friend_request_rejected")}`, 'success');
   };
+
+  /* Function to remove a friend request */
+    const handleRemoveFriend = async (friend: Friend) => {
+  
+      // send request to remove friend
+      const { ok, message } = await removeFriend(friend.id);
+  
+      if (!ok) {
+        // add notification of error
+        addNotification(`${message}`, 'error');
+        return ;
+      }
+  
+      // refresh friends and pending requests
+      await refreshFriends();
+  
+      // add notification of success
+      addNotification(t("notifications_friend_remove"), 'success');
+    };
 
   return (
     <div className="flex flex-col gap-2 md:gap-6 h-full p-5 sm:p-6 md:p-8 w-full">
@@ -70,14 +108,23 @@ const FriendsView: React.FC = () => {
       {view === 'friends' && (
         <div className="grid grid-cols-1 gap-3 overflow-y-scroll scrollbar-thin">
           {friends.map((friend) => (
-            <div key={friend.id} className="flex items-center px-4 py-3 rounded-sm bg-background-hover border-2 border-background-secondary">
-              <img src={friend.avatar} alt={friend.alias} className="w-12 h-12 rounded-full border-2 border-text-tertiary mr-4 object-cover" />
-              <div>
-                <p className="font-semibold">{friend.alias}</p>
-                <p className={`text-sm ${friend.alias ? 'text-green-500' : 'opacity-50 text-red-500'}`}>
-                  {friend.alias ? `${ t("home_online") }` : `${ t("home_offline") }` }
-                </p>
+            <div key={friend.id} className="group flex justify-between px-4 py-3 rounded-sm bg-background-hover border-2 border-background-secondary">
+
+              <div className='flex items-center'>
+                <img src={friend.avatar} alt={friend.alias} className="w-12 h-12 rounded-full border-2 border-text-tertiary mr-4 object-cover" />
+                <div>
+                  <p className="font-semibold">{friend.alias}</p>
+                  <p className={`text-sm ${friend.alias ? 'text-green-500' : 'opacity-50 text-red-500'}`}>
+                    {friend.alias ? `${ t("home_online") }` : `${ t("home_offline") }` }
+                  </p>
+                </div>
               </div>
+              <button
+					      className="invisible group-hover:visible border border-red-500 rounded-xs hover:bg-red-500/70 transition-all duration-300 cursor-pointer"
+                onClick={() => handleRemoveFriend(friend)}
+              >
+                <IoPersonRemoveSharp className="text-sm text-red-500 m-4" />
+              </button>
             </div>
           ))}
         </div>

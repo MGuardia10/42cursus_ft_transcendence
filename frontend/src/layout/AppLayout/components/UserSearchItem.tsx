@@ -7,8 +7,6 @@ import { SearchUser, SearchProps } from "@/types/friendsContext";
 import { useFriends } from '@/hooks/useFriends';
 import { useAuth } from '@/hooks/useAuth';
 
-
-
 const UserSearchItem: React.FC<SearchProps> = ({ user, onSelect }) => {
 
 	/* useLanguage Hook */
@@ -21,22 +19,46 @@ const UserSearchItem: React.FC<SearchProps> = ({ user, onSelect }) => {
 	const { addNotification } = useNotification();
 
 	/* useFriends hook */
-	const { sendRequest, friends, pending } = useFriends();
+	const { sendRequest, removeFriend, refreshFriends, friends, pending } = useFriends();
 	
 	/* Function to handle send request to a user */
-	const handleAddFriend = (friend: SearchUser) => {
+	const handleAddFriend = async (friend: SearchUser) => {
 
-		console.log(friend);
 		// send request to add friend
-		sendRequest(friend.id)
+		const { ok, message } = await sendRequest(friend.id);
+
+		if (!ok) {
+			// add notification of error
+			addNotification(`${message}`, 'error');
+			return ;
+		}
+
+		// refresh friends and pending requests
+		await refreshFriends();
+
+		console.log("pending", pending);
+		console.log("friends", friends);
 
 		// add notification of success
 		addNotification(t("notifications_friend_request"), 'success');
 	};
 	
 	/* Function to remove a friend request */
-	const handleRemoveFriend = (friend: SearchUser) => {
-		  console.log(friend);
+	const handleRemoveFriend = async (friend: SearchUser) => {
+
+		// send request to remove friend
+		const { ok, message } = await removeFriend(friend.id);
+
+		if (!ok) {
+			// add notification of error
+			addNotification(`${message}`, 'error');
+			return ;
+		}
+
+		// refresh friends and pending requests
+		await refreshFriends();
+
+		// add notification of success
 		addNotification(t("notifications_friend_remove"), 'success');
 	};
 
@@ -56,7 +78,7 @@ const UserSearchItem: React.FC<SearchProps> = ({ user, onSelect }) => {
 
 		{/* Buttons */}
 		{
-			(friends.some((friend) => friend.id === user.id) || pending.some((friend) => friend.from === user.id))
+			(friends.some((friend) => friend.id === user.id) || pending.some((friend) => friend.to === user.id))
 			? (
 				// Button to remove friend / decline request (except for logged user)
 				( Number(loggedUser?.id) != user.id ) && 
@@ -81,27 +103,6 @@ const UserSearchItem: React.FC<SearchProps> = ({ user, onSelect }) => {
 					<IoPersonAddSharp className="text-sm md:text-base font-bold" />
 				</button>)
 		}
-
-		
-
-		{/* <button
-			className="bg-text-tertiary p-2 rounded-xs hover:bg-text-secondary transition-all duration-300 cursor-pointer"
-			onClick={(e) => {
-				e.stopPropagation();
-				handleAddFriend(user);
-			}}
-		<button
-			className="bg-red-700/80 p-2 rounded-xs hover:bg-red-600 transition-all duration-300 cursor-pointer"
-			onClick={(e) => {
-				e.stopPropagation();
-				handleRemoveFriend(user)
-			}}
-		>
-		<IoPersonRemoveSharp className="text-sm md:text-base font-bold" />
-		</button>
-		<button className="p-2 rounded-xs bg-gray-500 cursor-not-allowed">
-		<CgSandClock className="text-sm md:text-base font-bold" />
-		</button> */}
 	</li>
 	);
 };

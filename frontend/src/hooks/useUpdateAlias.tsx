@@ -33,7 +33,7 @@ export function useUpdateAlias() {
 			});
 
 			if (!res.ok) {
-				if (res.status === 400)
+				if (res.status === 409)
 					throw new Error(`${t('notifications_alias_repeated')}`);
 				else
 					throw new Error(`${t('notifications_alias_error')}`);
