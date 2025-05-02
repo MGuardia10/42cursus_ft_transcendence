@@ -7,7 +7,7 @@ import send_mail from '../utils/mail_config.js';
 
 async function create_user(baseurl, name, email, avatar_url)
 {
-	const res = await fetch (`${baseurl}/`, {
+	const data = await fetch (`${baseurl}/`, {
 		method: "POST",
 		headers: {
 			'Content-Type': 'application/json'
@@ -18,13 +18,10 @@ async function create_user(baseurl, name, email, avatar_url)
 			avatar_url
 		})
 	});
+	
+	const { id, language } = await data.json();
 
-	if (!res.ok)
-		throw new Error(`Error creating user: ${res.statusText}`);
-
-	const { id } = await res.json();
-
-	return { user_id: id, user_name: name, user_email: email, tfa: false };
+	return { user_id: id, user_name: name, user_email: email, language: language, tfa: false };
 }
 
 async function search_user(baseurl, user_id)
@@ -32,9 +29,9 @@ async function search_user(baseurl, user_id)
 	const data = await fetch (`${baseurl}/${user_id}`, {
 		method: "GET"
 	});
-	const { name, email, tfa } = await data.json();
+	const { name, email, language, tfa } = await data.json();
 	const response = tfa == 0 ? false : true;
-	return { user_id: user_id, user_name: name, user_email: email, tfa: response };
+	return { user_id: user_id, user_name: name, user_email: email, language: language, tfa: response };
 }
 
 async function manage_user(users_api, name, email, picture)
@@ -79,14 +76,14 @@ export default async function google_callback(request, reply)
 		const { name, email, picture } = await google_authentication(request, reply);
 
 		/* Manage the user creation or search */
-		const { user_id, user_name, user_email, tfa } = await manage_user(users_api, name, email, picture);
+		const { user_id, user_name, user_email, language, tfa } = await manage_user(users_api, name, email, picture);
 		
 		/* Check if the user has TFA enabled */
 		if (tfa == false) {
 			/* Create the user init token and return it */
 			const token = create_jwt({
 				user_id: user_id,
-				language: process.env.DEFAULT_LANGUAGE
+				language: language
 			});
 
 			/* Set the cookie and redirect */
