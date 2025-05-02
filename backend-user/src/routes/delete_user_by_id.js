@@ -4,8 +4,6 @@ export default async function delete_user_by_id(request, reply) {
 	/* Get the user id */
 	const { id } = request.params;
 
-	console.log("Deleting user with id: ", id);
-
 	try
 	{
 		/* Check if the user exists */
@@ -13,10 +11,8 @@ export default async function delete_user_by_id(request, reply) {
 		if (!user)
 			return reply.code(404).send({ error: "User not found" });
 		
-		console.log("User deleted: ", user);
 		/* Delete the user */
 		db.prepare("DELETE FROM users WHERE id = ?").run(id);
-		console.log("User deleted");
 		return reply.clearCookie('token', {
 			sameSite: 'None',
 			secure: true,
