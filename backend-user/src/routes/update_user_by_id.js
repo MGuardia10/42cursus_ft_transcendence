@@ -6,10 +6,23 @@ function update_field(id, field, value)
 	db.prepare(`UPDATE users SET ${field} = ? WHERE id = ?`).run(value, id);
 }
 
+function update_alias(id, value)
+{
+	/* Check if the alias is already used */
+	const alias_search = db.prepare("SELECT * FROM users WHERE alias = ?").get(value);
+	if (alias_search)
+		return false;
+
+	/* If not, set it */
+	update_field(id, "alias", value);
+	return true;
+}
+
 async function update_user_data_by_id(request, reply) {
 	/* Get the params and the body data */
 	const { id } = request.params;
-	const { alias, language, tfa: bool_tfa } = request.body;
+	const { alias: pre_alias, language, tfa: bool_tfa } = request.body;
+	const alias = pre_alias.toLowerCase();
 	const tfa = bool_tfa ? 1 : 0;
 
 	/* Check if the user exists */
@@ -30,7 +43,8 @@ async function update_user_data_by_id(request, reply) {
 	{
 		if (alias)
 		{
-			update_field(id, "alias", alias);
+			if (!update_alias(id, alias))
+				return reply.code(409).send({ error: "The alias is already used by another user" });
 			fields.push("alias");
 		}
 
