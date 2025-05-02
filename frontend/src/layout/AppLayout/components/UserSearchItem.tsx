@@ -36,9 +36,6 @@ const UserSearchItem: React.FC<SearchProps> = ({ user, onSelect }) => {
 		// refresh friends and pending requests
 		await refreshFriends();
 
-		console.log("pending", pending);
-		console.log("friends", friends);
-
 		// add notification of success
 		addNotification(t("notifications_friend_request"), 'success');
 	};
@@ -93,6 +90,7 @@ const UserSearchItem: React.FC<SearchProps> = ({ user, onSelect }) => {
 				</button>)
 			: (
 				// Button to send / accept a friend request
+				( Number(loggedUser?.id) != user.id ) &&
 				<button
 					className="bg-text-tertiary p-2 rounded-xs hover:bg-text-secondary transition-all duration-300 cursor-pointer"
 					onClick={(e) => {
