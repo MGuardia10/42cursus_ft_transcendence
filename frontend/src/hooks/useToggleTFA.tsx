@@ -32,9 +32,8 @@ export function useToggleTFA() {
 				body: JSON.stringify({ tfa: enable }),
 			});
 
-			if (!res.ok) {
+			if (!res.ok)
 				throw new Error(t('notifications_two_factor_error'));
-			}
 
 		} catch (err: any) {
 			setError(err.message || 'Error');

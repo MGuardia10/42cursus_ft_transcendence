@@ -32,7 +32,6 @@ const TwoFactorAuth: React.FC = () => {
 			addNotification(error, 'error');
 			return;
 		}
-
 		
 		// Refresh user data
 		await refreshUser();

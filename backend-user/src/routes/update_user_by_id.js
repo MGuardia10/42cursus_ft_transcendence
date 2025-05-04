@@ -21,10 +21,9 @@ function update_alias(id, value)
 async function update_user_data_by_id(request, reply) {
 	/* Get the params and the body data */
 	const { id } = request.params;
-	const { alias: pre_alias, language, tfa: bool_tfa } = request.body;
-	const alias = pre_alias.toLowerCase();
+	const { alias, language, tfa: bool_tfa } = request.body;
 	const tfa = bool_tfa ? 1 : 0;
-
+	
 	/* Check if the user exists */
 	try
 	{
@@ -36,14 +35,14 @@ async function update_user_data_by_id(request, reply) {
 	{
 		return reply.code(500).send({ error: err });
 	}
-
+	
 	/* Update the fields */
 	let fields = [];
 	try
 	{
 		if (alias)
 		{
-			if (!update_alias(id, alias))
+			if (!update_alias(id, alias.toLowerCase()))
 				return reply.code(409).send({ error: "The alias is already used by another user" });
 			fields.push("alias");
 		}

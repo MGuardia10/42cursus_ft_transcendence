@@ -6,7 +6,6 @@ import { useLanguage } from '@/hooks/useLanguage';
 
 export function useUpdateAvatar() {
 
-	
 	/* Get userID */
 	const { user } = useAuth();
 	const { id } = user as User;
@@ -37,9 +36,8 @@ export function useUpdateAvatar() {
 				body: formData,
 			});
 
-			if (!res.ok) {
+			if (!res.ok)
 				throw new Error(t('notifications_avatar_error'));
-			}
 
 		} catch (err: any) {
 			setError(err.message || 'Error');

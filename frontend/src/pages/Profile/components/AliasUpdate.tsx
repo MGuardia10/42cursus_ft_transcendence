@@ -49,6 +49,13 @@ const AliasUpdate: React.FC = () => {
 			return ;
 		}
 
+		// if alias equuals current alias
+		if ( alias === user?.alias ) {
+			addNotification(`${t("notifications_alias_same")}`, 'error');
+			setAlias('');
+			return ;
+		}
+
 		// Update the alias on endpoint
 		await updateAlias(alias);
 

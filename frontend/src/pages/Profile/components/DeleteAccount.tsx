@@ -1,5 +1,4 @@
 import { useState } from 'react';
-// import { useNavigate } from 'react-router';
 import { FaRegTrashAlt } from "react-icons/fa";
 import { useLanguage } from '@/hooks/useLanguage';
 import { useNotification } from '@/hooks/useNotification';
@@ -9,9 +8,6 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { RiLogoutBoxLine } from 'react-icons/ri';
 
 const DeleteAccount: React.FC = () => {
-
-	/* useNavigate hook */
-	// const navigate = useNavigate();
 
 	/* useAuth hook */
 	const { deleteUser, deleteError } = useAuth();
@@ -44,10 +40,6 @@ const DeleteAccount: React.FC = () => {
 
 		// localstorage remove
 		localStorage.removeItem('lang');
-
-
-		// Redirect to login page
-		// navigate('/login', { replace: true });
 	};
 
 	return (
