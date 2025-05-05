@@ -12,10 +12,10 @@ export default async function tfa(request, reply)
 	const { hash, code } = request.body;
 
 	/* Check if the hash and the code are correct */
-	const tmp_data = db.prepare("SELECT user_id, code, tries FROM tfa_codes WHERE hash = ?").get(hash);
+	const tmp_data = db.prepare("SELECT user_id, language, code, tries FROM tfa_codes WHERE hash = ?").get(hash);
 	if (!tmp_data)
 		return reply.code(401).send({ error: 'Hash not valid' });
-	let { user_id, code: tmp_code, tries } = tmp_data;
+	let { user_id, code: tmp_code, language, tries } = tmp_data;
 
 	/* Check if the code is the correct one */
 	if (tmp_code != code)
@@ -37,7 +37,7 @@ export default async function tfa(request, reply)
 	delete_hash(hash);
 	const token = create_jwt({
 		user_id: user_id,
-		language: process.env.DEFAULT_LANGUAGE
+		language: language
 	});
 	return reply
 		.setCookie('token', token, {
