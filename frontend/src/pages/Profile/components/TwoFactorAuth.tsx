@@ -1,19 +1,51 @@
 import { useState } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
+import { useToggleTFA } from '@/hooks/useToggleTFA';
+import { useNotification } from '@/hooks/useNotification';
 
 const TwoFactorAuth: React.FC = () => {
 
-	// useLanguage hook
-	const { t } = useLanguage();
-
-	// useState hook
-	const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean>(false);
+	/* useAuth hook */
+	const { user, refreshUser } = useAuth();
 	
-	// Function to handle the toggle of two-factor authentication
-	const handleTwoFactorToggle = () => {
+	/* useNotification hook */
+	const { addNotification } = useNotification();
+
+	/* useUpdateAlias hook */
+	const { toggleTFA, error } = useToggleTFA();
+
+	/* useLanguage hook */
+	const { t } = useLanguage();
+	
+	/* useState hook */
+	const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean>(user?.tfa || false);
+	
+	/* Function to handle the toggle of two-factor authentication */
+	const handleTwoFactorToggle = async () => {
+
+		// change tfa value in the backend
+		await toggleTFA(!twoFactorEnabled);
+
+		// Check for errors
+		if (error) {
+			addNotification(error, 'error');
+			return;
+		}
+		
+		// Refresh user data
+		await refreshUser();
+		
+		// Show notification
+		addNotification(
+			!twoFactorEnabled
+			? t('notifications_two_factor_success')
+			: t('notifications_two_factor_disabled'),
+			'success'
+		);
+
+		// Set 2FA state
 		setTwoFactorEnabled((prev) => !prev);
-		// Se cambia el valor al re-renderizar componente, por lo que false cuando entra en esta funcion es true y viceversa. Tener en cuenta cuando API sea implementada
-		console.log('Actualizando autenticación en dos factores:', twoFactorEnabled);
 	};
 	
 	return (

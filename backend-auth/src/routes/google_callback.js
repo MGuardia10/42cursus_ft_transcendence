@@ -19,7 +19,7 @@ async function create_user(baseurl, name, email, avatar_url)
 		})
 	});
 	
-	const { id, language } = await data.json(); 
+	const { id, language } = await data.json();
 
 	return { user_id: id, user_name: name, user_email: email, language: language, tfa: false };
 }

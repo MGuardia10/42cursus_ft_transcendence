@@ -4,7 +4,6 @@ import { RxCross2 } from "react-icons/rx";
 
 import UsersSearch from '@/layout/AppLayout/components/UsersSearch';
 import Language from '@/layout/AppLayout/components/Language';
-import Notifications from '@/layout/AppLayout/components/Notifications';
 import Profile from '@/layout/AppLayout/components/Profile';
 
 type TopBarProps = {
@@ -24,9 +23,8 @@ const TopBar: React.FC<TopBarProps> = ({ showSidebar, setShowSidebar }) => {
 				</div>
 				<UsersSearch />
 			</div>
-			<div className='flex items-center gap-3 md:gap-4'>
+			<div className='flex items-center gap-3 md:gap-6'>
 				<Language />
-				<Notifications />
 				<Profile />
 			</div>
 		</header>

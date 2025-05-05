@@ -3,6 +3,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import fs from 'fs';
 import multipart from '@fastify/multipart';
+import cookie from '@fastify/cookie';
 
 /* Database */
 import {initializeDB} from './database/database.js';
@@ -22,6 +23,9 @@ app.register(cors, {
 
 /* NOTE: Register the multipart plugin */
 app.register(multipart);
+
+/* NOTE: Register the cookie plugin */
+app.register(cookie);
 
 /* NOTE: Init the database */
 await initializeDB();
