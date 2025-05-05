@@ -53,3 +53,36 @@ CREATE TABLE IF NOT EXISTS games (
   FOREIGN KEY (player_a_id) REFERENCES players(id) ON DELETE CASCADE,
   FOREIGN KEY (player_b_id) REFERENCES players(id) ON DELETE CASCADE
 );
+
+-- Tournaments
+CREATE TABLE IF NOT EXISTS tournaments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  configuration_id INTEGER NOT NULL,
+
+  -- Constraints
+  FOREIGN KEY (configuration_id) REFERENCES configuration(id) ON DELETE CASCADE
+);
+
+-- Tournament players
+CREATE TABLE IF NOT EXISTS tournament_players (
+  tournament_id INTEGER NOT NULL,
+  player_id INTEGER NOT NULL,
+
+  -- Constraints
+  PRIMARY KEY (tournament_id, player_id),
+  FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE,
+  FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE
+);
+
+-- Tournament games
+CREATE TABLE IF NOT EXISTS tournament_games (
+  tournament_id INTEGER NOT NULL,
+  game_id INTEGER NOT NULL,
+  phase INTEGER NOT NULL,
+  order INTEGER NOT NULL,
+
+  -- Constraints
+  PRIMARY KEY (tournament_id, game_id),
+  FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE,
+  FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
+);
