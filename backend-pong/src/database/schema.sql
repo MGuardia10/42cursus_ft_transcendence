@@ -1,4 +1,6 @@
--- Configuration
+-------------------
+-- Configuration --
+-------------------
 CREATE TABLE IF NOT EXISTS configuration (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   default_value INTEGER NOT NULL DEFAULT 1,
@@ -9,7 +11,10 @@ CREATE TABLE IF NOT EXISTS configuration (
   field_color INTEGER NOT NULL
 );
 
--- Players
+
+-------------
+-- Players --
+-------------
 CREATE TABLE IF NOT EXISTS players (
   -- Generic information
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,6 +31,11 @@ CREATE TABLE IF NOT EXISTS players (
   -- Constraints
   FOREIGN KEY (configuration_id) REFERENCES configuration(id) ON DELETE CASCADE
 );
+
+
+-----------
+-- Games --
+-----------
 
 -- Game status
 CREATE TABLE IF NOT EXISTS game_status (
@@ -53,6 +63,11 @@ CREATE TABLE IF NOT EXISTS games (
   FOREIGN KEY (player_a_id) REFERENCES players(id) ON DELETE CASCADE,
   FOREIGN KEY (player_b_id) REFERENCES players(id) ON DELETE CASCADE
 );
+
+
+-----------------
+-- Tournaments --
+-----------------
 
 -- Tournaments
 CREATE TABLE IF NOT EXISTS tournaments (
