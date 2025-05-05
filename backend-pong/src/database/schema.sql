@@ -10,11 +10,11 @@ CREATE TABLE IF NOT EXISTS configuration (
 );
 
 -- Players
-CREATE TABLE IF NOT EXISTS test (
+CREATE TABLE IF NOT EXISTS players (
   -- Generic information
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   active INTEGER NOT NULL DEFAULT 1,
-  configuration INTEGER NOT NULL,
+  configuration_id INTEGER NOT NULL,
 
   -- Games/punctuation data
   win_count INTEGER NOT NULL DEFAULT 0,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS test (
   percentage REAL NOT NULL DEFAULT 0.0,
 
   -- Constraints
-  FOREIGN KEY (configuration) REFERENCES configuration(id) ON DELETE CASCADE
+  FOREIGN KEY (configuration_id) REFERENCES configuration(id) ON DELETE CASCADE
 );
 
 -- Game status
@@ -43,13 +43,13 @@ CREATE TABLE IF NOT EXISTS games (
   date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   -- Players and puntuation
-  player_a INTEGER NOT NULL,
+  player_a_id INTEGER NOT NULL,
   player_a_score INTEGER NOT NULL,
-  player_b INTEGER NOT NULL,
+  player_b_id INTEGER NOT NULL,
   player_b_score INTEGER NOT NULL,
 
   -- Constraints
   FOREIGN KEY (status) REFERENCES game_status(id),
-  FOREIGN KEY (player_a) REFERENCES players(id) ON DELETE CASCADE,
-  FOREIGN KEY (player_b) REFERENCES players(id) ON DELETE CASCADE
+  FOREIGN KEY (player_a_id) REFERENCES players(id) ON DELETE CASCADE,
+  FOREIGN KEY (player_b_id) REFERENCES players(id) ON DELETE CASCADE
 );
