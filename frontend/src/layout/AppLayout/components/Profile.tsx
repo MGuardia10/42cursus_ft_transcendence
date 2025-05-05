@@ -13,7 +13,7 @@ const Profile: React.FC = () => {
 	// language, notification and auth hooks
 	const { t } = useLanguage();
 	const { addNotification } = useNotification();
-	const { logout } = useAuth();
+	const { logout, logoutError } = useAuth();
 
 	// useRef to handle the menu
 	const profileMenuRef = useRef<HTMLDivElement | null>(null);
@@ -45,14 +45,23 @@ const Profile: React.FC = () => {
 	// Function to handle the delete account
 	const handleLogOut = () => {
 
-		// Close the last call modal
-		setShowLastCall(false);
-
-		// addNotification goodbye
-		addNotification('Goodbye!', 'success');
-
+		
 		// Call the logout function
 		logout();
+		
+		// Check if there is an error
+		if (logoutError) {
+			// addNotification error
+			addNotification(t('notifications_logout_error'), 'error');
+			return;
+		}
+
+		// Close the last call modal
+		setShowLastCall(false);
+		
+		// addNotification goodbye
+		addNotification(t('notifications_logout_success'), 'success');
+
 	};
 	
 	return (

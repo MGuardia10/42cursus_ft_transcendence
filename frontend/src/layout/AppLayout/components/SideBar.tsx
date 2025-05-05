@@ -9,6 +9,7 @@ import { TbTournament } from "react-icons/tb";
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/hooks/useAuth';
 import { MenuItem } from '@/types/sidebarTypes';
+import { useNavigate } from 'react-router';
 
 type SideBarProps = {
 	showSidebar: boolean;
@@ -17,8 +18,11 @@ type SideBarProps = {
 
 const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
 
-	// useAuth hook
+	/* useAuth hook */
 	const { user } = useAuth();
+
+	/* useNavigate */
+	const Navigate = useNavigate();
 
 	// useLanguage hook
 	const { t } = useLanguage();
@@ -49,8 +53,13 @@ const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
       		className={`z-10 fixed top-[62px] md:top-0 left-0 h-full w-full md:w-72 bg-background-secondary p-4 transform ${showSidebar ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300`}
     	>
 			<div>
-				<div className='flex items-center justify-center md:items-center'>
-					<h1 className="text-xl md:text-sm font-login my-6 md:mt-2 md:mb-0">FT_TRASCENDENCE</h1>
+				<div className='flex items-center justify-center md:items-center cursor-pointer'>
+					<h1	
+						className="text-xl md:text-sm font-login my-6 md:mt-2 md:mb-0"
+						onClick={() => Navigate("/")}
+					>
+						FT_TRASCENDENCE
+					</h1>
 				</div>
 				<div className="hidden md:flex md:flex-col md:items-center md:my-12">
 					<img
@@ -60,7 +69,7 @@ const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
 						  }}
 						crossOrigin="use-credentials"
 						alt='avatar'
-						className='md:block md:w-24 md:h-24 rounded-full border-2 border-text-tertiary'
+						className='md:block md:w-24 md:h-24 rounded-full border-2 border-text-tertiary object-cover'
 					/>
 					<h2 className="text-3xl font-bold mt-3">{ user?.name?.split(' ')[0] || 'loading...' }</h2>
 					<p className="mt-1 text-sm text-text-tertiary">{ user?.alias?.split(' ')[0] || 'loading...' }</p>

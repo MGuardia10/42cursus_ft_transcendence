@@ -25,7 +25,7 @@ export default async function update (request, reply)
 		body: JSON.stringify({
 			language: language
 		})
-	})
+	});
 
 	/* Set the new token in the cookie */
 	return reply.setCookie('token', new_jwt.token, {

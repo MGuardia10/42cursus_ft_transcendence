@@ -18,5 +18,8 @@ export interface AuthContextType {
 	isAuthenticated: boolean;
 	login: () => void;
 	logout: () => Promise<void>;
+	deleteUser: () => Promise<void>;
 	refreshUser: () => Promise<void>;
+	logoutError: boolean;
+	deleteError: boolean;
 }

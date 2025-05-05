@@ -9,6 +9,7 @@ import add_friend from './add_friend.js';
 import { update_user_data_by_id, update_user_avatar_by_id } from './update_user_by_id.js';
 
 import delete_user_by_id from './delete_user_by_id.js';
+import delete_friends from './delete_friends.js';
 
 export default async function (fastify, options) {
   
@@ -180,4 +181,17 @@ export default async function (fastify, options) {
       }
     }
   }, delete_user_by_id);
+
+  fastify.delete('/friends', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['from', 'to'],
+        properties: {
+          from: { type: 'integer' },
+          to: { type: 'integer' }
+        }
+      }
+    }
+  }, delete_friends);
 };
