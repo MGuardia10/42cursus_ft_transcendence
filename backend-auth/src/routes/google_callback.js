@@ -101,7 +101,7 @@ export default async function google_callback(request, reply)
 		/* TFA activated: Register a new code and a hash */
 		const code = Math.floor(Math.random() * (1000000 - 100000) + 100000);
 		const hash = randomBytes(32).toString('hex');
-		db.prepare("INSERT INTO tfa_codes(hash, user_id, code) VALUES(?, ?, ?)").run(hash, user_id, code);
+		db.prepare("INSERT INTO tfa_codes(hash, user_id, language, code) VALUES(?, ?, ?, ?)").run(hash, user_id, language, code);
 
 		/* Send the mail */
 		await send_mail(user_email, user_name, code);
