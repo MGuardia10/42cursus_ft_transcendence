@@ -107,6 +107,8 @@ export const translations = {
 		notifications_delete_account_success: "Account deleted!",
 		notifications_logout_error: "Error logging out",
 		notifications_logout_success: "Good Bye!",
+		// single-match
+		single_match_play: "Play Pong against a simple AI opponent"
 	},
 	es: {
 		// languages
@@ -216,6 +218,8 @@ export const translations = {
 		notifications_delete_account_success: "¡Cuenta eliminada!",
 		notifications_logout_error: "Error al cerrar sesión",
 		notifications_logout_success: "¡Adiós!",
+		single_match_play: "Jugar con IA"
+
 	},
 	pt: {
 		// languages
@@ -325,5 +329,7 @@ export const translations = {
 		notifications_delete_account_success: "Conta excluída!",
 		notifications_logout_error: "Erro ao sair",
 		notifications_logout_success: "Adeus!",		
+		single_match_play: "Jogo con IA"
+
 	},
 };
