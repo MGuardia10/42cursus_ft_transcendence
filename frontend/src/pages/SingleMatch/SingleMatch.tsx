@@ -22,7 +22,7 @@ interface GameState {
     player: number
     enemy: number
   }
-  gameStarted: boolean
+  gamePaused: boolean
   gameWidth: number
   gameHeight: number
 }
@@ -32,8 +32,8 @@ const PADDLE_WIDTH = 12
 const BALL_SIZE = 12
 const PADDLE_SPEED = 3
 const BALL_SPEED = 2
-const SERVE_DELAY = 1
-const POINTS_TO_WIN = 5
+const SERVE_DELAY = 1 //BACK
+const POINTS_TO_WIN = 5 //BACK
 
 const SingleMatch: React.FC = () => {
   const { t } = useLanguage()
@@ -46,7 +46,7 @@ const SingleMatch: React.FC = () => {
     playerPaddle: { y: 260 },
     enemyPaddle: { y: 260, direction: 1 },
     score: { player: 0, enemy: 0 },
-    gameStarted: false,
+    gamePaused: false,
     gameWidth: 800,
     gameHeight: 600,
   })
@@ -124,7 +124,7 @@ const SingleMatch: React.FC = () => {
 
   const gameLoop = useCallback(() => {
     setGameState((prev) => {
-      if (!prev.gameStarted) return prev
+      if (!prev.gamePaused) return prev
       const newState = { ...prev }
       const { gameWidth, gameHeight } = newState
 
@@ -178,14 +178,14 @@ const SingleMatch: React.FC = () => {
         newState.ball = resetBall(gameWidth, gameHeight)
 
         if (newState.score.enemy >= POINTS_TO_WIN) {
-          newState.gameStarted = false
+          newState.gamePaused = false
         }
       } else if (newState.ball.x > gameWidth) {
         newState.score.player++
         newState.ball = resetBall(gameWidth, gameHeight)
 
         if (newState.score.player >= POINTS_TO_WIN) {
-          newState.gameStarted = false
+          newState.gamePaused = false
         }
       }
       return newState
@@ -194,10 +194,10 @@ const SingleMatch: React.FC = () => {
     animationRef.current = requestAnimationFrame(gameLoop)
   }, [resetBall])
 
-  const toggleGame = () => {
+  const pauseGame = () => {
     setGameState((prev) => ({
       ...prev,
-      gameStarted: !prev.gameStarted,
+      gamePaused: !prev.gamePaused,
     }))
   }
 
@@ -208,12 +208,12 @@ const SingleMatch: React.FC = () => {
       playerPaddle: { y: prev.gameHeight / 2 - PADDLE_HEIGHT / 2 },
       enemyPaddle: { y: prev.gameHeight / 2 - PADDLE_HEIGHT / 2, direction: 1 },
       score: { player: 0, enemy: 0 },
-      gameStarted: false,
+      gamePaused: false,
     }))
   }
 
   useEffect(() => {
-    if (gameState.gameStarted) {
+    if (gameState.gamePaused) {
       animationRef.current = requestAnimationFrame(gameLoop)
     } else {
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
@@ -221,7 +221,7 @@ const SingleMatch: React.FC = () => {
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
     }
-  }, [gameState.gameStarted, gameLoop])
+  }, [gameState.gamePaused, gameLoop])
 
   const stadiumColor = "#1e1e1e" //BACK
   const ballColor = "#ffffff" //BACK
@@ -293,7 +293,7 @@ const SingleMatch: React.FC = () => {
                 backgroundColor: ballColor,
               }}
             />
-            {!gameState.gameStarted && (
+            {!gameState.gamePaused && (
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div className="text-2xl text-text-primary">
                   {gameState.score.player === 0 && gameState.score.enemy === 0
@@ -313,10 +313,10 @@ const SingleMatch: React.FC = () => {
           <div className="flex space-x-4">
             {gameState.score.player < POINTS_TO_WIN && gameState.score.enemy < POINTS_TO_WIN && (
               <button
-                onClick={toggleGame}
+                onClick={pauseGame}
                 className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
               >
-                {gameState.gameStarted ? t?.pause || "Pause" : t?.start || "Start"}
+                {gameState.gamePaused ? t?.pause || "Pause" : t?.start || "Start"}
               </button>
             )}
             <button

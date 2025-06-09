@@ -5,7 +5,6 @@ import { useState } from "react"
 import { useNavigate } from "react-router"
 import { IoGameController, IoArrowBack } from "react-icons/io5"
 import { FaUserFriends } from "react-icons/fa"
-
 import { useLanguage } from "@/hooks/useLanguage"
 import { useFriends } from "@/hooks/useFriends"
 import { useNotification } from "@/hooks/useNotification"
@@ -88,7 +87,6 @@ const GameInvite: React.FC = () => {
       </div>
     )
   }
-
   return (
     <div className="container mx-auto flex flex-col items-center justify-center bg-background-primary p-4">
       <div className="w-full max-w-4xl mx-auto">
@@ -162,9 +160,6 @@ const GameInvite: React.FC = () => {
                 ))}
               </div>
             )}
-
-
-
           </div>
         )}
       </div>
