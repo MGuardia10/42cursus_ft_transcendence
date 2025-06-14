@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS configuration (
 -------------
 CREATE TABLE IF NOT EXISTS players (
   -- Generic information
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INTEGER PRIMARY KEY,
   active INTEGER NOT NULL DEFAULT 1,
   configuration_id INTEGER NOT NULL,
 
