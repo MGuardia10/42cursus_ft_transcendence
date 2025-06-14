@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS configuration (
   points_to_win INTEGER NOT NULL,
   serve_delay INTEGER NOT NULL,
   ball_color TEXT NOT NULL,
-  bar_speed INTEGER NOT NULL,
+  stick_speed INTEGER NOT NULL,
   field_color INTEGER NOT NULL
 );
 
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS tournament_games (
   tournament_id INTEGER NOT NULL,
   game_id INTEGER NOT NULL,
   phase INTEGER NOT NULL,
-  order INTEGER NOT NULL,
+  ordr INTEGER NOT NULL,
 
   -- Constraints
   PRIMARY KEY (tournament_id, game_id),
