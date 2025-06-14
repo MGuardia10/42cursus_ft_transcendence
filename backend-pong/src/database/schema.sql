@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS players (
   lose_count INTEGER NOT NULL DEFAULT 0,
   win_points INTEGER NOT NULL DEFAULT 0,
   lose_points INTEGER NOT NULL DEFAULT 0,
-  percentage REAL NOT NULL DEFAULT 0.0,
 
   -- Constraints
   FOREIGN KEY (configuration_id) REFERENCES configuration(id) ON DELETE CASCADE
