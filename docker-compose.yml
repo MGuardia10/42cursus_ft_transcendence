@@ -1,5 +1,4 @@
 services:
-
   # NOTE: Nginx container
   proxy:
     container_name: proxy
@@ -24,10 +23,17 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_BASEURL: ${API_BASEURL}
+        VITE_FRONTEND_BASEURL_EXTERNAL: ${FRONTEND_BASEURL_EXTERNAL}
         VITE_AUTH_API_BASEURL_EXTERNAL: ${AUTH_API_BASEURL_EXTERNAL}
         VITE_USER_API_BASEURL_EXTERNAL: ${USER_API_BASEURL_EXTERNAL}
         VITE_GOOGLE_CALLBACK_URI: ${GOOGLE_CALLBACK_URI}
         VITE_AVATAR_FOLDER: ${AVATAR_FOLDER}
+        VITE_DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
+        VITE_POINTS_TO_WIN: ${POINTS_TO_WIN}
+        VITE_SERVE_DELAY: ${SERVE_DELAY}
+        VITE_FIELD_COLOR: ${FIELD_COLOR}
+        VITE_STICK_COLOR: ${STICK_COLOR}
+        VITE_BALL_COLOR: ${BALL_COLOR}
     volumes:
       - ./frontend:/app
       - /app/node_modules
