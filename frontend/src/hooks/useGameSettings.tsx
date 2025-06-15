@@ -50,6 +50,7 @@ export function useGameSettings() {
     //   })
     //   .finally(() => {
     //     if (isMounted) setLoading(false);
+    setLoading(false);
     //   });
 
     return () => {
