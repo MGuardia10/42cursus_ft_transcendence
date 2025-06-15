@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS configuration (
   points_to_win INTEGER NOT NULL,
   serve_delay INTEGER NOT NULL,
   ball_color TEXT NOT NULL,
-  stick_speed INTEGER NOT NULL,
-  field_color INTEGER NOT NULL
+  stick_color TEXT NOT NULL,
+  field_color TEXT NOT NULL
 );
 
 
