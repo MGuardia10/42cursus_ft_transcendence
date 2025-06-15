@@ -1,9 +1,9 @@
 import { create_configuration } from '../utils/configuration.js'
 import db from '../database/database.js';
 
-export default async function player_create(req, reply)
+export default async function player_create(request, reply)
 {
-	const { user_id } = req.body;
+	const { user_id } = request.body;
 
 	try
 	{
