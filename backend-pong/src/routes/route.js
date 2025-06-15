@@ -1,4 +1,5 @@
 import player_create from "./player_create.js";
+import player_get from "./player_get.js";
 
 export default async function (fastify, options)
 {
@@ -14,4 +15,17 @@ export default async function (fastify, options)
 			additionalProperties: false
 		}
 	}, player_create);
+
+	fastify.get('/player/:id', {
+		schema: {
+			params: {
+				type: 'object',
+				required: ['id'],
+				properties: {
+					id: { type: 'integer' }
+				}
+			}
+		}
+	}
+	, player_get);
 }
