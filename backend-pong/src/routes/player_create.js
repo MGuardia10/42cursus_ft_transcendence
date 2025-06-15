@@ -13,15 +13,6 @@ export default async function player_create(req, reply)
 			return reply.code(409).send({ error: `The user with id ${user_id} exists` });
 
 		/* Create the configuration */
-		console.log({
-			default_conf: true,
-			ptw: process.env.POINTS_TO_WIN,
-			sd: process.env.SERVE_DELAY,
-			fc: process.env.FIELD_COLOR,
-			bc: process.env.BALL_COLOR,
-			sc: process.env.STICK_COLOR
-		})
-
 		const conf_id = create_configuration({
 			default_conf: true,
 			ptw: process.env.POINTS_TO_WIN,
@@ -34,7 +25,7 @@ export default async function player_create(req, reply)
 			return reply.code(500).send({ error: "Error creating the player configuration" });
 
 		/* Save the player */
-		const user_added = db
+		db
 			.prepare("INSERT INTO players(id, configuration_id) VALUES(?, ?)")
 			.run(user_id, conf_id);
 		
