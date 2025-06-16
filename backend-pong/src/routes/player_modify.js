@@ -58,6 +58,7 @@ export default async function player_modify( request, reply )
 	{
 		update_stats( id, win_count, lose_count, win_points, lose_points );
 		update_configuration( id, configuration );
+		return reply.code(200).send();
 	}
 	catch(err)
 	{
