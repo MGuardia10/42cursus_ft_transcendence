@@ -2,18 +2,19 @@ import db from '../database/database.js'
 
 function create_configuration( configuration )
 {
-	const { default_conf, ptw, sd, fc, bc, ss } = configuration;
+	const { default_conf, ptw, sd, fc, bc, sc } = configuration;
 
 	try
 	{
 		const result = db
-			.prepare("INSERT INTO configuration(default_value, points_to_win, serve_delay, field_color, ball_color, stick_speed) VALUES(?, ?, ?, ?, ?, ?)")
-			.run(default_conf == true ? 1 : 0, ptw, sd, fc, bc, ss);
+			.prepare("INSERT INTO configuration(default_value, points_to_win, serve_delay, field_color, ball_color, stick_color) VALUES(?, ?, ?, ?, ?, ?)")
+			.run(default_conf == true ? 1 : 0, ptw, sd, fc, bc, sc);
 	
 		return result.lastInsertRowid;
 	}
 	catch (err)
 	{
+		console.log("Error: ", err);
 		return undefined;
 	}
 }
@@ -42,7 +43,7 @@ function modify_configuration( id, configuration )
 			.run(value, id);
 	}
 
-	const { default_conf, ptw, sd, fc, bc, ss } = configuration;
+	const { default_conf, ptw, sd, fc, bc, sc } = configuration;
 
 	try
 	{
@@ -61,8 +62,8 @@ function modify_configuration( id, configuration )
 		if (bc)
 			set_config("ball_color", bc);
 
-		if (ss)
-			set_config("stick_speed", ss);
+		if (sc)
+			set_config("stick_color", sc);
 		
 		return true;
 	}

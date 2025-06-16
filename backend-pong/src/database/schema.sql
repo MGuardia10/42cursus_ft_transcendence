@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS configuration (
   points_to_win INTEGER NOT NULL,
   serve_delay INTEGER NOT NULL,
   ball_color TEXT NOT NULL,
-  stick_speed INTEGER NOT NULL,
-  field_color INTEGER NOT NULL
+  stick_color TEXT NOT NULL,
+  field_color TEXT NOT NULL
 );
 
 
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS configuration (
 -------------
 CREATE TABLE IF NOT EXISTS players (
   -- Generic information
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INTEGER PRIMARY KEY,
   active INTEGER NOT NULL DEFAULT 1,
   configuration_id INTEGER NOT NULL,
 
@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS players (
   lose_count INTEGER NOT NULL DEFAULT 0,
   win_points INTEGER NOT NULL DEFAULT 0,
   lose_points INTEGER NOT NULL DEFAULT 0,
-  percentage REAL NOT NULL DEFAULT 0.0,
 
   -- Constraints
   FOREIGN KEY (configuration_id) REFERENCES configuration(id) ON DELETE CASCADE

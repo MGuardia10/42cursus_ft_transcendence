@@ -53,6 +53,7 @@ services:
       - AVATAR_FOLDER=${AVATAR_FOLDER}
       - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE}
       - FRONTEND_BASEURL_EXTERNAL=${FRONTEND_BASEURL_EXTERNAL}
+      - PONG_API_BASEURL_INTERNAL=${PONG_API_BASEURL_INTERNAL}
     volumes:
       - ./backend-user:/app
       - /app/node_modules
@@ -94,6 +95,13 @@ services:
       dockerfile: Dockerfile
     environment:
       - FRONTEND_BASEURL_EXTERNAL=${FRONTEND_BASEURL_EXTERNAL}
+      - AUTH_API_BASEURL_INTERNAL=${AUTH_API_BASEURL_INTERNAL}
+
+      - POINTS_TO_WIN=${POINTS_TO_WIN}
+      - SERVE_DELAY=${SERVE_DELAY}
+      - FIELD_COLOR=${FIELD_COLOR}
+      - STICK_COLOR=${STICK_COLOR}
+      - BALL_COLOR=${BALL_COLOR}
     volumes:
       - ./backend-pong:/app
       - /app/node_modules
