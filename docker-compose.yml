@@ -95,6 +95,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - FRONTEND_BASEURL_EXTERNAL=${FRONTEND_BASEURL_EXTERNAL}
+      - AUTH_API_BASEURL_INTERNAL=${AUTH_API_BASEURL_INTERNAL}
 
       - POINTS_TO_WIN=${POINTS_TO_WIN}
       - SERVE_DELAY=${SERVE_DELAY}

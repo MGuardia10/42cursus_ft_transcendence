@@ -3,6 +3,13 @@ import player_delete from "./player_delete.js";
 import player_get from "./player_get.js";
 import player_modify from "./player_modify.js";
 
+/* This function is used to check if the cookie is present in the request */
+function cookieChecker(request, reply, done) {
+  if (!request.cookies || typeof request.cookies.token !== 'string')
+    return reply.status(400).send({ error: 'The "token" cookie is mandatory' });
+  done();
+}
+
 export default async function (fastify, options)
 {
 	fastify.post('/players', {
@@ -60,5 +67,6 @@ export default async function (fastify, options)
 				}
 			}
 		},
+		preValidation: cookieChecker
 	}, player_delete);
 }
