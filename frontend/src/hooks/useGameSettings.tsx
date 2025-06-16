@@ -95,8 +95,6 @@ export function useGameSettings() {
         field_color: bgColor.replace("#", ""),
       };
 
-      console.log("Payload to save:", payload);
-
       try {
         // Make API request to save settings
         const res = await fetch(
