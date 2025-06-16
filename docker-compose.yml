@@ -53,6 +53,7 @@ services:
       - AVATAR_FOLDER=${AVATAR_FOLDER}
       - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE}
       - FRONTEND_BASEURL_EXTERNAL=${FRONTEND_BASEURL_EXTERNAL}
+      - PONG_API_BASEURL_INTERNAL=${PONG_API_BASEURL_INTERNAL}
     volumes:
       - ./backend-user:/app
       - /app/node_modules
