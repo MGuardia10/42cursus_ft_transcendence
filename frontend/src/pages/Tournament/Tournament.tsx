@@ -138,15 +138,17 @@ const Tournament: React.FC = () => {
 
   // Main tournament selection view
   const MainView = () => (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="flex justify-center px-4 lg:px-16 py-8">
+      <div className="w-full max-w-6xl">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">{t("tournament") || "Tournament"}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">
+            {t("tournament") || "Tournament"}
+          </h1>
           <p className="text-text-secondary text-lg">
             {t("tournament_description") || "Create or join a tournament to compete with other players"}
           </p>
         </div>
-
+  
         <div className="grid md:grid-cols-2 gap-8">
           {/* Create Tournament */}
           <div className="bg-background-secondary rounded-xl p-8 border border-border-primary hover:border-text-tertiary transition-colors">
@@ -170,7 +172,7 @@ const Tournament: React.FC = () => {
               </button>
             </div>
           </div>
-
+  
           {/* Join Tournament */}
           <div className="bg-background-secondary rounded-xl p-8 border border-border-primary hover:border-text-tertiary transition-colors">
             <div className="text-center">
@@ -184,7 +186,9 @@ const Tournament: React.FC = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-text-primary mb-4">{t("join_tournament") || "Join Tournament"}</h3>
+              <h3 className="text-2xl font-bold text-text-primary mb-4">
+                {t("join_tournament") || "Join Tournament"}
+              </h3>
               <p className="text-text-secondary mb-6">
                 {t("join_tournament_desc") || "Enter a tournament code to join an existing tournament"}
               </p>
@@ -199,96 +203,111 @@ const Tournament: React.FC = () => {
         </div>
       </div>
     </div>
-  )
+  );
+  
 
-  // Create tournament view
-  const CreateView = () => (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-background-secondary rounded-xl p-8 border border-border-primary">
-          <div className="flex items-center mb-6">
-            <button onClick={() => setCurrentView("main")} className="text-text-secondary hover:text-text-primary mr-4">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <h2 className="text-3xl font-bold text-text-primary">{t("create_tournament") || "Create Tournament"}</h2>
+// Create tournament view
+const CreateView = () => (
+  <div className="px-4 py-8 flex justify-center">
+    <div className="max-w-2xl w-full">
+      <div className="bg-background-secondary rounded-xl p-8 border border-border-primary">
+        <div className="flex items-center mb-6">
+          <button
+            onClick={() => setCurrentView("main")}
+            className="text-text-secondary hover:text-text-primary mr-4"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          <h2 className="text-3xl font-bold text-text-primary">
+            {t("create_tournament") || "Create Tournament"}
+          </h2>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <label className="block text-text-primary font-semibold mb-3">
+              {t("number_of_players") || "Number of Players"}
+            </label>
+            <div className="grid grid-cols-3 gap-4">
+              {[2, 4, 8].map((num) => (
+                <button
+                  key={num}
+                  onClick={() => setSelectedPlayers(num)}
+                  className={`p-4 rounded-lg border-2 transition-colors ${
+                    selectedPlayers === num
+                      ? "border-text-tertiary text-text-secondary bg-opacity-10 text-text-tertiary"
+                      : "border-border-secondary text-text-secondary hover:border-text-secondary"
+                  }`}
+                >
+                  <div className="text-2xl font-bold">{num}</div>
+                  <div className="text-sm">{t("players") || "Players"}</div>
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="space-y-6">
-            <div>
-              <label className="block text-text-primary font-semibold mb-3">
-                {t("number_of_players") || "Number of Players"}
-              </label>
-              <div className="grid grid-cols-3 gap-4">
-                {[2, 4, 8].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => setSelectedPlayers(num)}
-                    className={`p-4 rounded-lg border-2 transition-colors ${
-                      selectedPlayers === num
-                        ? "border-text-tertiary bg-text-tertiary bg-opacity-10 text-text-tertiary"
-                        : "border-border-primary text-text-secondary hover:border-text-secondary"
-                    }`}
-                  >
-                    <div className="text-2xl font-bold">{num}</div>
-                    <div className="text-sm">{t("players") || "Players"}</div>
-                  </button>
-                ))}
+          {tournamentId && (
+            <div className="bg-background-primary rounded-lg p-6 border border-border-primary">
+              <h3 className="text-text-primary font-semibold mb-2">
+                {t("tournament_id") || "Tournament ID"}
+              </h3>
+              <div className="flex items-center space-x-4">
+                <code className="bg-background-secondary px-4 py-2 rounded text-text-tertiary font-mono text-lg flex-1">
+                  {tournamentId}
+                </code>
+                <button
+                  onClick={() => navigator.clipboard.writeText(tournamentId)}
+                  className="text-text-secondary hover:text-text-primary"
+                  title="Copy to clipboard"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
               </div>
+              <p className="text-text-secondary text-sm mt-2">
+                {t("share_tournament_id") ||
+                  "Share this ID with other players so they can join your tournament"}
+              </p>
             </div>
+          )}
 
-            {tournamentId && (
-              <div className="bg-background-primary rounded-lg p-6 border border-border-primary">
-                <h3 className="text-text-primary font-semibold mb-2">{t("tournament_id") || "Tournament ID"}</h3>
-                <div className="flex items-center space-x-4">
-                  <code className="bg-background-secondary px-4 py-2 rounded text-text-tertiary font-mono text-lg flex-1">
-                    {tournamentId}
-                  </code>
-                  <button
-                    onClick={() => navigator.clipboard.writeText(tournamentId)}
-                    className="text-text-secondary hover:text-text-primary"
-                    title="Copy to clipboard"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </button>
-                </div>
-                <p className="text-text-secondary text-sm mt-2">
-                  {t("share_tournament_id") || "Share this ID with other players so they can join your tournament"}
-                </p>
-              </div>
+          <div className="flex space-x-4">
+            {!tournamentId ? (
+              <button
+                onClick={handleCreateTournament}
+                disabled={loading}
+                className="flex-1 bg-text-tertiary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
+              >
+                {loading ? t("creating") || "Creating..." : t("create_tournament") || "Create Tournament"}
+              </button>
+            ) : (
+              <button
+                onClick={() => setCurrentView("tournament")}
+                className="flex-1 bg-text-tertiary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
+              >
+                {t("enter_tournament") || "Enter Tournament"}
+              </button>
             )}
-
-            <div className="flex space-x-4">
-              {!tournamentId ? (
-                <button
-                  onClick={handleCreateTournament}
-                  disabled={loading}
-                  className="flex-1 bg-text-tertiary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
-                >
-                  {loading ? t("creating") || "Creating..." : t("create_tournament") || "Create Tournament"}
-                </button>
-              ) : (
-                <button
-                  onClick={() => setCurrentView("tournament")}
-                  className="flex-1 bg-text-tertiary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
-                >
-                  {t("enter_tournament") || "Enter Tournament"}
-                </button>
-              )}
-            </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  </div>
+);
+
 
   // Join tournament view
   const JoinView = () => (
@@ -427,7 +446,7 @@ const Tournament: React.FC = () => {
                         {/* Player 1 */}
                         <div
                           className={`flex items-center space-x-3 p-3 rounded ${
-                            match.winner?.id === match.player1?.id ? "bg-green-500 bg-opacity-20" : ""
+                            match.winner?.id === match.player1?.id ? "bg-background-secondary bg-opacity-20" : ""
                           }`}
                         >
                           {match.player1 ? (
@@ -451,7 +470,7 @@ const Tournament: React.FC = () => {
                         {/* Player 2 */}
                         <div
                           className={`flex items-center space-x-3 p-3 rounded ${
-                            match.winner?.id === match.player2?.id ? "bg-green-500 bg-opacity-20" : ""
+                            match.winner?.id === match.player2?.id ? "bg-background-secondary bg-opacity-20" : ""
                           }`}
                         >
                           {match.player2 ? (
