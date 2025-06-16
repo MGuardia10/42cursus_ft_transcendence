@@ -1,4 +1,5 @@
 import player_create from "./player_create.js";
+import player_delete from "./player_delete.js";
 import player_get from "./player_get.js";
 import player_modify from "./player_modify.js";
 
@@ -49,4 +50,15 @@ export default async function (fastify, options)
 
 		}
 	}, player_modify);
+
+	fastify.delete('/player/:id', {
+		schema: {
+			params: {
+				required: ['id'],
+				properties: {
+					id: { type: 'integer' }
+				}
+			}
+		},
+	}, player_delete);
 }
