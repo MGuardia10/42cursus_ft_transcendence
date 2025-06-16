@@ -11,8 +11,8 @@ const GameSettings: React.FC = () => {
 
   // useGameSettings hook
   const {
-    custom,
-    setCustom,
+    defaultValue,
+    setDefaultValue,
     score,
     setScore,
     serveDelay,
@@ -25,6 +25,7 @@ const GameSettings: React.FC = () => {
     setBallColor,
     updateSettings,
     loading,
+    error,
   } = useGameSettings();
 
   // useLanguage hook
@@ -73,14 +74,14 @@ const GameSettings: React.FC = () => {
     ctx.strokeStyle = barColor;
     ctx.lineWidth = 3;
     ctx.strokeRect(0, 0, width, height);
-  }, [bgColor, barColor, ballColor, custom]);
+  }, [bgColor, barColor, ballColor, defaultValue]);
 
-  const handleCustomChange = async () => {
+  const handleDefaultChange = async () => {
     // Set custom to true or false
-    setCustom((prev) => !prev);
+    setDefaultValue((prev) => !prev);
 
     // Call API to update custom setting
-    const result = await updateSettings();
+    const result = await updateSettings(true);
 
     if (result.success == false)
       addNotification(`${t("notifications_game_settings_error")}`, "error");
@@ -90,18 +91,8 @@ const GameSettings: React.FC = () => {
     // Prevent default form submission
     e.preventDefault();
 
-    // Lógica para actualizar el nombre en su endpoint
-    console.log(
-      "Propiedades:",
-      score,
-      serveDelay,
-      bgColor,
-      barColor,
-      ballColor
-    );
-
     // Call API to update custom setting
-    const result = await updateSettings();
+    const result = await updateSettings(false);
 
     // Check if the result is successful
     if (result.success) {
@@ -112,6 +103,8 @@ const GameSettings: React.FC = () => {
   };
 
   if (loading) return <Spinner />;
+
+  if (error) return <p className="text-red-400">Error al obtener los datos</p>;
 
   return (
     <div className="w-full rounded-md mx-auto p-6 md:p-10 bg-background-secondary">
@@ -124,14 +117,14 @@ const GameSettings: React.FC = () => {
         <p className="text-sm md:text-base">{t("game_settings_custom")}</p>
         <button
           type="button"
-          onClick={handleCustomChange}
+          onClick={handleDefaultChange}
           className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none hover:cursor-pointer ${
-            custom ? "bg-text-secondary" : "bg-gray-300"
+            defaultValue ? "bg-gray-300" : "bg-text-secondary"
           }`}
         >
           <span
             className={`inline-block w-4 h-4 bg-white rounded-full transform transition-transform ${
-              custom ? "translate-x-6" : "translate-x-1"
+              defaultValue ? "translate-x-1" : "translate-x-6"
             }`}
           ></span>
         </button>
@@ -141,7 +134,7 @@ const GameSettings: React.FC = () => {
       <form
         onSubmit={handleSubmit}
         className={`${
-          custom ? "flex flex-col gap-2 md:gap-2.5 mt-4" : "hidden"
+          defaultValue ? "hidden" : "flex flex-col gap-2 md:gap-2.5 mt-4"
         }`}
       >
         {/* Points to win game */}

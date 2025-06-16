@@ -1,10 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { User } from "@/types/authContext";
+import { PlayerSettings } from "@/types/playerTypes";
 
 export function useGameSettings() {
+  /* Get userID */
+  const { user } = useAuth();
+  const { id } = user as User;
+
   /* State variables with default values */
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [custom, setCustom] = useState(false);
+  const [defaultValue, setDefaultValue] = useState(true);
   const [score, setScore] = useState(import.meta.env.VITE_POINTS_TO_WIN);
   const [serveDelay, setServeDelay] = useState(
     import.meta.env.VITE_SERVE_DELAY
@@ -21,82 +28,108 @@ export function useGameSettings() {
 
   /* Fetch current user data from API */
   useEffect(() => {
-    // let isMounted = true;
+    let isMounted = true;
     setLoading(true);
     setError(null);
 
-    console.log(bgColor, barColor, ballColor);
+    /* Get userID */
 
-    // fetch("/api/game-settings")
-    //   .then(async (res) => {
-    //     if (!res.ok) {
-    //       throw new Error(`Error fetching settings: ${res.status}`);
-    //     }
-    //     const data = await res.json();
+    fetch(`${import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL}/player/${id}`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error(`Error fetching settings: ${res.status}`);
+        }
+        const data = await res.json();
+        // const { configuration } = data;
 
-    //     // Check if component is still mounted before updating state
-    //     if (!isMounted) return;
+        const currentConfiguration: PlayerSettings = {
+          default: data.configuration.default_value,
+          pointToWin: data.configuration.points_to_win,
+          serveDelay: data.configuration.serve_delay,
+          bgColor: data.configuration.field_color,
+          barColor: data.configuration.stick_color,
+          ballColor: data.configuration.ball_color,
+        };
 
-    //     // Set state variables with fetched data
-    //     setCustom(data.custom);
-    //     setScore(String(data.score));
-    //     setServeDelay(String(data.serveDelay));
-    //     setBgColor(data.bgColor);
-    //     setBarColor(data.barColor);
-    //     setBallColor(data.ballColor);
-    //   })
-    //   .catch((err: Error) => {
-    //     if (isMounted) setError(err);
-    //   })
-    //   .finally(() => {
-    //     if (isMounted) setLoading(false);
-    setLoading(false);
-    //   });
+        // Check if component is still mounted before updating state
+        if (!isMounted) return;
+
+        // Set state variables with fetched data
+        setDefaultValue(currentConfiguration.default === 1 ? true : false);
+        setScore(String(currentConfiguration.pointToWin));
+        setServeDelay(String(currentConfiguration.serveDelay));
+        setBgColor(`#${currentConfiguration.bgColor}`);
+        setBarColor(`#${currentConfiguration.barColor}`);
+        setBallColor(`#${currentConfiguration.ballColor}`);
+      })
+      .catch((err: Error) => {
+        if (isMounted) setError(err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
 
     return () => {
-      // isMounted = false;
+      isMounted = false;
     };
   }, []);
 
   /* Submit updated settings */
-  const updateSettings = useCallback(async () => {
-    // Payload
-    const payload = {
-      custom,
-      score: Number(score),
-      serveDelay: Number(serveDelay),
-      bgColor,
-      barColor,
-      ballColor,
-    };
+  const updateSettings = useCallback(
+    async (overrideDefault: boolean) => {
+      let default_value = defaultValue ? 1 : 0;
 
-    try {
-      // Make API request to save settings
-      const res = await fetch("/api/game-settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      // If overrideDefault is true, set default_value to opposite
+      if (overrideDefault) default_value = defaultValue ? 0 : 1;
 
-      // Check if response is ok
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Error saving settings: ${res.status} ${errorText}`);
+      // Payload
+      const payload = {
+        default_value,
+        points_to_win: Number(score),
+        serve_delay: Number(serveDelay),
+        ball_color: ballColor.replace("#", ""),
+        stick_color: barColor.replace("#", ""),
+        field_color: bgColor.replace("#", ""),
+      };
+
+      console.log("Payload to save:", payload);
+
+      try {
+        // Make API request to save settings
+        const res = await fetch(
+          `${import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL}/player/${id}`,
+          {
+            method: "PATCH",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ configuration: payload }),
+          }
+        );
+
+        // Check if response is ok
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Error saving settings: ${res.status} ${errorText}`);
+        }
+
+        // Parse response
+        return { success: true };
+      } catch (err) {
+        console.error(err);
+        return { success: false, error: err };
       }
-
-      // Parse response
-      return { success: true };
-    } catch (err) {
-      console.error(err);
-      return { success: false, error: err };
-    }
-  }, [custom, score, serveDelay, bgColor, barColor, ballColor]);
+    },
+    [defaultValue, score, serveDelay, bgColor, barColor, ballColor, id]
+  );
 
   return {
     loading,
     error,
-    custom,
-    setCustom,
+    defaultValue,
+    setDefaultValue,
     score,
     setScore,
     serveDelay,
