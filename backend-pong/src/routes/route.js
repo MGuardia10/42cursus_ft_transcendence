@@ -3,6 +3,7 @@ import player_delete from "./player_delete.js";
 import player_get from "./player_get.js";
 import player_modify from "./player_modify.js";
 import ranking_all from "./ranking_all.js";
+import ranking_specific_player from "./ranking_specific_player.js";
 
 /* This function is used to check if the cookie is present in the request */
 function cookieChecker(request, reply, done) {
@@ -95,5 +96,17 @@ export default async function (fastify, options)
 			}
 		}
 	}, ranking_all);
+
+	fastify.get('/ranking/:id', {
+		schema: {
+			params: {
+				type: 'object',
+				required: ['id'],
+				properties: {
+					id: { type: 'integer' }
+				}
+			}
+		}
+	}, ranking_specific_player);
 
 }
