@@ -28,6 +28,7 @@ export default async function (fastify, options)
 	fastify.get('/player/:id', {
 		schema: {
 			params: {
+				type: 'object',
 				required: ['id'],
 				properties: {
 					id: { type: 'integer' }
@@ -39,6 +40,7 @@ export default async function (fastify, options)
 	fastify.patch('/player/:id', {
 		schema: {
 			params: {
+				type: 'object',
 				required: ['id'],
 				properties: {
 					id: { type: 'integer' }
@@ -61,6 +63,7 @@ export default async function (fastify, options)
 	fastify.delete('/player/:id', {
 		schema: {
 			params: {
+				type: 'object',
 				required: ['id'],
 				properties: {
 					id: { type: 'integer' }
