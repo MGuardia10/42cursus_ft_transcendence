@@ -41,20 +41,21 @@ CREATE TABLE IF NOT EXISTS game_status (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE
 );
-INSERT OR IGNORE INTO game_status(name) VALUES('Waiting');
-INSERT OR IGNORE INTO game_status(name) VALUES('Finished');
+DELETE FROM game_status WHERE id = 1 AND name != 'Waiting';
+INSERT OR IGNORE INTO game_status(id, name) VALUES(1, 'Waiting');
+INSERT OR IGNORE INTO game_status(id, name) VALUES(2, 'Finished');
 
 -- Games
 CREATE TABLE IF NOT EXISTS games (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  status INTEGER NOT NULL,
+  status INTEGER NOT NULL DEFAULT 1,
   date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   -- Players and puntuation
   player_a_id INTEGER NOT NULL,
-  player_a_score INTEGER NOT NULL,
+  player_a_score INTEGER NOT NULL DEFAULT 0,
   player_b_id INTEGER NOT NULL,
-  player_b_score INTEGER NOT NULL,
+  player_b_score INTEGER NOT NULL DEFAULT 0,
 
   -- Constraints
   FOREIGN KEY (status) REFERENCES game_status(id),
