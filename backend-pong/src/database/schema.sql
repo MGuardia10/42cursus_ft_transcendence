@@ -42,7 +42,6 @@ CREATE TABLE IF NOT EXISTS game_status (
   name TEXT UNIQUE
 );
 INSERT OR IGNORE INTO game_status(name) VALUES('Waiting');
-INSERT OR IGNORE INTO game_status(name) VALUES('In Progress');
 INSERT OR IGNORE INTO game_status(name) VALUES('Finished');
 
 -- Games
