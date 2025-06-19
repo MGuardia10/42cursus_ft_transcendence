@@ -38,15 +38,11 @@ function update_game( id, data )
 	}
 
 	/* Get all the info */
-	const { player_a_id, player_a_score, player_b_id, player_b_score, state } = data;
+	const { player_a_score, player_b_score, state } = data;
 
 	/* Update each field */
-	if (player_a_id !== undefined)
-		set_game_data( "player_a_id", player_a_id );
 	if (player_a_score !== undefined)
 		set_game_data( "player_a_score", player_a_score );
-	if (player_b_id !== undefined)
-		set_game_data( "player_b_id", player_b_id );
 	if (player_b_score !== undefined)
 		set_game_data( "player_b_score", player_b_score );
 
