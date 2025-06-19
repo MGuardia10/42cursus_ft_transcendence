@@ -1,4 +1,5 @@
 import game_create from "./game_create.js";
+import game_get from "./game_get.js";
 import player_create from "./player_create.js";
 import player_delete from "./player_delete.js";
 import player_get from "./player_get.js";
@@ -89,4 +90,15 @@ export default async function (fastify, options)
 		}
 	}, game_create);
 
+	fastify.get('/games', {
+		schema: {
+			querystring: {
+				type: 'object',
+				properties: {
+					player: { type: 'integer' }
+				}
+			},
+			additionalProperties: false
+		}
+	}, game_get);
 }
