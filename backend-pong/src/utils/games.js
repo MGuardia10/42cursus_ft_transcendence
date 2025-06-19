@@ -11,13 +11,23 @@ function create_game( id_a, id_b )
 	return result.lastInsertRowid;
 }
 
-function get_game_data( id )
+function format_game_data( data )
 {
-	const game_data = db
-		.prepare("SELECT * from games WHERE id = ?")
-		.get( id );
-	
-	return game_data;
+	function get_state_name( id )
+	{
+		const search = db.prepare("SELECT name FROM game_status WHERE id = ?").get(id);
+		return search ? search.name : undefined
+	}
+
+	return {
+		id: data.id,
+		status: get_state_name(data.status),
+		date: data.date,
+		player_a_id: data.player_a_id,
+		player_a_score: data.player_a_score,
+		player_b_id: data.player_b_id,
+		player_b_score: data.player_b_score,
+	}
 }
 
 function update_game( id, data )
@@ -53,4 +63,4 @@ function update_game( id, data )
 	return true;
 }
 
-export { create_game };
+export { create_game, format_game_data, update_game };
