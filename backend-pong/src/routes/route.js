@@ -1,3 +1,4 @@
+import game_create from "./game_create.js";
 import player_create from "./player_create.js";
 import player_delete from "./player_delete.js";
 import player_get from "./player_get.js";
@@ -69,4 +70,23 @@ export default async function (fastify, options)
 		},
 		preValidation: cookieChecker
 	}, player_delete);
+
+
+	/***************/
+	/* NOTE: Games */
+	/***************/
+
+	fastify.post('/games', {
+		schema: {
+			body: {
+				type: 'object',
+				required: ['player_a_id', 'player_b_id'],
+				properties: {
+					player_a_id: { type: 'string' },
+					player_b_id: { type: 'string' },
+				}
+			}
+		}
+	}, game_create);
+
 }
