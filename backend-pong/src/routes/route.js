@@ -5,6 +5,8 @@ import player_create from "./player_create.js";
 import player_delete from "./player_delete.js";
 import player_get from "./player_get.js";
 import player_modify from "./player_modify.js";
+import ranking_all from "./ranking_all.js";
+import ranking_specific_player from "./ranking_specific_player.js";
 
 /* This function is used to check if the cookie is present in the request */
 function cookieChecker(request, reply, done) {
@@ -15,6 +17,10 @@ function cookieChecker(request, reply, done) {
 
 export default async function (fastify, options)
 {
+	/*****************/
+	/* NOTE: Players */
+	/*****************/
+
 	fastify.post('/players', {
 		schema: {
 			body: {
@@ -31,6 +37,7 @@ export default async function (fastify, options)
 	fastify.get('/player/:id', {
 		schema: {
 			params: {
+				type: 'object',
 				required: ['id'],
 				properties: {
 					id: { type: 'integer' }
@@ -42,6 +49,7 @@ export default async function (fastify, options)
 	fastify.patch('/player/:id', {
 		schema: {
 			params: {
+				type: 'object',
 				required: ['id'],
 				properties: {
 					id: { type: 'integer' }
@@ -64,6 +72,7 @@ export default async function (fastify, options)
 	fastify.delete('/player/:id', {
 		schema: {
 			params: {
+				type: 'object',
 				required: ['id'],
 				properties: {
 					id: { type: 'integer' }
@@ -73,7 +82,32 @@ export default async function (fastify, options)
 		preValidation: cookieChecker
 	}, player_delete);
 
+	/*****************/	
+	/* NOTE: Ranking */
+	/*****************/
 
+	fastify.get('/ranking', {
+		schema: {
+			querystring: {
+				type: 'object',
+				properties: {
+					limit: { type: 'integer', minimum: 1, default: 10 },
+					page: { type: 'integer', minimum: 1, default: 1 },
+					includeTop3: { type: 'boolean', default: true }
+				}
+			}
+		}
+	}, ranking_all);
+
+	fastify.get('/ranking/:id', {
+		schema: {
+			params: {
+				type: 'object',
+      }
+		}
+	}, ranking_specific_player);
+      
+=======
 	/***************/
 	/* NOTE: Games */
 	/***************/
