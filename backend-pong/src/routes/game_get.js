@@ -25,7 +25,6 @@ export default async function game_get( request, reply )
 	try
 	{
 		const { query, params } = analyze_query( player );
-		console.log("Query: ", query, "\nParams:", ...params);
 		const results = db.prepare(query).all(...params);
 
 		const formatted_results = results.map(game => format_game_data(game))
