@@ -1,3 +1,6 @@
+import game_create from "./game_create.js";
+import game_get from "./game_get.js";
+import game_update from "./game_update.js";
 import player_create from "./player_create.js";
 import player_delete from "./player_delete.js";
 import player_get from "./player_get.js";
@@ -79,7 +82,6 @@ export default async function (fastify, options)
 		preValidation: cookieChecker
 	}, player_delete);
 
-
 	/*****************/	
 	/* NOTE: Ranking */
 	/*****************/
@@ -101,12 +103,56 @@ export default async function (fastify, options)
 		schema: {
 			params: {
 				type: 'object',
+      }
+		}
+	}, ranking_specific_player);
+      
+=======
+	/***************/
+	/* NOTE: Games */
+	/***************/
+
+	fastify.post('/games', {
+		schema: {
+			body: {
+				type: 'object',
+				required: ['player_a_id', 'player_b_id'],
+				properties: {
+					player_a_id: { type: 'string' },
+					player_b_id: { type: 'string' },
+				}
+			}
+		}
+	}, game_create);
+
+	fastify.get('/games', {
+		schema: {
+			querystring: {
+				type: 'object',
+				properties: {
+					player: { type: 'integer' }
+				}
+			},
+			additionalProperties: false
+		}
+	}, game_get);
+
+	fastify.patch('/game/:id', {
+		schema: {
+			params: {
 				required: ['id'],
 				properties: {
 					id: { type: 'integer' }
 				}
+			},
+			body: {
+				type: 'object',
+				properties: {
+					player_a_score: { type: 'integer', minimum: 1 },
+					player_b_score: { type: 'integer', minimum: 1 },
+					state: { type: 'string' }
+				}
 			}
 		}
-	}, ranking_specific_player);
-
+	}, game_update);
 }
