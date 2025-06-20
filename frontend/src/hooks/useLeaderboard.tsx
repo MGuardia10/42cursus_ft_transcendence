@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback } from "react";
 
 /**
@@ -8,10 +9,10 @@ export function useLeaderboard(itemsPerPage: number = 5) {
   /* useState variables */
   const [loadingTop, setLoadingTop] = useState(true);
   const [loadingPage, setLoadingPage] = useState(true);
-  const [errorTop, setErrorTop] = useState(null);
-  const [errorPage, setErrorPage] = useState(null);
-  const [topPlayers, setTopPlayers] = useState([]);
-  const [currentPlayers, setCurrentPlayers] = useState([]);
+  const [errorTop, setErrorTop] = useState<Error | null>(null);
+  const [errorPage, setErrorPage] = useState<Error | null>(null);
+  const [topPlayers, setTopPlayers] = useState<any[]>([]);
+  const [currentPlayers, setCurrentPlayers] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -20,11 +21,19 @@ export function useLeaderboard(itemsPerPage: number = 5) {
     setLoadingTop(true);
     setErrorTop(null);
     try {
-      const res = await fetch(`/api/leaderboard/top3`);
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL
+        }/ranking?limit=3&page=1&includeTop3=true`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       if (!res.ok) throw new Error(`Error fetching top players: ${res.status}`);
       const data = await res.json();
       setTopPlayers(data);
-    } catch (err) {
+    } catch (err: any) {
       setErrorTop(err);
     } finally {
       setLoadingTop(false);
@@ -33,19 +42,21 @@ export function useLeaderboard(itemsPerPage: number = 5) {
 
   // Fetch paginated players (excluding top 3 on backend)
   const fetchPagePlayers = useCallback(
-    async (page) => {
+    async (page: number) => {
       setLoadingPage(true);
       setErrorPage(null);
       try {
         const res = await fetch(
-          `/api/leaderboard?page=${page}&limit=${itemsPerPage}`
+          `${
+            import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL
+          }/ranking?limit=${itemsPerPage}&page=${page}&includeTop3=false`
         );
         if (!res.ok)
           throw new Error(`Error fetching page ${page}: ${res.status}`);
-        const { players, total } = await res.json();
-        setCurrentPlayers(players);
-        setTotalPages(Math.ceil(total / itemsPerPage));
-      } catch (err) {
+        const { results, stats } = await res.json();
+        setCurrentPlayers(results);
+        setTotalPages(Math.ceil(stats.lastPage));
+      } catch (err: any) {
         setErrorPage(err);
       } finally {
         setLoadingPage(false);
