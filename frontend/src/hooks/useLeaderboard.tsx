@@ -18,9 +18,12 @@ export function useLeaderboard(itemsPerPage: number = 5) {
 
   // Fetch top 3 players
   const fetchTopPlayers = useCallback(async () => {
+    // Set loading state and reset error
     setLoadingTop(true);
     setErrorTop(null);
+
     try {
+      // Fetch top 3 players from the API
       const res = await fetch(
         `${
           import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL
@@ -30,9 +33,45 @@ export function useLeaderboard(itemsPerPage: number = 5) {
           credentials: "include",
         }
       );
+
+      // Check if the response is ok
       if (!res.ok) throw new Error(`Error fetching top players: ${res.status}`);
-      const data = await res.json();
-      setTopPlayers(data);
+      const { results } = await res.json();
+
+      // With results, get user data from the API
+      if (!Array.isArray(results) || results.length === 0) {
+        setTopPlayers([]);
+      } else {
+        // Map results to include user data
+        const data = await Promise.all(
+          results.map(async (player: any) => {
+            // Fetch user data for each player
+            const userRes = await fetch(
+              `${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${player.id}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+
+            // Check if user data response is ok
+            if (!userRes.ok)
+              throw new Error(
+                `Error fetching user ${player.id}: ${userRes.status}`
+              );
+
+            // Extract user data neccesary
+            const { alias } = await userRes.json();
+
+            // Return player data with alias
+            return {
+              ...player,
+              alias,
+            };
+          })
+        );
+        setTopPlayers(data);
+      }
     } catch (err: any) {
       setErrorTop(err);
     } finally {
@@ -43,19 +82,67 @@ export function useLeaderboard(itemsPerPage: number = 5) {
   // Fetch paginated players (excluding top 3 on backend)
   const fetchPagePlayers = useCallback(
     async (page: number) => {
+      // Set loading state and reset error
       setLoadingPage(true);
       setErrorPage(null);
+
+      // Fetch players for the current page
       try {
         const res = await fetch(
           `${
             import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL
           }/ranking?limit=${itemsPerPage}&page=${page}&includeTop3=false`
         );
+
+        // Check if the response is ok
         if (!res.ok)
           throw new Error(`Error fetching page ${page}: ${res.status}`);
+
+        // Extract results and stats from the response
         const { results, stats } = await res.json();
-        setCurrentPlayers(results);
-        setTotalPages(Math.ceil(stats.lastPage));
+
+        // Check if results is an array and has items
+        if (!Array.isArray(results) || results.length === 0) {
+          setCurrentPlayers([]);
+          setTotalPages(1);
+        } else {
+          // Map results to include user data
+          const data = await Promise.all(
+            results.map(async (player: any) => {
+              // Fetch user data for each player
+              const userRes = await fetch(
+                `${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${
+                  player.id
+                }`,
+                {
+                  method: "GET",
+                  credentials: "include",
+                }
+              );
+
+              // Check if user data response is ok
+              if (!userRes.ok)
+                throw new Error(
+                  `Error fetching user ${player.id}: ${userRes.status}`
+                );
+
+              // Extract user data neccesary
+              const { alias } = await userRes.json();
+
+              // Return player data with alias
+              return {
+                ...player,
+                alias,
+              };
+            })
+          );
+
+          // Set current players
+          setCurrentPlayers(data);
+        }
+
+        // Set total pages from stats
+        setTotalPages(stats.lastPage);
       } catch (err: any) {
         setErrorPage(err);
       } finally {
