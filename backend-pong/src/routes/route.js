@@ -107,7 +107,7 @@ export default async function (fastify, options)
 		}
 	}, ranking_specific_player);
       
-=======
+
 	/***************/
 	/* NOTE: Games */
 	/***************/
