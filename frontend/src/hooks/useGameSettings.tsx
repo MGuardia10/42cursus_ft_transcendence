@@ -116,7 +116,6 @@ export function useGameSettings() {
         // Parse response
         return { success: true };
       } catch (err) {
-        console.error(err);
         return { success: false, error: err };
       }
     },
