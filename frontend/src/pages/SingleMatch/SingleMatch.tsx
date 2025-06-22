@@ -4,6 +4,18 @@ import type React from "react"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useLanguage } from "../../hooks/useLanguage"
 
+interface PlayerData {
+  id: string
+  name: string
+  alias: string
+  avatar?: string
+}
+
+interface GameData {
+  player1: PlayerData
+  player2: PlayerData
+}
+
 interface GameState {
   ball: {
     x: number
@@ -41,6 +53,23 @@ const SingleMatch: React.FC = () => {
   const animationRef = useRef<number | null>(null)
   const keysRef = useRef<{ [key: string]: boolean }>({})
 
+  // Load player data from sessionStorage
+  const [gameData, setGameData] = useState<GameData | null>(null)
+  const [gameEnded, setGameEnded] = useState(false)
+
+  useEffect(() => {
+    const storedGameData = sessionStorage.getItem("gameData")
+    if (storedGameData) {
+      try {
+        const parsedData = JSON.parse(storedGameData)
+        setGameData(parsedData)
+        // Don't clear the data immediately - keep it for the duration of the game
+      } catch (error) {
+        console.error("Error parsing game data:", error)
+      }
+    }
+  }, [])
+
   const [gameState, setGameState] = useState<GameState>({
     ball: { x: 400, y: 300, dx: BALL_SPEED, dy: BALL_SPEED },
     playerPaddle: { y: 260 },
@@ -50,6 +79,14 @@ const SingleMatch: React.FC = () => {
     gameWidth: 800,
     gameHeight: 600,
   })
+
+  // Clear game data when game ends
+  useEffect(() => {
+    if (gameEnded) {
+      // Clear the game data from sessionStorage when the game ends
+      sessionStorage.removeItem("gameData")
+    }
+  }, [gameEnded])
 
   const updateGameDimensions = useCallback(() => {
     if (gameRef.current) {
@@ -173,21 +210,58 @@ const SingleMatch: React.FC = () => {
         newState.ball.dy = (hitPos - 0.5) * BALL_SPEED * 2
       }
 
-      if (newState.ball.x < 0) {
+      if (newState.ball.x < -BALL_SIZE) {
         newState.score.enemy++
-        newState.ball = resetBall(gameWidth, gameHeight)
+        newState.ball = {
+          x: gameWidth / 2,
+          y: gameHeight / 2,
+          dx: 0,
+          dy: 0,
+        }
+
+        // Set ball movement after delay
+        setTimeout(() => {
+          setGameState((prev) => ({
+            ...prev,
+            ball: {
+              ...prev.ball,
+              dx: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
+              dy: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
+            },
+          }))
+        }, SERVE_DELAY * 1000)
 
         if (newState.score.enemy >= POINTS_TO_WIN) {
           newState.gamePaused = false
+          setGameEnded(true)
         }
-      } else if (newState.ball.x > gameWidth) {
+      } else if (newState.ball.x > gameWidth + BALL_SIZE) {
         newState.score.player++
-        newState.ball = resetBall(gameWidth, gameHeight)
+        newState.ball = {
+          x: gameWidth / 2,
+          y: gameHeight / 2,
+          dx: 0,
+          dy: 0,
+        }
+
+        // Set ball movement after delay
+        setTimeout(() => {
+          setGameState((prev) => ({
+            ...prev,
+            ball: {
+              ...prev.ball,
+              dx: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
+              dy: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
+            },
+          }))
+        }, SERVE_DELAY * 1000)
 
         if (newState.score.player >= POINTS_TO_WIN) {
           newState.gamePaused = false
+          setGameEnded(true)
         }
       }
+
       return newState
     })
 
@@ -210,6 +284,8 @@ const SingleMatch: React.FC = () => {
       score: { player: 0, enemy: 0 },
       gamePaused: false,
     }))
+    // Reset the game ended state to allow continuing the match
+    setGameEnded(false)
   }
 
   useEffect(() => {
@@ -237,12 +313,30 @@ const SingleMatch: React.FC = () => {
 
         <div className="flex justify-center items-center mb-6 bg-background-secondary rounded-lg p-4">
           <div className="text-center mx-8">
-            <div className="text-text-secondary text-sm mb-1">Jugador 1</div>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              {gameData?.player1.avatar && (
+                <img
+                  src={gameData.player1.avatar || "/placeholder.svg"}
+                  alt={gameData.player1.alias}
+                  className="w-8 h-8 rounded-full border border-text-tertiary object-cover"
+                />
+              )}
+              <div className="text-text-secondary text-sm">{gameData?.player1.alias || "Jugador 1"}</div>
+            </div>
             <div className="text-3xl font-bold text-text-tertiary">{gameState.score.player}</div>
           </div>
           <div className="text-2xl text-text-primary mx-4">-</div>
           <div className="text-center mx-8">
-            <div className="text-text-secondary text-sm mb-1">Jugador 2</div>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              {gameData?.player2.avatar && (
+                <img
+                  src={gameData.player2.avatar || "/placeholder.svg"}
+                  alt={gameData.player2.alias}
+                  className="w-8 h-8 rounded-full border border-text-tertiary object-cover"
+                />
+              )}
+              <div className="text-text-secondary text-sm">{gameData?.player2.alias || "Jugador 2"}</div>
+            </div>
             <div className="text-3xl font-bold text-text-tertiary">{gameState.score.enemy}</div>
           </div>
         </div>
@@ -299,9 +393,9 @@ const SingleMatch: React.FC = () => {
                   {gameState.score.player === 0 && gameState.score.enemy === 0
                     ? t?.pressToStart || "Press Start to Play"
                     : gameState.score.player >= POINTS_TO_WIN
-                      ? "¡Jugador 1 gana!"
+                      ? `¡${gameData?.player1.alias || "Jugador 1"} gana!`
                       : gameState.score.enemy >= POINTS_TO_WIN
-                        ? "¡Jugador 2 gana!"
+                        ? `¡${gameData?.player2.alias || "Jugador 2"} gana!`
                         : t?.gamePaused || "Game Paused"}
                 </div>
               </div>
@@ -327,7 +421,9 @@ const SingleMatch: React.FC = () => {
             </button>
           </div>
           <div className="text-center text-text-secondary text-sm max-w-md">
-            <p className="mb-2">Jugador 1: W/S | Jugador 2: O/L</p>
+            <p className="mb-2">
+              {gameData?.player1.alias || "Jugador 1"}: W/S | {gameData?.player2.alias || "Jugador 2"}: O/L
+            </p>
             <p>{t?.firstToScore || `Primero en llegar a ${POINTS_TO_WIN} puntos gana!`}</p>
           </div>
         </div>

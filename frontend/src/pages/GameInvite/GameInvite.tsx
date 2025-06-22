@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { useNavigate } from "react-router"
-import { IoGameController, IoArrowBack } from "react-icons/io5"
+import { IoGameController } from "react-icons/io5"
 import { FaUserFriends } from "react-icons/fa"
 import { useLanguage } from "@/hooks/useLanguage"
 import { useFriends } from "@/hooks/useFriends"
@@ -12,6 +12,13 @@ import { useAuth } from "@/hooks/useAuth"
 import type { Friend } from "@/types/friendsContext"
 import Spinner from "@/layout/Spinner/Spinner"
 import TwoFactorInput from "@/pages/TwoFactorAuth/components/TwoFactorInput"
+
+interface GameInvitation {
+  id: string
+  senderId: string
+  receiverId: string
+  status: "pending" | "accepted" | "rejected"
+}
 
 const GameInvite: React.FC = () => {
   const { t } = useLanguage()
@@ -34,48 +41,125 @@ const GameInvite: React.FC = () => {
     setWaitingForResponse(true)
 
     try {
-      // Generate a random 6-digit code
-      const code = Math.floor(100000 + Math.random() * 900000).toString()
-      setVerificationCode(code)
-
-      // Send email with the verification code
-      const response = await fetch(`${import.meta.env.VITE_EMAIL_API_BASEURL_EXTERNAL}/send-invite`, {
+      // Send invitation using the auth API
+      const response = await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/send-invitation`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // Enable cookies for JWT
         body: JSON.stringify({
-          to: friend.email,
-          subject: t("game_invite_email_subject") || "Invitación a jugar",
-          message: `${t("game_invite_email_message") || `Hola ${friend.alias}, te invitamos a jugar.`} Tu código de verificación es: ${code}`,
+          id: friend.id,
         }),
       })
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`)
+        let errorMessage = t("game_invitation_error") || "Error al enviar la invitación"
+
+        switch (response.status) {
+          case 400:
+            errorMessage = t("bad_request_error") || "Solicitud incorrecta"
+            break
+          case 401:
+            errorMessage = t("unauthorized_error") || "No autorizado"
+            break
+          case 403:
+            errorMessage = t("self_invite_error") || "No puedes invitarte a ti mismo"
+            break
+          case 404:
+            errorMessage = t("user_not_found_error") || "Usuario no encontrado"
+            break
+          default:
+            errorMessage = `Error ${response.status}: ${response.statusText}`
+        }
+
+        throw new Error(errorMessage)
       }
+
+      const data = await response.json()
+      setVerificationCode(data.hash) // Store the hash instead of generating a random code
 
       addNotification(`${t("game_invitation_sent")} ${friend.alias}`, "success")
     } catch (error) {
-      addNotification(`${t("game_invitation_email_error") || "Error al enviar el correo"}: ${error}`, "error")
+      addNotification(`${error}`, "error")
       setWaitingForResponse(false)
+      setSelectedFriend(null)
       return
     }
   }
 
   const handleCodeComplete = async (code: string) => {
-    try {
-      // Verify the code matches the one we generated
-      if (code === verificationCode) {
-        addNotification(t("tfa_success") || "Código de autenticación correcto", "success")
+    if (!verificationCode) {
+      addNotification(t("no_hash_error") || "Error: No hay hash de verificación", "error")
+      return
+    }
 
-        // Redirect to the single match page
-        window.location.href = "https://localhost:8080/single-match"
-      } else {
-        throw new Error("Invalid code")
+    try {
+      // Verify the code using the auth API
+      const response = await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/verify-invitation`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Enable cookies for JWT
+        body: JSON.stringify({
+          hash: verificationCode, // Use the hash we received from send-invitation
+          code: code,
+        }),
+      })
+
+      if (!response.ok) {
+        let errorMessage = t("tfa_error") || "Código de autenticación incorrecto"
+
+        switch (response.status) {
+          case 400:
+            errorMessage = t("bad_request_error") || "Solicitud incorrecta"
+            break
+          case 401:
+            errorMessage = t("invalid_code_error") || "Código incorrecto"
+            break
+          case 404:
+            errorMessage = t("hash_not_found_error") || "Hash de verificación no encontrado"
+            break
+          case 429:
+            errorMessage =
+              t("max_attempts_error") || "Máximo número de intentos alcanzado. Vuelve a invitar al usuario."
+            // Reset the state to allow sending a new invitation
+            setWaitingForResponse(false)
+            setSelectedFriend(null)
+            setVerificationCode("")
+            break
+          default:
+            errorMessage = `Error ${response.status}: ${response.statusText}`
+        }
+
+        throw new Error(errorMessage)
       }
+
+      const data = await response.json()
+      addNotification(t("tfa_success") || "Código de autenticación correcto", "success")
+
+      // Store player data for the game
+      const gameData = {
+        player1: {
+          id: user.id,
+          name: user.name,
+          alias: user.alias,
+          avatar: user.avatar,
+        },
+        player2: {
+          id: selectedFriend.id,
+          name: selectedFriend.name,
+          alias: selectedFriend.alias,
+          avatar: selectedFriend.avatar,
+        },
+      }
+      sessionStorage.setItem("gameData", JSON.stringify(gameData))
+
+      // Redirect to the single match page
+      window.location.href = "https://localhost:8080/single-match"
     } catch (error) {
-      addNotification(t("tfa_error") || "Código de autenticación incorrecto", "error")
+      addNotification(`${error}`, "error")
       setResetKey((k) => k + 1)
     }
   }
@@ -95,8 +179,7 @@ const GameInvite: React.FC = () => {
           <button
             onClick={() => navigate("/")}
             className="absolute top-4 left-4 p-2 text-text-secondary hover:text-text-primary transition-colors"
-          >
-          </button>
+          ></button>
 
           <div className="flex items-center justify-center gap-3 mb-4">
             <IoGameController className="text-4xl text-text-tertiary" />
