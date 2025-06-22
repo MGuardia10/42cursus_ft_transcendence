@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useLanguage } from "../../hooks/useLanguage"
+import { usePlayerConfig } from "@/hooks/usePlayerConfig"
 
 interface PlayerData {
   id: string
@@ -56,6 +57,9 @@ const SingleMatch: React.FC = () => {
   // Load player data from sessionStorage
   const [gameData, setGameData] = useState<GameData | null>(null)
   const [gameEnded, setGameEnded] = useState(false)
+
+  // Load player configuration
+  const { config: playerConfig, loading: configLoading } = usePlayerConfig()
 
   useEffect(() => {
     const storedGameData = sessionStorage.getItem("gameData")
@@ -300,8 +304,20 @@ const SingleMatch: React.FC = () => {
   }, [gameState.gamePaused, gameLoop])
 
   const stadiumColor = "#1e1e1e" //BACK
-  const ballColor = "#ffffff" //BACK
   const paddleColor = "#00ffcc" //BACK
+
+  // Determine ball color based on player config or environment default
+  const ballColor =
+    playerConfig?.default_value === false ? playerConfig.ball_color : import.meta.env.BALL_COLOR || "#974603"
+
+  // Show loading while fetching config
+  if (configLoading) {
+    return (
+      <div className="container mx-auto flex items-center justify-center min-h-screen">
+        <div>Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-center min-h-screen bg-background-primary">
