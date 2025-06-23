@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useLanguage } from "../../hooks/useLanguage"
-import { usePlayerConfig } from "@/hooks/usePlayerConfig"
+import { useGameSettings } from "@/hooks/useGameSettings"
 
 interface PlayerData {
   id: string
@@ -50,6 +50,10 @@ const POINTS_TO_WIN = 5 //BACK
 
 const SingleMatch: React.FC = () => {
   const { t } = useLanguage()
+
+  // Get player game settings
+  const { ballColor, bgColor, barColor, defaultValue, loading: settingsLoading } = useGameSettings()
+
   const gameRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
   const keysRef = useRef<{ [key: string]: boolean }>({})
@@ -57,9 +61,6 @@ const SingleMatch: React.FC = () => {
   // Load player data from sessionStorage
   const [gameData, setGameData] = useState<GameData | null>(null)
   const [gameEnded, setGameEnded] = useState(false)
-
-  // Load player configuration
-  const { config: playerConfig, loading: configLoading } = usePlayerConfig()
 
   useEffect(() => {
     const storedGameData = sessionStorage.getItem("gameData")
@@ -303,21 +304,10 @@ const SingleMatch: React.FC = () => {
     }
   }, [gameState.gamePaused, gameLoop])
 
-  const stadiumColor = "#1e1e1e" //BACK
-  const paddleColor = "#00ffcc" //BACK
-
-  // Determine ball color based on player config or environment default
-  const ballColor =
-    playerConfig?.default_value === false ? playerConfig.ball_color : import.meta.env.BALL_COLOR || "#974603"
-
-  // Show loading while fetching config
-  if (configLoading) {
-    return (
-      <div className="container mx-auto flex items-center justify-center min-h-screen">
-        <div>Loading...</div>
-      </div>
-    )
-  }
+  // Use player's custom ball color only if custom settings are enabled and not loading
+  const finalBallColor = settingsLoading || defaultValue ? `#${import.meta.env.VITE_BALL_COLOR}` : ballColor
+  const finalBgColor = settingsLoading || defaultValue ? `#${import.meta.env.VITE_FIELD_COLOR}` : bgColor
+  const finalBarColor = settingsLoading || defaultValue ? `#${import.meta.env.VITE_STICK_COLOR}` : barColor
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-center min-h-screen bg-background-primary">
@@ -360,18 +350,26 @@ const SingleMatch: React.FC = () => {
         <div className="flex justify-center mb-6">
           <div
             ref={gameRef}
-            className="relative border-2 border-border-primary rounded-lg overflow-hidden"
+            className="relative rounded-lg overflow-hidden"
             style={{
               width: "100%",
               maxWidth: "600px",
               height: "auto",
               aspectRatio: "4/3",
-              backgroundColor: stadiumColor,
+              backgroundColor: finalBgColor,
+              border: `1px solid ${finalBarColor}`,
             }}
           >
             <div
-              className="absolute bg-border-primary opacity-50"
-              style={{ left: "50%", top: 0, width: "2px", height: "100%", transform: "translateX(-50%)" }}
+              className="absolute opacity-50"
+              style={{
+                left: "50%",
+                top: 0,
+                width: "2px",
+                height: "100%",
+                transform: "translateX(-50%)",
+                backgroundColor: finalBarColor,
+              }}
             />
             <div
               className="absolute rounded-sm"
@@ -380,7 +378,7 @@ const SingleMatch: React.FC = () => {
                 top: `${(gameState.playerPaddle.y / gameState.gameHeight) * 100}%`,
                 width: `${(PADDLE_WIDTH / gameState.gameWidth) * 100}%`,
                 height: `${(PADDLE_HEIGHT / gameState.gameHeight) * 100}%`,
-                backgroundColor: paddleColor,
+                backgroundColor: finalBarColor,
               }}
             />
             <div
@@ -390,7 +388,7 @@ const SingleMatch: React.FC = () => {
                 top: `${(gameState.enemyPaddle.y / gameState.gameHeight) * 100}%`,
                 width: `${(PADDLE_WIDTH / gameState.gameWidth) * 100}%`,
                 height: `${(PADDLE_HEIGHT / gameState.gameHeight) * 100}%`,
-                backgroundColor: paddleColor,
+                backgroundColor: finalBarColor,
               }}
             />
             <div
@@ -400,7 +398,7 @@ const SingleMatch: React.FC = () => {
                 top: `${(gameState.ball.y / gameState.gameHeight) * 100}%`,
                 width: `${(BALL_SIZE / gameState.gameWidth) * 100}%`,
                 height: `${(BALL_SIZE / gameState.gameHeight) * 100}%`,
-                backgroundColor: ballColor,
+                backgroundColor: finalBallColor,
               }}
             />
             {!gameState.gamePaused && (
