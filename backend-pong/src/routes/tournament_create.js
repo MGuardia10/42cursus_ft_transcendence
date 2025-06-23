@@ -15,26 +15,45 @@ function divide_players( players )
 	return [m1, m2];
 }
 
-function matchmaking_4( tournament_id, players )
+function matchmaking_4( tournament_id, players, base_phase = 1, base_ordr = 1 )
 {
 	/* Get the matches */
 	const matches = [...divide_players( players ), [-1, -1]];
 
 	/* Create each match and the next rounds */
-	let ordr = 0;
+	let ordr = base_ordr - 1;
 	matches.forEach(([p1, p2]) => {
 		const game_id = create_game(p1, p2);
+		const current_phase = p1 != -1 ? base_phase : base_phase + 1;
+		const current_ordr = (current_phase === base_phase)
+			? ((ordr % (base_ordr + 1)) + 1)
+			: ((base_ordr - 1) / 2) + 1
 		db
 			.prepare("INSERT INTO tournament_games(tournament_id, game_id, phase, ordr) VALUES(?, ?, ?, ?)")
-			.run( tournament_id, game_id, p1 != -1 ? 1 : 2, (ordr % 2) + 1 );
+			.run( tournament_id, game_id, current_phase, current_ordr );
 		ordr++;
 	})
+}
+
+function matchmaking_8( tournament_id, players )
+{
+	/* "Create" 2 4 players tournament */
+	matchmaking_4( tournament_id, players.slice(0, 4), 1, 1)
+	matchmaking_4( tournament_id, players.slice(4, 8), 1, 3)
+
+	/* Set the final match */
+	const game_id = create_game(-1, -1);
+	db
+		.prepare("INSERT INTO tournament_games(tournament_id, game_id, phase, ordr) VALUES(?, ?, ?, ?)")
+		.run( tournament_id, game_id, 3, 1 );
 }
 
 function do_matchmaking( tournament_id, players )
 {
 	if (players.length == 4)
 		matchmaking_4( tournament_id, players );
+	if (players.length == 8)
+		matchmaking_8( tournament_id, players );
 }
 
 export default async function tournament_create( request, reply )
@@ -44,7 +63,7 @@ export default async function tournament_create( request, reply )
 
 	/* Check if the number of players is valid */
 	if (players.length != 4 && players.length != 8)
-		return reply.code(500).send({ error: "The number of players is not valid" });
+		return reply.code(500).send({ error: "Incorrect number of players" });
 
 	/* Create the configuration */
 	const conf_id = create_configuration({
@@ -56,7 +75,7 @@ export default async function tournament_create( request, reply )
 		sc: configuration.stick_color
 	});
 	if (conf_id == undefined)
-		return reply.code(400).send({ error: "Error creating the player configuration" });
+		return reply.code(400).send({ error: "Error creating the tournament configuration" });
 
 	try
 	{
