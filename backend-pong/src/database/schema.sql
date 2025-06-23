@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS games (
 
 -- Tournaments
 CREATE TABLE IF NOT EXISTS tournaments (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id TEXT PRIMARY KEY,
   configuration_id INTEGER NOT NULL,
 
   -- Constraints
