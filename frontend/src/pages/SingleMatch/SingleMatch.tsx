@@ -31,7 +31,7 @@ interface GameState {
     y: number
     direction: number
   }
-  score: {
+  gameScore: {
     player: number
     enemy: number
   }
@@ -45,14 +45,20 @@ const PADDLE_WIDTH = 12
 const BALL_SIZE = 12
 const PADDLE_SPEED = 3
 const BALL_SPEED = 2
-const SERVE_DELAY = 1 //BACK
-const POINTS_TO_WIN = 5 //BACK
 
 const SingleMatch: React.FC = () => {
   const { t } = useLanguage()
 
   // Get player game settings
-  const { ballColor, bgColor, barColor, defaultValue, loading: settingsLoading } = useGameSettings()
+  const {
+    ballColor,
+    bgColor,
+    barColor,
+    serveDelay,
+    score,
+    defaultValue,
+    loading: settingsLoading,
+  } = useGameSettings()
 
   const gameRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
@@ -79,7 +85,7 @@ const SingleMatch: React.FC = () => {
     ball: { x: 400, y: 300, dx: BALL_SPEED, dy: BALL_SPEED },
     playerPaddle: { y: 260 },
     enemyPaddle: { y: 260, direction: 1 },
-    score: { player: 0, enemy: 0 },
+    gameScore: { player: 0, enemy: 0 },
     gamePaused: false,
     gameWidth: 800,
     gameHeight: 600,
@@ -92,6 +98,14 @@ const SingleMatch: React.FC = () => {
       sessionStorage.removeItem("gameData")
     }
   }, [gameEnded])
+
+  // Use player's custom game settings only if custom settings are enabled and not loading
+  const finalServeDelay =
+    settingsLoading || defaultValue ? Number.parseInt(import.meta.env.VITE_SERVE_DELAY) : serveDelay
+  const finalPointsToWin =
+    settingsLoading || defaultValue ? Number.parseInt(import.meta.env.VITE_POINTS_TO_WIN) : score
+
+  console.log("PTW: ", finalPointsToWin)
 
   const updateGameDimensions = useCallback(() => {
     if (gameRef.current) {
@@ -139,30 +153,33 @@ const SingleMatch: React.FC = () => {
     updateGameDimensions()
   }, [updateGameDimensions])
 
-  const resetBall = useCallback((gameWidth: number, gameHeight: number, withDelay = true) => {
-    const newBall = {
-      x: gameWidth / 2,
-      y: gameHeight / 2,
-      dx: 0,
-      dy: 0,
-    }
-    if (withDelay) {
-      setTimeout(() => {
-        setGameState((prev) => ({
-          ...prev,
-          ball: {
-            ...prev.ball,
-            dx: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
-            dy: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
-          },
-        }))
-      }, SERVE_DELAY * 1000)
-    } else {
-      newBall.dx = (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED
-      newBall.dy = (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED
-    }
-    return newBall
-  }, [])
+  const resetBall = useCallback(
+    (gameWidth: number, gameHeight: number, withDelay = true) => {
+      const newBall = {
+        x: gameWidth / 2,
+        y: gameHeight / 2,
+        dx: 0,
+        dy: 0,
+      }
+      if (withDelay) {
+        setTimeout(() => {
+          setGameState((prev) => ({
+            ...prev,
+            ball: {
+              ...prev.ball,
+              dx: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
+              dy: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
+            },
+          }))
+        }, finalServeDelay * 1000)
+      } else {
+        newBall.dx = (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED
+        newBall.dy = (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED
+      }
+      return newBall
+    },
+    [finalServeDelay],
+  )
 
   const gameLoop = useCallback(() => {
     setGameState((prev) => {
@@ -216,7 +233,7 @@ const SingleMatch: React.FC = () => {
       }
 
       if (newState.ball.x < -BALL_SIZE) {
-        newState.score.enemy++
+        newState.gameScore.enemy++
         newState.ball = {
           x: gameWidth / 2,
           y: gameHeight / 2,
@@ -234,14 +251,14 @@ const SingleMatch: React.FC = () => {
               dy: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
             },
           }))
-        }, SERVE_DELAY * 1000)
+        }, finalServeDelay * 1000)
 
-        if (newState.score.enemy >= POINTS_TO_WIN) {
+        if (newState.gameScore.enemy >= finalPointsToWin) {
           newState.gamePaused = false
           setGameEnded(true)
         }
       } else if (newState.ball.x > gameWidth + BALL_SIZE) {
-        newState.score.player++
+        newState.gameScore.player++
         newState.ball = {
           x: gameWidth / 2,
           y: gameHeight / 2,
@@ -259,9 +276,9 @@ const SingleMatch: React.FC = () => {
               dy: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
             },
           }))
-        }, SERVE_DELAY * 1000)
+        }, finalServeDelay * 1000)
 
-        if (newState.score.player >= POINTS_TO_WIN) {
+        if (newState.gameScore.player >= finalPointsToWin) {
           newState.gamePaused = false
           setGameEnded(true)
         }
@@ -271,7 +288,7 @@ const SingleMatch: React.FC = () => {
     })
 
     animationRef.current = requestAnimationFrame(gameLoop)
-  }, [resetBall])
+  }, [resetBall, finalServeDelay, finalPointsToWin])
 
   const pauseGame = () => {
     setGameState((prev) => ({
@@ -286,7 +303,7 @@ const SingleMatch: React.FC = () => {
       ball: resetBall(prev.gameWidth, prev.gameHeight, false),
       playerPaddle: { y: prev.gameHeight / 2 - PADDLE_HEIGHT / 2 },
       enemyPaddle: { y: prev.gameHeight / 2 - PADDLE_HEIGHT / 2, direction: 1 },
-      score: { player: 0, enemy: 0 },
+      gameScore: { player: 0, enemy: 0 },
       gamePaused: false,
     }))
     // Reset the game ended state to allow continuing the match
@@ -329,7 +346,7 @@ const SingleMatch: React.FC = () => {
               )}
               <div className="text-text-secondary text-sm">{gameData?.player1.alias || "Jugador 1"}</div>
             </div>
-            <div className="text-3xl font-bold text-text-tertiary">{gameState.score.player}</div>
+            <div className="text-3xl font-bold text-text-tertiary">{gameState.gameScore.player}</div>
           </div>
           <div className="text-2xl text-text-primary mx-4">-</div>
           <div className="text-center mx-8">
@@ -343,7 +360,7 @@ const SingleMatch: React.FC = () => {
               )}
               <div className="text-text-secondary text-sm">{gameData?.player2.alias || "Jugador 2"}</div>
             </div>
-            <div className="text-3xl font-bold text-text-tertiary">{gameState.score.enemy}</div>
+            <div className="text-3xl font-bold text-text-tertiary">{gameState.gameScore.enemy}</div>
           </div>
         </div>
 
@@ -404,11 +421,11 @@ const SingleMatch: React.FC = () => {
             {!gameState.gamePaused && (
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div className="text-2xl text-text-primary">
-                  {gameState.score.player === 0 && gameState.score.enemy === 0
+                  {gameState.gameScore.player === 0 && gameState.gameScore.enemy === 0
                     ? t?.pressToStart || "Press Start to Play"
-                    : gameState.score.player >= POINTS_TO_WIN
+                    : gameState.gameScore.player >= finalPointsToWin
                       ? `¡${gameData?.player1.alias || "Jugador 1"} gana!`
-                      : gameState.score.enemy >= POINTS_TO_WIN
+                      : gameState.gameScore.enemy >= finalPointsToWin
                         ? `¡${gameData?.player2.alias || "Jugador 2"} gana!`
                         : t?.gamePaused || "Game Paused"}
                 </div>
@@ -419,7 +436,7 @@ const SingleMatch: React.FC = () => {
 
         <div className="flex flex-col items-center space-y-4">
           <div className="flex space-x-4">
-            {gameState.score.player < POINTS_TO_WIN && gameState.score.enemy < POINTS_TO_WIN && (
+            {gameState.gameScore.player < finalPointsToWin && gameState.gameScore.enemy < finalPointsToWin && (
               <button
                 onClick={pauseGame}
                 className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
@@ -438,7 +455,7 @@ const SingleMatch: React.FC = () => {
             <p className="mb-2">
               {gameData?.player1.alias || "Jugador 1"}: W/S | {gameData?.player2.alias || "Jugador 2"}: O/L
             </p>
-            <p>{t?.firstToScore || `Primero en llegar a ${POINTS_TO_WIN} puntos gana!`}</p>
+            <p>{t?.firstToScore || `Primero en llegar a ${finalPointsToWin} puntos gana!`}</p>
           </div>
         </div>
       </div>
