@@ -4,6 +4,10 @@ import type React from "react"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useLanguage } from "../../hooks/useLanguage"
 import { useGameSettings } from "@/hooks/useGameSettings"
+import { useGame } from "@/hooks/useGame"
+import { usePlayer } from "@/hooks/usePlayer"
+import { useNotification } from "@/hooks/useNotification"
+import { useAuth } from "@/hooks/useAuth"
 
 interface PlayerData {
   id: string
@@ -48,17 +52,15 @@ const BALL_SPEED = 2
 
 const SingleMatch: React.FC = () => {
   const { t } = useLanguage()
+  const { user } = useAuth()
+  const { addNotification } = useNotification()
+
+  // 🔥 Usar los hooks correctamente
+  const { createGame, updateGame, loading: gameLoading, error: gameError } = useGame()
+  const { refreshPlayerStats } = usePlayer()
 
   // Get player game settings
-  const {
-    ballColor,
-    bgColor,
-    barColor,
-    serveDelay,
-    score,
-    defaultValue,
-    loading: settingsLoading,
-  } = useGameSettings()
+  const { ballColor, bgColor, barColor, serveDelay, score, defaultValue, loading: settingsLoading } = useGameSettings()
 
   const gameRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
@@ -67,6 +69,9 @@ const SingleMatch: React.FC = () => {
   // Load player data from sessionStorage
   const [gameData, setGameData] = useState<GameData | null>(null)
   const [gameEnded, setGameEnded] = useState(false)
+  const [backendGameId, setBackendGameId] = useState<number | null>(null)
+  const [gameCreated, setGameCreated] = useState(false)
+  const [gameUpdated, setGameUpdated] = useState(false)
 
   useEffect(() => {
     const storedGameData = sessionStorage.getItem("gameData")
@@ -74,12 +79,12 @@ const SingleMatch: React.FC = () => {
       try {
         const parsedData = JSON.parse(storedGameData)
         setGameData(parsedData)
-        // Don't clear the data immediately - keep it for the duration of the game
       } catch (error) {
         console.error("Error parsing game data:", error)
+        addNotification("Error loading game data", "error")
       }
     }
-  }, [])
+  }, [addNotification])
 
   const [gameState, setGameState] = useState<GameState>({
     ball: { x: 400, y: 300, dx: BALL_SPEED, dy: BALL_SPEED },
@@ -94,7 +99,6 @@ const SingleMatch: React.FC = () => {
   // Clear game data when game ends
   useEffect(() => {
     if (gameEnded) {
-      // Clear the game data from sessionStorage when the game ends
       sessionStorage.removeItem("gameData")
     }
   }, [gameEnded])
@@ -102,10 +106,75 @@ const SingleMatch: React.FC = () => {
   // Use player's custom game settings only if custom settings are enabled and not loading
   const finalServeDelay =
     settingsLoading || defaultValue ? Number.parseInt(import.meta.env.VITE_SERVE_DELAY) : serveDelay
-  const finalPointsToWin =
-    settingsLoading || defaultValue ? Number.parseInt(import.meta.env.VITE_POINTS_TO_WIN) : score
+  const finalPointsToWin = settingsLoading || defaultValue ? Number.parseInt(import.meta.env.VITE_POINTS_TO_WIN) : score
 
-  console.log("PTW: ", finalPointsToWin)
+  // 🔥 Función para crear una partida usando el hook
+  const createBackendGame = useCallback(async () => {
+    if (!gameData || !user || gameCreated) return
+
+    try {
+      const result = await createGame({
+        player_a_id: gameData.player1.id,
+        player_b_id: gameData.player2.id,
+      })
+
+      if (result) {
+        setBackendGameId(result.game_id)
+        console.log("✅ Game created with ID:", result.game_id) // <--- AÑADIDO
+        setGameCreated(true)
+        setGameUpdated(false)
+      } else {
+        addNotification("Error creating game in backend", "error")
+      }
+    } catch (error) {
+      console.error("Error creating backend game:", error)
+      addNotification("Error creating game in backend", "error")
+    }
+  }, [gameData, user, gameCreated, createGame, addNotification])
+
+const updateBackendGame = useCallback(
+  async (playerScore: number, enemyScore: number) => {
+    if (!backendGameId || gameUpdated) {
+      return
+    }
+
+    try {
+      setGameUpdated(true)
+
+      const success = await updateGame(backendGameId, {
+        player_a_score: playerScore,
+        player_b_score: enemyScore,
+        state: "Finished",
+      })
+
+      if (success) {
+        // 👉 Logs informativos
+        console.log("✅ Game ID:", backendGameId)
+        console.log("🎯 Final Score - Player A:", playerScore, "| Player B:", enemyScore)
+
+        if (gameData) {
+          const winner =
+            playerScore > enemyScore ? gameData.player1 : gameData.player2
+          console.log("🏆 Winner ID:", winner.id)
+          console.log("🏆 Winner Name:", winner.alias)
+        }
+
+        // Refresh player stats after game completion
+        await refreshPlayerStats()
+        addNotification("Game completed and stats updated!", "success")
+      } else {
+        setGameUpdated(false)
+        addNotification("Error updating game result", "error")
+      }
+    } catch (error) {
+      console.error("Error updating backend game:", error)
+      addNotification("Error updating game result", "error")
+      setGameUpdated(false)
+    }
+  },
+  [backendGameId, gameUpdated, updateGame, refreshPlayerStats, addNotification, gameData],
+)
+
 
   const updateGameDimensions = useCallback(() => {
     if (gameRef.current) {
@@ -183,7 +252,8 @@ const SingleMatch: React.FC = () => {
 
   const gameLoop = useCallback(() => {
     setGameState((prev) => {
-      if (!prev.gamePaused) return prev
+      if (!prev.gamePaused || gameEnded) return prev
+
       const newState = { ...prev }
       const { gameWidth, gameHeight } = newState
 
@@ -241,7 +311,6 @@ const SingleMatch: React.FC = () => {
           dy: 0,
         }
 
-        // Set ball movement after delay
         setTimeout(() => {
           setGameState((prev) => ({
             ...prev,
@@ -256,6 +325,9 @@ const SingleMatch: React.FC = () => {
         if (newState.gameScore.enemy >= finalPointsToWin) {
           newState.gamePaused = false
           setGameEnded(true)
+          if (!gameUpdated) {
+            updateBackendGame(newState.gameScore.player, newState.gameScore.enemy)
+          }
         }
       } else if (newState.ball.x > gameWidth + BALL_SIZE) {
         newState.gameScore.player++
@@ -266,7 +338,6 @@ const SingleMatch: React.FC = () => {
           dy: 0,
         }
 
-        // Set ball movement after delay
         setTimeout(() => {
           setGameState((prev) => ({
             ...prev,
@@ -281,14 +352,19 @@ const SingleMatch: React.FC = () => {
         if (newState.gameScore.player >= finalPointsToWin) {
           newState.gamePaused = false
           setGameEnded(true)
+          if (!gameUpdated) {
+            updateBackendGame(newState.gameScore.player, newState.gameScore.enemy)
+          }
         }
       }
 
       return newState
     })
 
-    animationRef.current = requestAnimationFrame(gameLoop)
-  }, [resetBall, finalServeDelay, finalPointsToWin])
+    if (!gameEnded) {
+      animationRef.current = requestAnimationFrame(gameLoop)
+    }
+  }, [resetBall, finalServeDelay, finalPointsToWin, updateBackendGame, gameEnded, gameUpdated])
 
   const pauseGame = () => {
     setGameState((prev) => ({
@@ -297,7 +373,23 @@ const SingleMatch: React.FC = () => {
     }))
   }
 
+  const startGame = async () => {
+    if (!gameCreated) {
+      await createBackendGame()
+    }
+
+    setGameState((prev) => ({
+      ...prev,
+      gamePaused: true,
+    }))
+  }
+
   const resetGame = () => {
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current)
+      animationRef.current = null
+    }
+
     setGameState((prev) => ({
       ...prev,
       ball: resetBall(prev.gameWidth, prev.gameHeight, false),
@@ -306,12 +398,15 @@ const SingleMatch: React.FC = () => {
       gameScore: { player: 0, enemy: 0 },
       gamePaused: false,
     }))
-    // Reset the game ended state to allow continuing the match
+
     setGameEnded(false)
+    setBackendGameId(null)
+    setGameCreated(false)
+    setGameUpdated(false)
   }
 
   useEffect(() => {
-    if (gameState.gamePaused) {
+    if (gameState.gamePaused && !gameEnded) {
       animationRef.current = requestAnimationFrame(gameLoop)
     } else {
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
@@ -319,12 +414,24 @@ const SingleMatch: React.FC = () => {
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
     }
-  }, [gameState.gamePaused, gameLoop])
+  }, [gameState.gamePaused, gameLoop, gameEnded])
 
   // Use player's custom ball color only if custom settings are enabled and not loading
   const finalBallColor = settingsLoading || defaultValue ? `#${import.meta.env.VITE_BALL_COLOR}` : ballColor
   const finalBgColor = settingsLoading || defaultValue ? `#${import.meta.env.VITE_FIELD_COLOR}` : bgColor
   const finalBarColor = settingsLoading || defaultValue ? `#${import.meta.env.VITE_STICK_COLOR}` : barColor
+
+  // Show loading if game settings are loading
+  if (settingsLoading) {
+    return (
+      <div className="container mx-auto flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-text-tertiary mx-auto"></div>
+          <p className="mt-4 text-text-secondary">Loading game settings...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-center min-h-screen bg-background-primary">
@@ -332,6 +439,7 @@ const SingleMatch: React.FC = () => {
         <div className="text-center mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">{t?.singleMatch || "Single Match"}</h1>
           <p className="text-text-secondary">{t("single_match_play")}</p>
+          {backendGameId && <p className="text-sm text-text-tertiary mt-2">Game ID: {backendGameId}</p>}
         </div>
 
         <div className="flex justify-center items-center mb-6 bg-background-secondary rounded-lg p-4">
@@ -437,12 +545,24 @@ const SingleMatch: React.FC = () => {
         <div className="flex flex-col items-center space-y-4">
           <div className="flex space-x-4">
             {gameState.gameScore.player < finalPointsToWin && gameState.gameScore.enemy < finalPointsToWin && (
-              <button
-                onClick={pauseGame}
-                className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
-              >
-                {gameState.gamePaused ? t?.pause || "Pause" : t?.start || "Start"}
-              </button>
+              <>
+                {gameState.gameScore.player === 0 && gameState.gameScore.enemy === 0 && !gameState.gamePaused ? (
+                  <button
+                    onClick={startGame}
+                    disabled={gameLoading}
+                    className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
+                  >
+                    {gameLoading ? "Creating Game..." : t?.start || "Start"}
+                  </button>
+                ) : (
+                  <button
+                    onClick={pauseGame}
+                    className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
+                  >
+                    {gameState.gamePaused ? t?.pause || "Pause" : t?.resume || "Resume"}
+                  </button>
+                )}
+              </>
             )}
             <button
               onClick={resetGame}
@@ -456,6 +576,7 @@ const SingleMatch: React.FC = () => {
               {gameData?.player1.alias || "Jugador 1"}: W/S | {gameData?.player2.alias || "Jugador 2"}: O/L
             </p>
             <p>{t?.firstToScore || `Primero en llegar a ${finalPointsToWin} puntos gana!`}</p>
+            {gameError && <p className="text-red-400 mt-2">Error: {gameError.message}</p>}
           </div>
         </div>
       </div>
