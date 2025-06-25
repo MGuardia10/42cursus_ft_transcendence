@@ -8,6 +8,7 @@ import player_modify from "./player_modify.js";
 import ranking_all from "./ranking_all.js";
 import ranking_specific_player from "./ranking_specific_player.js";
 import tournament_get from './tournament_get.js';
+import tournament_create from "./tournament_create.js";
 
 /* This function is used to check if the cookie is present in the request */
 function cookieChecker(request, reply, done) {
@@ -205,4 +206,17 @@ export default async function (fastify, options) {
       }
     }
   }, tournament_get);
+
+  fastify.post("/tournaments", {
+	schema: {
+		body: {
+			type: 'object',
+			required: ['configuration', 'players'],
+			properties: {
+				configuration: { type: 'object' },
+				players: { type: 'array', items: { type: 'integer' } }
+			}
+		}
+	}
+  }, tournament_create);
 }
