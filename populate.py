@@ -75,6 +75,8 @@ def set_stats(id: int) -> None:
 	"""
 	games_won = random.randint(0, GAMES_COUNT)
 	games_lost = GAMES_COUNT - games_won
+	points_won = random.randint(1, 1000)
+	points_lose = random.randint(1, 1000)
 
 	requests.patch(
 		f"{PLAYERS_API_URL}/player/{id}",
@@ -83,7 +85,9 @@ def set_stats(id: int) -> None:
 		},
 		json={
 			'win_count': games_won,
-			'lose_count': games_lost
+			'lose_count': games_lost,
+			'win_points': points_won,
+			'lose_points': points_lose,
 		},
 	)
 
