@@ -179,8 +179,8 @@ export default async function (fastify, options) {
         body: {
           type: "object",
           properties: {
-            player_a_score: { type: "integer", minimum: 1 },
-            player_b_score: { type: "integer", minimum: 1 },
+            player_a_score: { type: "integer" },
+            player_b_score: { type: "integer" },
             state: { type: "string" },
           },
         },

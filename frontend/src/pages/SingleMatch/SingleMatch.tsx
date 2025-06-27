@@ -73,6 +73,9 @@ const SingleMatch: React.FC = () => {
   const [gameCreated, setGameCreated] = useState(false)
   const [gameUpdated, setGameUpdated] = useState(false)
 
+  const updateGameCalledRef = useRef(false)
+  const endGameHandledRef = useRef(false)
+
   useEffect(() => {
     const storedGameData = sessionStorage.getItem("gameData")
     if (storedGameData) {
@@ -132,56 +135,53 @@ const SingleMatch: React.FC = () => {
     }
   }, [gameData, user, gameCreated, createGame, addNotification])
 
-const updateBackendGame = useCallback(
-  async (playerScore: number, enemyScore: number) => {
-    if (!backendGameId || gameUpdated) {
-      return
-    }
-
-    try {
-      setGameUpdated(true)
-
-      const success = await updateGame(backendGameId, {
-        player_a_score: playerScore,
-        player_b_score: enemyScore,
-        state: "Finished",
-      })
-
-      if (success) {
-        // 👉 Logs informativos
-        console.log("✅ Game ID:", backendGameId)
-        console.log("🎯 Final Score - Player A:", playerScore, "| Player B:", enemyScore)
-
-        if (gameData) {
-          const winner =
-            playerScore > enemyScore ? gameData.player1 : gameData.player2
-          console.log("🏆 Winner ID:", winner.id)
-          console.log("🏆 Winner Name:", winner.alias)
-        }
-
-        // Refresh player stats after game completion
-        await refreshPlayerStats()
-        addNotification("Game completed and stats updated!", "success")
-      } else {
-        setGameUpdated(false)
-        addNotification("Error updating game result", "error")
+  const updateBackendGame = useCallback(
+    async (playerScore: number, enemyScore: number) => {
+      if (!backendGameId || gameUpdated || updateGameCalledRef.current) {
+        return
       }
-    } catch (error) {
-      console.error("Error updating backend game:", error)
-      addNotification("Error updating game result", "error")
-      setGameUpdated(false)
-    }
-  },
-  [backendGameId, gameUpdated, updateGame, refreshPlayerStats, addNotification, gameData],
-)
-
+      updateGameCalledRef.current = true
+      try {
+        setGameUpdated(true)
+        console.log("[SingleMatch] Llamando a updateBackendGame", { backendGameId, playerScore, enemyScore })
+        const success = await updateGame(backendGameId, {
+          player_a_score: playerScore,
+          player_b_score: enemyScore,
+          state: "Finished",
+        })
+        if (success) {
+          // 👉 Logs informativos
+          console.log("✅ Game ID:", backendGameId)
+          console.log("🎯 Final Score - Player A:", playerScore, "| Player B:", enemyScore)
+          if (gameData) {
+            const winner = playerScore > enemyScore ? gameData.player1 : gameData.player2
+            console.log("🏆 Winner ID:", winner.id)
+            console.log("🏆 Winner Name:", winner.alias)
+          }
+          // Refresh player stats after game completion
+          await refreshPlayerStats()
+          addNotification("Game completed and stats updated!", "success")
+        } else {
+          setGameUpdated(false)
+          updateGameCalledRef.current = false
+          addNotification("Error updating game result", "error")
+        }
+      } catch (error) {
+        console.error("Error updating backend game:", error)
+        addNotification("Error updating game result", "error")
+        setGameUpdated(false)
+        updateGameCalledRef.current = false
+      }
+    },
+    [backendGameId, gameUpdated, updateGame, refreshPlayerStats, addNotification, gameData],
+  )
 
   const updateGameDimensions = useCallback(() => {
     if (gameRef.current) {
       const rect = gameRef.current.getBoundingClientRect()
       const width = Math.min(rect.width, 800)
       const height = Math.min(rect.height, 600)
-      setGameState((prev) => ({
+      setGameState((prev: GameState) => ({
         ...prev,
         gameWidth: width,
         gameHeight: height,
@@ -232,7 +232,7 @@ const updateBackendGame = useCallback(
       }
       if (withDelay) {
         setTimeout(() => {
-          setGameState((prev) => ({
+          setGameState((prev: GameState) => ({
             ...prev,
             ball: {
               ...prev.ball,
@@ -251,7 +251,7 @@ const updateBackendGame = useCallback(
   )
 
   const gameLoop = useCallback(() => {
-    setGameState((prev) => {
+    setGameState((prev: GameState) => {
       if (!prev.gamePaused || gameEnded) return prev
 
       const newState = { ...prev }
@@ -312,7 +312,7 @@ const updateBackendGame = useCallback(
         }
 
         setTimeout(() => {
-          setGameState((prev) => ({
+          setGameState((prev: GameState) => ({
             ...prev,
             ball: {
               ...prev.ball,
@@ -323,9 +323,10 @@ const updateBackendGame = useCallback(
         }, finalServeDelay * 1000)
 
         if (newState.gameScore.enemy >= finalPointsToWin) {
-          newState.gamePaused = false
-          setGameEnded(true)
-          if (!gameUpdated) {
+          if (!endGameHandledRef.current) {
+            endGameHandledRef.current = true
+            newState.gamePaused = false
+            setGameEnded(true)
             updateBackendGame(newState.gameScore.player, newState.gameScore.enemy)
           }
         }
@@ -339,7 +340,7 @@ const updateBackendGame = useCallback(
         }
 
         setTimeout(() => {
-          setGameState((prev) => ({
+          setGameState((prev: GameState) => ({
             ...prev,
             ball: {
               ...prev.ball,
@@ -350,9 +351,10 @@ const updateBackendGame = useCallback(
         }, finalServeDelay * 1000)
 
         if (newState.gameScore.player >= finalPointsToWin) {
-          newState.gamePaused = false
-          setGameEnded(true)
-          if (!gameUpdated) {
+          if (!endGameHandledRef.current) {
+            endGameHandledRef.current = true
+            newState.gamePaused = false
+            setGameEnded(true)
             updateBackendGame(newState.gameScore.player, newState.gameScore.enemy)
           }
         }
@@ -367,7 +369,7 @@ const updateBackendGame = useCallback(
   }, [resetBall, finalServeDelay, finalPointsToWin, updateBackendGame, gameEnded, gameUpdated])
 
   const pauseGame = () => {
-    setGameState((prev) => ({
+    setGameState((prev: GameState) => ({
       ...prev,
       gamePaused: !prev.gamePaused,
     }))
@@ -378,7 +380,7 @@ const updateBackendGame = useCallback(
       await createBackendGame()
     }
 
-    setGameState((prev) => ({
+    setGameState((prev: GameState) => ({
       ...prev,
       gamePaused: true,
     }))
@@ -389,8 +391,8 @@ const updateBackendGame = useCallback(
       cancelAnimationFrame(animationRef.current)
       animationRef.current = null
     }
-
-    setGameState((prev) => ({
+    endGameHandledRef.current = false
+    setGameState((prev: GameState) => ({
       ...prev,
       ball: resetBall(prev.gameWidth, prev.gameHeight, false),
       playerPaddle: { y: prev.gameHeight / 2 - PADDLE_HEIGHT / 2 },

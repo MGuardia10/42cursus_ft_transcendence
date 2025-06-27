@@ -69,6 +69,13 @@ export default async function game_update(request, reply) {
       return reply.code(404).send({ error: "Game not found" })
     }
 
+    // Comprobar si el juego ya está terminado
+    const statusRow = db.prepare("SELECT name FROM game_status WHERE id = ?").get(game_info.status)
+    if (statusRow && statusRow.name === "Finished") {
+      console.log("⚠️ Backend: Game already finished, skipping stats update.")
+      return reply.code(200).send({ success: true, message: "Game already finished, stats not updated again." })
+    }
+
     console.log("🎮 Backend: Current game info:", game_info)
 
     // Actualizar el juego
