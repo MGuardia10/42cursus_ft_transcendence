@@ -195,27 +195,19 @@ export default async function (fastify, options) {
   /* NOTE: Tournament */
   /********************/
 
-  fastify.delete('/tournament/:id', {
-    schema: {
-      params: {
-        required: ['id'],
-        properties: {
-          id: { type: 'string' }
-        }
-      }
-    }
-  }, tournament_delete);
-
-  fastify.post('/tournament/join', {
-    schema: {
-      body: {
-        type: 'object',
-        required: ['player_id', 'tournament_id'],
-        properties: {
-          player_id: { type: 'integer' },
-          tournament_id: { type: 'string' }
-        }
-      }
-    }
-  }, tournament_join);
+  fastify.delete(
+    "/tournament/:id",
+    {
+      schema: {
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: {
+            id: { type: "string", minLength: 1 },
+          },
+        },
+      },
+    },
+    tournament_delete
+  );
 }
