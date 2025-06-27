@@ -194,16 +194,20 @@ export default async function (fastify, options) {
   /* NOTE: Tournament */
   /********************/
 
-  fastify.post('/tournament/join', {
-    schema: {
-      body: {
-        type: 'object',
-        required: ['player_id', 'tournament_id'],
-        properties: {
-          player_id: { type: 'integer' },
-          tournament_id: { type: 'string' }
-        }
-      }
-    }
-  }, tournament_join);
+  fastify.post(
+    "/tournament/join",
+    {
+      schema: {
+        body: {
+          type: "object",
+          required: ["player_id", "tournament_id"],
+          properties: {
+            player_id: { type: "integer", minimum: 0 },
+            tournament_id: { type: "string", minLength: 1 },
+          },
+        },
+      },
+    },
+    tournament_join
+  );
 }
