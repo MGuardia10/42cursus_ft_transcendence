@@ -4,7 +4,6 @@ export default async function tournament_join(request, reply) {
     const { player_id, tournament_id } = request.body;
 
     try {
-        // Verificar que el torneo existe
         const tournament = db
         .prepare(`SELECT id FROM tournaments WHERE id = ?`)
         .get(tournament_id);
@@ -14,7 +13,6 @@ export default async function tournament_join(request, reply) {
             return reply.code(404).send({ error: "Tournament not found" });
         }
 
-        // Verificar que el jugador pertenece al torneo
         const isMember = db
         .prepare(`
             SELECT tournament_id FROM tournament_players
