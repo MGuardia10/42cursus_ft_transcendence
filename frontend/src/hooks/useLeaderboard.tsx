@@ -54,6 +54,14 @@ export function useLeaderboard(itemsPerPage: number = 5) {
               }
             );
 
+            if (userRes.status == 404) {
+              // If user not found, return player with empty alias
+              return {
+                ...player,
+                alias: "Unknown",
+              };
+            }
+
             // Check if user data response is ok
             if (!userRes.ok)
               throw new Error(
@@ -119,6 +127,13 @@ export function useLeaderboard(itemsPerPage: number = 5) {
                   credentials: "include",
                 }
               );
+              if (userRes.status == 404) {
+                // If user not found, return player with empty alias
+                return {
+                  ...player,
+                  alias: "Unknown",
+                };
+              }
 
               // Check if user data response is ok
               if (!userRes.ok)
