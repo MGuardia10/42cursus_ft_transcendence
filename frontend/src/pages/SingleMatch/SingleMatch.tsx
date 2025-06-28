@@ -155,6 +155,10 @@ const SingleMatch: React.FC = () => {
       try {
         setGameUpdated(true)
         console.log("[SingleMatch] Llamando a updateBackendGame", { backendGameId, playerScore, enemyScore })
+        console.log("[SingleMatch] Game Data:", gameData)
+        console.log("[SingleMatch] Player A ID:", gameData?.player1.id, "| Player B ID:", gameData?.player2.id)
+        console.log("[SingleMatch] Sending to backend - Player A Score:", playerScore, "| Player B Score:", enemyScore)
+        
         const success = await updateGame(backendGameId, {
           player_a_score: playerScore,
           player_b_score: enemyScore,

@@ -15,27 +15,29 @@ function update_player_stats(player_id, won, points_scored, points_conceded) {
     console.log("📊 Backend: Current stats before update:", currentStats)
 
     if (won) {
-      // Incrementar victorias y puntos ganados
+      // Incrementar victorias, puntos ganados Y puntos perdidos
       const result = db
         .prepare(`
         UPDATE players 
         SET win_count = win_count + 1, 
-            win_points = win_points + ? 
+            win_points = win_points + ?,
+            lose_points = lose_points + ?
         WHERE id = ?
       `)
-        .run(points_scored, player_id)
+        .run(points_scored, points_conceded, player_id)
 
       console.log("✅ Backend: Winner update result:", result)
     } else {
-      // Incrementar derrotas y puntos perdidos
+      // Incrementar derrotas, puntos perdidos Y puntos ganados
       const result = db
         .prepare(`
         UPDATE players 
         SET lose_count = lose_count + 1, 
-            lose_points = lose_points + ? 
+            lose_points = lose_points + ?,
+            win_points = win_points + ?
         WHERE id = ?
       `)
-        .run(points_conceded, player_id)
+        .run(points_conceded, points_scored, player_id)
 
       console.log("✅ Backend: Loser update result:", result)
     }
