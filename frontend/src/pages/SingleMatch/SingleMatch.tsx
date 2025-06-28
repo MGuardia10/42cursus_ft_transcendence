@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect, useCallback, useRef } from "react"
+import { useNavigate } from "react-router"
 import { useLanguage } from "../../hooks/useLanguage"
 import { useGameSettings } from "@/hooks/useGameSettings"
 import { useGame } from "@/hooks/useGame"
@@ -54,6 +55,7 @@ const SingleMatch: React.FC = () => {
   const { t } = useLanguage()
   const { user } = useAuth()
   const { addNotification } = useNotification()
+  const navigate = useNavigate()
 
   // 🔥 Usar los hooks correctamente
   const { createGame, updateGame, loading: gameLoading, error: gameError } = useGame()
@@ -65,6 +67,7 @@ const SingleMatch: React.FC = () => {
   const gameRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
   const keysRef = useRef<{ [key: string]: boolean }>({})
+  const redirectAttemptedRef = useRef(false)
 
   // Load player data from sessionStorage
   const [gameData, setGameData] = useState<GameData | null>(null)
@@ -74,9 +77,10 @@ const SingleMatch: React.FC = () => {
   const [gameUpdated, setGameUpdated] = useState(false)
 
   const updateGameCalledRef = useRef(false)
-  const endGameHandledRef = useRef(false)
 
   useEffect(() => {
+    if (redirectAttemptedRef.current) return
+
     const storedGameData = sessionStorage.getItem("gameData")
     if (storedGameData) {
       try {
@@ -85,9 +89,16 @@ const SingleMatch: React.FC = () => {
       } catch (error) {
         console.error("Error parsing game data:", error)
         addNotification("Error loading game data", "error")
+        redirectAttemptedRef.current = true
+        navigate("/game-invite")
       }
+    } else {
+      // No game data found, redirect to game invite
+      addNotification("No game data found. Please start a new game.", "error")
+      redirectAttemptedRef.current = true
+      navigate("/game-invite")
     }
-  }, [addNotification])
+  }, [addNotification, navigate])
 
   const [gameState, setGameState] = useState<GameState>({
     ball: { x: 400, y: 300, dx: BALL_SPEED, dy: BALL_SPEED },
@@ -323,10 +334,9 @@ const SingleMatch: React.FC = () => {
         }, finalServeDelay * 1000)
 
         if (newState.gameScore.enemy >= finalPointsToWin) {
-          if (!endGameHandledRef.current) {
-            endGameHandledRef.current = true
-            newState.gamePaused = false
-            setGameEnded(true)
+          newState.gamePaused = false
+          setGameEnded(true)
+          if (!gameUpdated) {
             updateBackendGame(newState.gameScore.player, newState.gameScore.enemy)
           }
         }
@@ -351,10 +361,9 @@ const SingleMatch: React.FC = () => {
         }, finalServeDelay * 1000)
 
         if (newState.gameScore.player >= finalPointsToWin) {
-          if (!endGameHandledRef.current) {
-            endGameHandledRef.current = true
-            newState.gamePaused = false
-            setGameEnded(true)
+          newState.gamePaused = false
+          setGameEnded(true)
+          if (!gameUpdated) {
             updateBackendGame(newState.gameScore.player, newState.gameScore.enemy)
           }
         }
@@ -391,7 +400,7 @@ const SingleMatch: React.FC = () => {
       cancelAnimationFrame(animationRef.current)
       animationRef.current = null
     }
-    endGameHandledRef.current = false
+
     setGameState((prev: GameState) => ({
       ...prev,
       ball: resetBall(prev.gameWidth, prev.gameHeight, false),
@@ -566,12 +575,6 @@ const SingleMatch: React.FC = () => {
                 )}
               </>
             )}
-            <button
-              onClick={resetGame}
-              className="px-6 py-3 bg-text-secondary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
-            >
-              {t?.reset || "Reset"}
-            </button>
           </div>
           <div className="text-center text-text-secondary text-sm max-w-md">
             <p className="mb-2">
@@ -581,6 +584,17 @@ const SingleMatch: React.FC = () => {
             {gameError && <p className="text-red-400 mt-2">Error: {gameError.message}</p>}
           </div>
         </div>
+
+        {gameEnded && (
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => navigate("/")}
+              className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
+            >
+              {t?.backToHome || "Back to Home"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
