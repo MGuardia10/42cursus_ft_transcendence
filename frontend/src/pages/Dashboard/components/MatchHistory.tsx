@@ -18,7 +18,7 @@ const MatchHistory: React.FC<DashboardProps> = ({ id }) => {
   if (error || matches?.length === 0) {
     return (
       <div className="text-text-secondary flex w-full justify-center items-center h-full">
-        No data to dispay
+        {t("dashboard_no_data")}
       </div>
     );
   }
@@ -95,7 +95,9 @@ const MatchHistory: React.FC<DashboardProps> = ({ id }) => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* title */}
-            <h3 className="text-xl font-bold">Match Details</h3>
+            <h3 className="text-xl font-bold">
+              {t("dashboard_match_details")}
+            </h3>
 
             {/* Details */}
             <div className="flex flex-row gap-10 lg:gap-16 mt-4">
