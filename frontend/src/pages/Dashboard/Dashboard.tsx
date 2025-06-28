@@ -89,7 +89,7 @@ const Dashboard: React.FC = () => {
 
       {/* MatchHistory */}
       <div className="max-h-[500px] xl:max-h-full xl:h-full col-span-full row-span-2 lg:col-span-2 lg:row-span-1 xl:col-span-2 xl:row-span-6 xl:col-start-5 xl:row-start-1 bg-background-primary rounded-md overflow-y-auto min-h-0">
-        <MatchHistory />
+        <MatchHistory id={Number(id)} />
       </div>
     </div>
   );
