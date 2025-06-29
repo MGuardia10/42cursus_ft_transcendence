@@ -52,6 +52,9 @@ export const translations = {
     dashboard_points_won: "Points Won",
     dashboard_points_lost: "Points Lost",
     dashboard_match_history: "Match History",
+    dashboard_no_stats: "Win a match to see your stats",
+    dashboard_no_data: "No data to display",
+    dashboard_match_details: "Match Details",
     // Leaderboard
     leaderboard_top_3: "Top 3 Players",
     leaderboard_ranking: "Ranking",
@@ -164,6 +167,9 @@ export const translations = {
     dashboard_points_won: "Puntos Ganados",
     dashboard_points_lost: "Puntos Perdidos",
     dashboard_match_history: "Historial de partidas",
+    dashboard_no_stats: "Gana una partida para ver tus estadísticas",
+    dashboard_no_data: "No hay datos para mostrar",
+    dashboard_match_details: "Detalles de la Partida",
     // Leaderboard
     leaderboard_top_3: "Top 3 Jugadores",
     leaderboard_ranking: "Ranking",
@@ -279,6 +285,9 @@ export const translations = {
     dashboard_points_won: "Pontos Ganhos",
     dashboard_points_lost: "Pontos Perdidos",
     dashboard_match_history: "Histórico de Jogos",
+    dashboard_no_stats: "ganhe um jogo para ver suas estatísticas",
+    dashboard_no_data: "Sem dados para exibir",
+    dashboard_match_details: "Detalhes do Jogo",
     // Leaderboard
     leaderboard_top_3: "Top 3 Jogadores",
     leaderboard_ranking: "Ranking",

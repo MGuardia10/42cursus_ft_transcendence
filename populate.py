@@ -2,6 +2,7 @@ import requests
 import sys
 import sqlite3
 import random
+from typing import List, Dict
 
 USERS_API_URL = 'http://localhost:8081/api/user'
 USERS_DATABASE = 'backend-user/database.sqlite'
@@ -9,7 +10,8 @@ USERS_DATABASE = 'backend-user/database.sqlite'
 PLAYERS_API_URL = 'http://localhost:8081/api/pong'
 PLAYERS_DATABASE = 'backend-pong/database.sqlite'
 
-GAMES_COUNT = 100
+GAMES_STATS_COUNT = 100
+GAMES_COUNT = 10
 
 def error_code(msg: str, code: int) -> None:
 	"""
@@ -17,7 +19,7 @@ def error_code(msg: str, code: int) -> None:
 	print(f"[ ERROR ] {msg}: code {code}")
 	sys.exit(1)
 
-def add_user(name: str, avatar_url: str) -> dict:
+def add_user(name: str, avatar_url: str) -> Dict:
 	"""
 	"""
 	email = f"{name}@hollowknight.slk"
@@ -73,8 +75,10 @@ def create_relation(id_from: int, id_to: int, mutual: bool =False) -> None:
 def set_stats(id: int) -> None:
 	"""
 	"""
-	games_won = random.randint(0, GAMES_COUNT)
-	games_lost = GAMES_COUNT - games_won
+	games_won = random.randint(0, GAMES_STATS_COUNT)
+	games_lost = GAMES_STATS_COUNT - games_won
+	points_won = random.randint(1, 1000)
+	points_lose = random.randint(1, 1000)
 
 	requests.patch(
 		f"{PLAYERS_API_URL}/player/{id}",
@@ -83,9 +87,53 @@ def set_stats(id: int) -> None:
 		},
 		json={
 			'win_count': games_won,
-			'lose_count': games_lost
+			'lose_count': games_lost,
+			'win_points': points_won,
+			'lose_points': points_lose,
 		},
 	)
+
+def generate_games(host: Dict, enemies: List[Dict], count) -> None:
+	"""
+	"""
+	for _ in range(count):
+		# Get the enemy
+		enemy = random.choice(enemies)
+
+		# Select positions
+		position = random.randint(0, 1)
+		if position == 0:
+			player_a, player_b = host['id'], enemy['id']
+		else:
+			player_a, player_b = enemy['id'], host['id']
+
+		# Create the game
+		res = requests.post(
+			f"{PLAYERS_API_URL}/games",
+			headers={
+				'Content-Type': 'application/json'
+			},
+			json={
+				'player_a_id': player_a,
+				'player_b_id': player_b
+			}
+		)
+		game_id = res.json()['game_id']
+
+		# Set a result
+		score_a = random.randint(0, 5)
+		score_b = 5 if score_a != 5 else random.randint(0, 4)
+		res = requests.patch(
+			f"{PLAYERS_API_URL}/game/{game_id}",
+			headers={
+				'Content-Type': 'application/json'
+			},
+			json={
+				'state': 'Finished',
+				'player_a_score': score_a,
+				'player_b_score': score_b,
+			}
+		)
 
 def delete_data() -> None:
 	"""
@@ -104,8 +152,10 @@ def delete_data() -> None:
 		users_conn.commit()
 
 		players_cursor.execute("DELETE FROM configuration;")
+		players_cursor.execute("DELETE FROM games;")
 		players_cursor.execute("DELETE FROM players;")
 		players_cursor.execute("DELETE FROM sqlite_sequence WHERE name='configuration';")
+		players_cursor.execute("DELETE FROM sqlite_sequence WHERE name='games';")
 		players_cursor.execute("DELETE FROM sqlite_sequence WHERE name='players';")
 		players_conn.commit()
 	except Exception as e:
@@ -204,6 +254,9 @@ def main():
 	# Place random scores
 	for user in users:
 		set_stats(user['id'])
+
+	# Create random games
+	generate_games(knight, users[1:], GAMES_COUNT)
 
 if __name__ == '__main__':
 	delete_data()

@@ -15,3 +15,10 @@ export type Player = {
   winPointsCount: number;
   losePointsCount: number;
 };
+
+export type PlayerStats = {
+  winCount: number;
+  loseCount: number;
+  winPointsCount: number;
+  losePointsCount: number;
+};

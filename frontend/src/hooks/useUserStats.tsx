@@ -1,24 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RankingPlayer } from "@/types/rankingPlayerTypes";
+import { PlayerStats } from "@/types/playerTypes";
 import { useState, useEffect, useCallback } from "react";
 
-export function useUserRanking(userId: string | number) {
+export function useUserStats(userId: string | number) {
   // State variables
-  const [data, setData] = useState<RankingPlayer | null>(null);
+  const [stats, setStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   // Función que hace la petición
   const fetchUserRanking = useCallback(async () => {
-    // Reseteamos error anterior
+    // Set error and loading state
     setError(null);
     setLoading(true);
-    setData(null);
 
     // Get data from the API
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL}/ranking/${userId}`,
+        `${import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL}/player/${userId}`,
         {
           method: "GET",
           credentials: "include",
@@ -30,9 +29,18 @@ export function useUserRanking(userId: string | number) {
         throw new Error(`Error fetching user ${userId}: ${res.status}`);
       }
 
-      const json: RankingPlayer = await res.json();
+      // Parse the response data
+      const data = await res.json();
 
-      setData(json);
+      // playerStats object
+      const playerStats: PlayerStats = {
+        winCount: data.win_count || 0,
+        loseCount: data.lose_count || 0,
+        winPointsCount: data.win_points || 0,
+        losePointsCount: data.lose_points || 0,
+      };
+
+      setStats(playerStats);
     } catch (err: any) {
       setError(err);
     } finally {
@@ -45,13 +53,13 @@ export function useUserRanking(userId: string | number) {
     if (userId != null) {
       fetchUserRanking();
     } else {
-      setData(null);
+      setStats(null);
       setError(new Error("No userId provided"));
     }
   }, [userId, fetchUserRanking]);
 
   return {
-    data,
+    stats,
     loading,
     error,
     refetch: fetchUserRanking,
