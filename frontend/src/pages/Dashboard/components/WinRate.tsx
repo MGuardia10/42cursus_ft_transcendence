@@ -3,13 +3,14 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useMediaQuery } from "@mui/material";
 import { DashboardProps } from "@/types/dashboardProps";
 import { useUserRanking } from "@/hooks/useUserRanking";
+import Spinner from "@/layout/Spinner/Spinner";
 
 const WinRate: React.FC<DashboardProps> = ({ id }) => {
   // useLanguage hook
   const { t } = useLanguage();
 
   // useUserRanking hook
-  const { data, error } = useUserRanking(id);
+  const { data, loading, error } = useUserRanking(id);
 
   // useMediaQuery hook
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -18,10 +19,18 @@ const WinRate: React.FC<DashboardProps> = ({ id }) => {
   const width = isMonitor ? (isMobile ? 250 : 300) : 350;
   const height = isMonitor ? (isMobile ? 125 : 150) : 175;
 
+  if (loading) {
+    return (
+      <div className="min-h-44 md:min-h-90 flex items-center justify-center w-full p-6 md:p-10">
+        <Spinner />
+      </div>
+    );
+  }
+
   // If there is an error or win_percentage empty
   if (error || data?.win_percentage === null) {
     return (
-      <div className="flex flex-col items-center justify-center gap-6 w-full p-6 md:p-10">
+      <div className="min-h-44 md:min-h-90 flex flex-col items-center justify-center gap-6 w-full p-6 md:p-10">
         <p className="text-text-secondary text-center">
           {t("dashboard_no_stats")}
         </p>

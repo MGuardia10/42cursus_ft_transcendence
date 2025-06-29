@@ -5,12 +5,14 @@ import { useState, useEffect, useCallback } from "react";
 export function useUserStats(userId: string | number) {
   // State variables
   const [stats, setStats] = useState<PlayerStats | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   // Función que hace la petición
   const fetchUserRanking = useCallback(async () => {
-    // Reseteamos error anterior
+    // Set error and loading state
     setError(null);
+    setLoading(true);
 
     // Get data from the API
     try {
@@ -41,6 +43,8 @@ export function useUserStats(userId: string | number) {
       setStats(playerStats);
     } catch (err: any) {
       setError(err);
+    } finally {
+      setLoading(false);
     }
   }, [userId]);
 
@@ -56,6 +60,7 @@ export function useUserStats(userId: string | number) {
 
   return {
     stats,
+    loading,
     error,
     refetch: fetchUserRanking,
   };

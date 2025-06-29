@@ -17,8 +17,13 @@ const MatchHistory: React.FC<DashboardProps> = ({ id }) => {
 
   if (error || matches?.length === 0) {
     return (
-      <div className="text-text-secondary flex w-full justify-center items-center h-full">
-        {t("dashboard_no_data")}
+      <div className="min-h-44 md:min-h-90  flex-col w-full  p-6 justify-center items-center h-full overflow-hidden">
+        <h2 className="md:text-xl mb-2">{t("dashboard_match_history")}</h2>
+        <div className="flex flex-col items-center justify-center h-44 md:h-90">
+          <p className="text-text-secondary text-center">
+            {t("dashboard_no_data")}
+          </p>
+        </div>
       </div>
     );
   }

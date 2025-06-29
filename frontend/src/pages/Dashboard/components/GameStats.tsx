@@ -2,13 +2,14 @@ import React from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { DashboardProps } from "@/types/dashboardProps";
 import { useUserStats } from "@/hooks/useUserStats";
+import Spinner from "@/layout/Spinner/Spinner";
 
 const GameStats: React.FC<DashboardProps> = ({ id }) => {
   // useLanguage hook
   const { t } = useLanguage();
 
   // useUserStats hook
-  const { stats } = useUserStats(id);
+  const { stats, error, loading } = useUserStats(id);
 
   const wins = stats?.winCount || 0;
   const losses = stats?.loseCount || 0;
@@ -22,6 +23,22 @@ const GameStats: React.FC<DashboardProps> = ({ id }) => {
   const gameLossWidth = (losses / total) * 100;
   const pointsWonWidth = (pointsWon / totalPoints) * 100;
   const pointsLossWidth = (pointsLost / totalPoints) * 100;
+
+  if (loading) {
+    return (
+      <div className="h-44 md:h-90 w-full mx-auto p-6 md:p-10 flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-44 md:h-90 text-text-secondary flex w-full justify-center items-center">
+        {t("dashboard_no_data")}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col justify-center gap-2 w-full px-8 py-10 md:px-10">
