@@ -20,7 +20,7 @@ function get_results( limit, page, includeTop3 )
     			AS INTEGER
   			) AS win_percentage
 		FROM players
-		WHERE (win_count + lose_count) > 0
+		WHERE active=1 AND (win_count + lose_count) > 0
 		ORDER BY position
 		LIMIT ?
 		OFFSET ?;
