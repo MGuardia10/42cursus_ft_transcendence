@@ -35,31 +35,21 @@ function get_tournament_games(tournament_id) {
         SELECT 
             games.id as game_id,
             tournament_games.phase,
-            tournament_games.ordr as ord,
-            games.player_a_id,
-            games.player_a_score,
-            games.player_b_id,
-            games.player_b_score,
-            games.status
+            tournament_games.ordr as ord
         FROM games
         JOIN tournament_games ON tournament_games.game_id = games.id
         WHERE tournament_games.tournament_id = ?
         ORDER BY tournament_games.phase, tournament_games.ordr
     `).all(tournament_id).map(game => ({
         phase: game.phase,
-        ord: game.ord,
-        player_a_id: game.player_a_id,
-        player_a_score: game.player_a_score,
-        player_b_id: game.player_b_id,
-        player_b_score: game.player_b_score,
-        status: game.status
+        ord: game.ord
     }));
 }
 
 function merge_tournament_data(tournament_id, config, players, games) {
     return {
+        tournament_id,
         configuracion: {
-            tournament_id,
             default_value: config.default_value === 1,
             points_to_win: config.points_to_win,
             serve_delay: config.serve_delay,
