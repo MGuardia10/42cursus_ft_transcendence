@@ -495,11 +495,6 @@ const SingleMatch: React.FC = () => {
             {t("singleMatch")}
           </h1>
           <p className="text-text-secondary">{t("single_match_play")}</p>
-          {backendGameId && (
-            <p className="text-sm text-text-tertiary mt-2">
-              Game ID: {backendGameId}
-            </p>
-          )}
         </div>
 
         <div className="flex justify-center items-center mb-6 bg-background-secondary rounded-lg p-4">
@@ -599,8 +594,11 @@ const SingleMatch: React.FC = () => {
               }}
             />
             {!gameState.gamePaused && (
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="text-2xl text-text-primary">
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
+                <div className="mb-2 text-xl font-bold text-text-tertiary drop-shadow">
+                  {t("firstToScore").replace("{score}", finalPointsToWin)}
+                </div>
+                <div className="text-base text-text-primary">
                   {gameState.gameScore.player === 0 &&
                   gameState.gameScore.enemy === 0
                     ? t("pressToStart")
@@ -648,13 +646,13 @@ const SingleMatch: React.FC = () => {
               {gameData?.player1.alias || "Jugador 1"}: W/S |{" "}
               {gameData?.player2.alias || "Jugador 2"}: O/L
             </p>
-            <p>
-              {t("firstToScore").replace("{score}", finalPointsToWin)}
-            </p>
             {gameError && (
               <p className="text-red-400 mt-2">Error: {gameError.message}</p>
             )}
           </div>
+          {gameError && (
+            <div className="text-center text-red-400 text-sm mt-2">Error: {gameError.message}</div>
+          )}
         </div>
 
         {gameEnded && (

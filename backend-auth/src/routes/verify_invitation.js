@@ -3,6 +3,7 @@ import db from "../database/database.js";
 export default async function verify_invitation(request, reply) {
   // Get the parameters
   const { code, hash } = request.body;
+  console.log(`2FA validation attempt for hash: ${hash}`);
 
   // Check if the code and hash are provided
   if (!code || !hash) {
