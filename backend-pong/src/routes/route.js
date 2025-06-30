@@ -8,7 +8,6 @@ import player_modify from "./player_modify.js";
 import ranking_all from "./ranking_all.js";
 import ranking_specific_player from "./ranking_specific_player.js";
 import tournament_delete from './tournament_delete.js';
-import tournament_join from './tournament_join.js';
 
 /* This function is used to check if the cookie is present in the request */
 function cookieChecker(request, reply, done) {
