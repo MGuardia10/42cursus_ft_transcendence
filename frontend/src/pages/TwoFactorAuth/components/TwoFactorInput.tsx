@@ -14,6 +14,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 	/* useState hook for numbers */
 	const [values, setValues] = useState<string[]>(Array(length).fill(''));
 	const [loading, setLoading] = useState<boolean>(false);
+	const [hasSubmitted, setHasSubmitted] = useState(false);
 
 	/* Refs for inputs */
 	const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
@@ -80,22 +81,24 @@ import { useLanguage } from '@/hooks/useLanguage';
 	/* Reset if resetKey change */
 	useEffect(() => {
 		setValues(Array(length).fill(''));
+		setHasSubmitted(false);
 		focusInput(0);
 	}, [resetKey, length]);
 
 	/* Check all numbers filled and call function to handle 2FA */
 	useEffect(() => {
-		if (values.every((v) => v !== '')) {
-		  (async () => {
-			setLoading(true);
-			try {
-			  await onComplete(values.join(''));
-			} finally {
-			  setLoading(false);
-			}
-		  })();
+		if (values.every((v) => v !== '') && !hasSubmitted) {
+			setHasSubmitted(true);
+			(async () => {
+				setLoading(true);
+				try {
+					await onComplete(values.join(''));
+				} finally {
+					setLoading(false);
+				}
+			})();
 		}
-	  }, [values, onComplete]);
+	}, [values, onComplete, hasSubmitted]);
 
 	return (
 		<div className='flex flex-col items-center gap-10'>

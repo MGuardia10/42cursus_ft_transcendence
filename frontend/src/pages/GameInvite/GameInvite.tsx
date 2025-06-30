@@ -32,6 +32,7 @@ const GameInvite: React.FC = () => {
   const [waitingForResponse, setWaitingForResponse] = useState(false);
   const [resetKey, setResetKey] = useState(0);
   const [verificationCode, setVerificationCode] = useState<string>("");
+  const [failedAttempts, setFailedAttempts] = useState(0);
 
   const handleInviteFriend = async (friend: Friend) => {
     if (!user) return;
@@ -157,6 +158,7 @@ const GameInvite: React.FC = () => {
         t("tfa_success") || "Código de autenticación correcto",
         "success"
       );
+      setFailedAttempts(0);
 
       // Store player data for the game
       const gameData = {
@@ -180,6 +182,9 @@ const GameInvite: React.FC = () => {
     } catch (error) {
       addNotification(`${error}`, "error");
       setResetKey((k) => k + 1);
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
+      console.log(`Intento de 2FA fallido. Intentos totales: ${newAttempts}`);
     }
   };
 
