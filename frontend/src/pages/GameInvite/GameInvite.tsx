@@ -1,143 +1,162 @@
-"use client"
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { IoGameController } from "react-icons/io5";
+import { FaUserFriends } from "react-icons/fa";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useFriends } from "@/hooks/useFriends";
+import { useNotification } from "@/hooks/useNotification";
+import { useAuth } from "@/hooks/useAuth";
+import type { Friend } from "@/types/friendsContext";
+import Spinner from "@/layout/Spinner/Spinner";
+import TwoFactorInput from "@/pages/TwoFactorAuth/components/TwoFactorInput";
 
-import type React from "react"
-import { useState } from "react"
-import { useNavigate } from "react-router"
-import { IoGameController } from "react-icons/io5"
-import { FaUserFriends } from "react-icons/fa"
-import { useLanguage } from "@/hooks/useLanguage"
-import { useFriends } from "@/hooks/useFriends"
-import { useNotification } from "@/hooks/useNotification"
-import { useAuth } from "@/hooks/useAuth"
-import type { Friend } from "@/types/friendsContext"
-import Spinner from "@/layout/Spinner/Spinner"
-import TwoFactorInput from "@/pages/TwoFactorAuth/components/TwoFactorInput"
-
-interface GameInvitation {
-  id: string
-  senderId: string
-  receiverId: string
-  status: "pending" | "accepted" | "rejected"
-}
+// interface GameInvitation {
+//   id: string;
+//   senderId: string;
+//   receiverId: string;
+//   status: "pending" | "accepted" | "rejected";
+// }
 
 const GameInvite: React.FC = () => {
-  const { t } = useLanguage()
-  const { friends, loading } = useFriends()
-  const { addNotification } = useNotification()
-  const { user } = useAuth()
-  const navigate = useNavigate()
+  const { t } = useLanguage();
+  const { friends, loading } = useFriends();
+  const { addNotification } = useNotification();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null)
-  const [invitationSent, setInvitationSent] = useState(false)
-  const [pendingInvitations, setPendingInvitations] = useState<GameInvitation[]>([])
-  const [waitingForResponse, setWaitingForResponse] = useState(false)
-  const [resetKey, setResetKey] = useState(0)
-  const [verificationCode, setVerificationCode] = useState<string>("")
+  const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
+  // const [invitationSent, setInvitationSent] = useState(false);
+  // const [pendingInvitations, setPendingInvitations] = useState<
+  //   GameInvitation[]
+  // >([]);
+  const [waitingForResponse, setWaitingForResponse] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [verificationCode, setVerificationCode] = useState<string>("");
 
   const handleInviteFriend = async (friend: Friend) => {
-    if (!user) return
+    if (!user) return;
 
-    setSelectedFriend(friend)
-    setWaitingForResponse(true)
+    setSelectedFriend(friend);
+    setWaitingForResponse(true);
 
     try {
       // Send invitation using the auth API
-      const response = await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/send-invitation`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Enable cookies for JWT
-        body: JSON.stringify({
-          id: friend.id,
-        }),
-      })
+      const response = await fetch(
+        `${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/send-invitation`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Enable cookies for JWT
+          body: JSON.stringify({
+            id: friend.id,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        let errorMessage = t("game_invitation_error") || "Error al enviar la invitación"
+        let errorMessage =
+          t("game_invitation_error") || "Error al enviar la invitación";
 
         switch (response.status) {
           case 400:
-            errorMessage = t("bad_request_error") || "Solicitud incorrecta"
-            break
+            errorMessage = t("bad_request_error") || "Solicitud incorrecta";
+            break;
           case 401:
-            errorMessage = t("unauthorized_error") || "No autorizado"
-            break
+            errorMessage = t("unauthorized_error") || "No autorizado";
+            break;
           case 403:
-            errorMessage = t("self_invite_error") || "No puedes invitarte a ti mismo"
-            break
+            errorMessage =
+              t("self_invite_error") || "No puedes invitarte a ti mismo";
+            break;
           case 404:
-            errorMessage = t("user_not_found_error") || "Usuario no encontrado"
-            break
+            errorMessage = t("user_not_found_error") || "Usuario no encontrado";
+            break;
           default:
-            errorMessage = `Error ${response.status}: ${response.statusText}`
+            errorMessage = `Error ${response.status}: ${response.statusText}`;
         }
 
-        throw new Error(errorMessage)
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json()
-      setVerificationCode(data.hash) // Store the hash instead of generating a random code
+      const data = await response.json();
+      setVerificationCode(data.hash); // Store the hash instead of generating a random code
 
-      addNotification(`${t("game_invitation_sent")} ${friend.alias}`, "success")
+      addNotification(
+        `${t("game_invitation_sent")} ${friend.alias}`,
+        "success"
+      );
     } catch (error) {
-      addNotification(`${error}`, "error")
-      setWaitingForResponse(false)
-      setSelectedFriend(null)
-      return
+      addNotification(`${error}`, "error");
+      setWaitingForResponse(false);
+      setSelectedFriend(null);
+      return;
     }
-  }
+  };
 
   const handleCodeComplete = async (code: string) => {
     if (!verificationCode) {
-      addNotification(t("no_hash_error") || "Error: No hay hash de verificación", "error")
-      return
+      addNotification(
+        t("no_hash_error") || "Error: No hay hash de verificación",
+        "error"
+      );
+      return;
     }
 
     try {
       // Verify the code using the auth API
-      const response = await fetch(`${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/verify-invitation`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Enable cookies for JWT
-        body: JSON.stringify({
-          hash: verificationCode, // Use the hash we received from send-invitation
-          code: code,
-        }),
-      })
+      const response = await fetch(
+        `${import.meta.env.VITE_AUTH_API_BASEURL_EXTERNAL}/verify-invitation`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            hash: verificationCode,
+            code: code,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        let errorMessage = t("tfa_error") || "Código de autenticación incorrecto"
+        let errorMessage =
+          t("tfa_error") || "Código de autenticación incorrecto";
 
         switch (response.status) {
           case 400:
-            errorMessage = t("bad_request_error") || "Solicitud incorrecta"
-            break
+            errorMessage = t("bad_request_error") || "Solicitud incorrecta";
+            break;
           case 401:
-            errorMessage = t("invalid_code_error") || "Código incorrecto"
-            break
+            errorMessage = t("invalid_code_error") || "Código incorrecto";
+            break;
           case 404:
-            errorMessage = t("hash_not_found_error") || "Hash de verificación no encontrado"
-            break
+            errorMessage =
+              t("hash_not_found_error") || "Hash de verificación no encontrado";
+            break;
           case 429:
             errorMessage =
-              t("max_attempts_error") || "Máximo número de intentos alcanzado. Vuelve a invitar al usuario."
+              t("max_attempts_error") ||
+              "Máximo número de intentos alcanzado. Vuelve a invitar al usuario.";
             // Reset the state to allow sending a new invitation
-            setWaitingForResponse(false)
-            setSelectedFriend(null)
-            setVerificationCode("")
-            break
+            setWaitingForResponse(false);
+            setSelectedFriend(null);
+            setVerificationCode("");
+            break;
           default:
-            errorMessage = `Error ${response.status}: ${response.statusText}`
+            errorMessage = `Error ${response.status}: ${response.statusText}`;
         }
 
-        throw new Error(errorMessage)
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json()
-      addNotification(t("tfa_success") || "Código de autenticación correcto", "success")
+      const data = await response.json();
+      addNotification(
+        t("tfa_success") || "Código de autenticación correcto",
+        "success"
+      );
 
       // Store player data for the game
       const gameData = {
@@ -153,23 +172,23 @@ const GameInvite: React.FC = () => {
           alias: selectedFriend.alias,
           avatar: selectedFriend.avatar,
         },
-      }
-      sessionStorage.setItem("gameData", JSON.stringify(gameData))
+      };
+      sessionStorage.setItem("gameData", JSON.stringify(gameData));
 
       // Redirect to the single match page
-      window.location.href = "https://localhost:8080/single-match"
+      window.location.href = "https://localhost:8080/single-match";
     } catch (error) {
-      addNotification(`${error}`, "error")
-      setResetKey((k) => k + 1)
+      addNotification(`${error}`, "error");
+      setResetKey((k) => k + 1);
     }
-  }
+  };
 
   if (loading) {
     return (
       <div className="container mx-auto flex items-center justify-center min-h-screen">
         <Spinner />
       </div>
-    )
+    );
   }
   return (
     <div className="container mx-auto flex flex-col items-center justify-center bg-background-primary p-4">
@@ -188,14 +207,18 @@ const GameInvite: React.FC = () => {
             </h1>
           </div>
           <p className="text-text-secondary">
-            {t("game_invite_description") || "Selecciona un amigo para invitarlo a una partida"}
+            {t("game_invite_description") ||
+              "Selecciona un amigo para invitarlo a una partida"}
           </p>
         </div>
 
         {/* Estado de espera con TFA */}
         {waitingForResponse && selectedFriend && (
           <div className="mb-8 p-6 bg-background-secondary rounded-lg border border-text-tertiary text-center">
-            <TwoFactorInput onComplete={handleCodeComplete} resetKey={resetKey} />
+            <TwoFactorInput
+              onComplete={handleCodeComplete}
+              resetKey={resetKey}
+            />
           </div>
         )}
 
@@ -210,13 +233,16 @@ const GameInvite: React.FC = () => {
             {friends.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-text-secondary">
-                  {t("no_friends_available") || "No tienes amigos disponibles para invitar"}
+                  {t("no_friends_available") ||
+                    "No tienes amigos disponibles para invitar"}
                 </p>
               </div>
             ) : (
               <div
                 className={`grid gap-4 max-h-[75vh] overflow-y-auto pr-1 ${
-                  friends.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"
+                  friends.length === 1
+                    ? "grid-cols-1"
+                    : "grid-cols-1 sm:grid-cols-2"
                 }`}
               >
                 {friends.map((friend) => (
@@ -232,8 +258,12 @@ const GameInvite: React.FC = () => {
                         className="w-12 h-12 rounded-full border-2 border-text-tertiary object-cover"
                       />
                       <div>
-                        <p className="font-semibold text-text-primary">{friend.alias}</p>
-                        <p className="text-sm text-green-500">{t("online") || "En línea"}</p>
+                        <p className="font-semibold text-text-primary">
+                          {friend.alias}
+                        </p>
+                        <p className="text-sm text-green-500">
+                          {t("online") || "En línea"}
+                        </p>
                       </div>
                     </div>
                     <button className="w-full mt-4 px-3 py-1.5 text-sm bg-text-tertiary text-background-primary rounded-lg hover:bg-opacity-80 transition-colors">
@@ -247,7 +277,7 @@ const GameInvite: React.FC = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GameInvite
+export default GameInvite;
