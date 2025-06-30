@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useRef, useState, useEffect, type KeyboardEvent, type ClipboardEvent } from "react"
 import Spinner from "@/layout/Spinner/Spinner"
+import { useLanguage } from "@/hooks/useLanguage"
 
 interface TournamentCodeInputProps {
   length?: number
@@ -15,6 +16,7 @@ const TournamentCodeInput: React.FC<TournamentCodeInputProps> = ({ length = 6, o
   /* useState hook for numbers */
   const [values, setValues] = useState<string[]>(Array(length).fill(""))
   const [loading, setLoading] = useState<boolean>(false)
+  const { t } = useLanguage()
 
   /* Refs for inputs */
   const inputsRef = useRef<Array<HTMLInputElement | null>>([])
@@ -99,7 +101,7 @@ const TournamentCodeInput: React.FC<TournamentCodeInputProps> = ({ length = 6, o
   return (
     <div className="flex flex-col items-center gap-0 p-0 m-0">
       <div className="flex flex-col items-center gap-0 p-0 m-0">
-        <p className="text-center text-gray-600 text-sm">Please, insert the submitted code.</p>
+        <p className="text-center text-gray-600 text-sm">{t("two_factor_subtitle")}</p>
       </div>
       <div className="flex gap-1 p-0 m-0">
         {values.map((val, idx) => (

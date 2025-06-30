@@ -492,7 +492,7 @@ const SingleMatch: React.FC = () => {
       <div className="w-full max-w-6xl mx-auto">
         <div className="text-center mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
-            {t?.singleMatch || "Single Match"}
+            {t("singleMatch")}
           </h1>
           <p className="text-text-secondary">{t("single_match_play")}</p>
           {backendGameId && (
@@ -603,12 +603,12 @@ const SingleMatch: React.FC = () => {
                 <div className="text-2xl text-text-primary">
                   {gameState.gameScore.player === 0 &&
                   gameState.gameScore.enemy === 0
-                    ? t?.pressToStart || "Press Start to Play"
+                    ? t("pressToStart")
                     : gameState.gameScore.player >= finalPointsToWin
-                    ? `¡${gameData?.player1.alias || "Jugador 1"} gana!`
+                    ? `${gameData?.player1.alias || "Player 1"} ${t("wins")}`
                     : gameState.gameScore.enemy >= finalPointsToWin
-                    ? `¡${gameData?.player2.alias || "Jugador 2"} gana!`
-                    : t?.gamePaused || "Game Paused"}
+                    ? `${gameData?.player2.alias || "Player 2"} ${t("wins")}`
+                    : t("gamePaused")}
                 </div>
               </div>
             )}
@@ -628,7 +628,7 @@ const SingleMatch: React.FC = () => {
                       disabled={gameLoading}
                       className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
                     >
-                      {gameLoading ? "Creating Game..." : t?.start || "Start"}
+                      {gameLoading ? "Creating Game..." : t("start")}
                     </button>
                   ) : (
                     <button
@@ -636,8 +636,8 @@ const SingleMatch: React.FC = () => {
                       className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
                     >
                       {gameState.gamePaused
-                        ? t?.pause || "Pause"
-                        : t?.resume || "Resume"}
+                        ? t("pause")
+                        : t("resume")}
                     </button>
                   )}
                 </>
@@ -649,8 +649,7 @@ const SingleMatch: React.FC = () => {
               {gameData?.player2.alias || "Jugador 2"}: O/L
             </p>
             <p>
-              {t?.firstToScore ||
-                `Primero en llegar a ${finalPointsToWin} puntos gana!`}
+              {t("firstToScore").replace("{score}", finalPointsToWin)}
             </p>
             {gameError && (
               <p className="text-red-400 mt-2">Error: {gameError.message}</p>
@@ -664,7 +663,7 @@ const SingleMatch: React.FC = () => {
               onClick={() => navigate("/")}
               className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
             >
-              {t?.backToHome || "Back to Home"}
+              {t("backToHome")}
             </button>
           </div>
         )}

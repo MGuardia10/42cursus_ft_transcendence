@@ -7,6 +7,7 @@ import {
 } from 'react';
 import Spinner from '@/layout/Spinner/Spinner';
 import { TwoFactorInputProps} from '@/types/twoFactorAuth';
+import { useLanguage } from '@/hooks/useLanguage';
 
   const TwoFactorInput: React.FC<TwoFactorInputProps> = ({ length = 6, onComplete, resetKey = 0 }) => {
 
@@ -16,6 +17,8 @@ import { TwoFactorInputProps} from '@/types/twoFactorAuth';
 
 	/* Refs for inputs */
 	const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
+
+	const { t } = useLanguage();
 
 	/* Move focus to next input */
 	const focusInput = (index: number) => {
@@ -97,8 +100,8 @@ import { TwoFactorInputProps} from '@/types/twoFactorAuth';
 	return (
 		<div className='flex flex-col items-center gap-10'>
 			<div className='flex flex-col items-center gap-2'>
-				<h1 className='text-2xl font-bold'>Two Factor Authentication</h1>
-				<p className='text-center text-gray-600'>Please, insert the submitted code.</p>
+				<h1 className='text-2xl font-bold'>{t('two_factor_title')}</h1>
+				<p className='text-center text-gray-600'>{t('two_factor_subtitle')}</p>
 			</div>
 			<div className="flex gap-2">
 				{values.map((val, idx) => (

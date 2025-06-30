@@ -7,6 +7,7 @@ import { useNavigate } from "react-router"
 import { useFriends } from "@/hooks/useFriends"
 import { useNotification } from "@/hooks/useNotification"
 import TournamentCodeInput from "@/pages/Tournament/components/TournamentCodeInput"
+import { useLanguage } from "@/hooks/useLanguage"
 
 interface Player {
   id: number
@@ -37,6 +38,7 @@ type TournamentView = "main" | "create" | "join" | "tournament"
 const Tournament: React.FC = () => {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   const [currentView, setCurrentView] = useState<TournamentView>("main")
   const [selectedPlayers, setSelectedPlayers] = useState<number>(4)
@@ -144,8 +146,8 @@ const Tournament: React.FC = () => {
     <div className="flex justify-center px-4 lg:px-16 py-8">
       <div className="w-full max-w-6xl">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">Tournament</h1>
-          <p className="text-text-secondary text-lg">Create or join a tournament to compete with other players</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4">{t("tournament_title")}</h1>
+          <p className="text-text-secondary text-lg">{t("tournament_subtitle")}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
@@ -157,8 +159,8 @@ const Tournament: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-text-primary mb-4">Create Tournament</h3>
-              <p className="text-text-secondary mb-6">Start a new tournament and invite players to join</p>
+              <h3 className="text-2xl font-bold text-text-primary mb-4">{t("create_tournament")}</h3>
+              <p className="text-text-secondary mb-6">{t("create_tournament_subtitle")}</p>
               <button
                 onClick={() => {
                   const creatorId = Number(user?.id) || 0
@@ -177,7 +179,7 @@ const Tournament: React.FC = () => {
                 }}
                 className="w-full bg-text-tertiary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
               >
-                Create
+                {t("create_tournament")}
               </button>
             </div>
           </div>
@@ -195,13 +197,13 @@ const Tournament: React.FC = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-text-primary mb-4">Join Tournament</h3>
-              <p className="text-text-secondary mb-6">Enter a tournament code to join an existing tournament</p>
+              <h3 className="text-2xl font-bold text-text-primary mb-4">{t("join_tournament")}</h3>
+              <p className="text-text-secondary mb-6">{t("join_tournament_subtitle")}</p>
               <button
                 onClick={() => setCurrentView("join")}
                 className="w-full bg-text-secondary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
               >
-                Join
+                {t("join_tournament")}
               </button>
             </div>
           </div>
@@ -242,19 +244,19 @@ const Tournament: React.FC = () => {
           }),
         })
         if (!response.ok) {
-          let errorMessage = "Error al enviar la invitación"
+          let errorMessage = t("game_invitation_error")
           switch (response.status) {
             case 400:
-              errorMessage = "Solicitud incorrecta"
+              errorMessage = t("bad_request_error")
               break
             case 401:
-              errorMessage = "No autorizado"
+              errorMessage = t("unauthorized_error")
               break
             case 403:
-              errorMessage = "No puedes invitarte a ti mismo"
+              errorMessage = t("self_invite_error")
               break
             case 404:
-              errorMessage = "Usuario no encontrado"
+              errorMessage = t("user_not_found_error")
               break
             default:
               errorMessage = `Error ${response.status}: ${response.statusText}`
@@ -275,7 +277,7 @@ const Tournament: React.FC = () => {
     // Validar código de invitación
     const handleCodeComplete = async (code: string) => {
       if (!verificationCode) {
-        addNotification("Error: No hay hash de verificación", "error")
+        addNotification(t("no_hash_error"), "error")
         return
       }
       try {
@@ -291,19 +293,19 @@ const Tournament: React.FC = () => {
           }),
         })
         if (!response.ok) {
-          let errorMessage = "Código de autenticación incorrecto"
+          let errorMessage = t("tfa_error")
           switch (response.status) {
             case 400:
-              errorMessage = "Solicitud incorrecta"
+              errorMessage = t("bad_request_error")
               break
             case 401:
-              errorMessage = "Código incorrecto"
+              errorMessage = t("invalid_code_error")
               break
             case 404:
-              errorMessage = "Hash de verificación no encontrado"
+              errorMessage = t("hash_not_found_error")
               break
             case 429:
-              errorMessage = "Máximo número de intentos alcanzado. Vuelve a invitar al usuario."
+              errorMessage = t("max_attempts_error")
               setWaitingForResponse(false)
               setVerificationCode("")
               setResetKey((k) => k + 1)
@@ -315,7 +317,7 @@ const Tournament: React.FC = () => {
           throw new Error(errorMessage)
         }
         await response.json()
-        addNotification("Código de autenticación correcto", "success")
+        addNotification(t("tfa_success"), "success")
 
         // Agregar usuario a la lista de validados
         setValidatedUsers((prev) => {
@@ -376,7 +378,7 @@ const Tournament: React.FC = () => {
             onClick={isValidated || waitingForResponse || isFull ? undefined : handleInviteFriend}
             disabled={isValidated || waitingForResponse || isFull}
           >
-            {isValidated ? "✓ Invitado" : waitingForResponse ? "Pending..." : isFull ? "Lleno" : "Invitar"}
+            {isValidated ? t("tournament_invited") : waitingForResponse ? t("tournament_pending") : isFull ? t("tournament_full") : t("invite")}
           </button>
         </div>
         {inputVisible && verificationCode && !isValidated && (
@@ -393,7 +395,7 @@ const Tournament: React.FC = () => {
                 setWaitingForResponse(false)
               }}
             >
-              Cancelar
+              {t("delete_cancel")}
             </button>
           </div>
         )}
@@ -439,12 +441,12 @@ const Tournament: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              <h2 className="text-3xl font-bold text-text-primary">Create Tournament</h2>
+              <h2 className="text-3xl font-bold text-text-primary">{t("create_tournament")}</h2>
             </div>
 
             <div className="space-y-6">
               <div>
-                <label className="block text-text-primary font-semibold mb-3">Number of Players</label>
+                <label className="block text-text-primary font-semibold mb-3">{t("tournament_players")}</label>
                 <div className="grid grid-cols-2 gap-4">
                   {[4, 8].map((num) => (
                     <button
@@ -457,7 +459,7 @@ const Tournament: React.FC = () => {
                       }`}
                     >
                       <div className="text-2xl font-bold">{num}</div>
-                      <div className="text-sm">Players</div>
+                      <div className="text-sm">{t("tournament_players")}</div>
                     </button>
                   ))}
                 </div>
@@ -465,12 +467,12 @@ const Tournament: React.FC = () => {
 
               {/* Lista de amigos */}
               <div className="bg-background-primary rounded-lg p-6 border border-border-primary mb-6">
-                <h3 className="text-text-primary font-semibold mb-4">Mis amigos</h3>
+                <h3 className="text-text-primary font-semibold mb-4">{t("home_friends")}</h3>
                 <div className="mb-2 text-text-secondary font-mono">
-                  Players: {participants.length}/{selectedPlayers}
+                  {t("tournament_players_label").replace("{current}", String(participants.length)).replace("{max}", String(selectedPlayers))}
                 </div>
                 {friends.length === 0 ? (
-                  <div className="text-text-secondary">No tienes amigos.</div>
+                  <div className="text-text-secondary">{t("tournament_no_friends")}</div>
                 ) : (
                   <ul className="space-y-3">
                     {friends.map((friend) => (
@@ -500,7 +502,7 @@ const Tournament: React.FC = () => {
                   disabled={participants.length < selectedPlayers || loading}
                   className="flex-1 bg-text-tertiary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
                 >
-                  Enter Tournament
+                  {t("enter_tournament")}
                 </button>
               </div>
             </div>
@@ -521,22 +523,22 @@ const Tournament: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h2 className="text-3xl font-bold text-text-primary">Join Tournament</h2>
+            <h2 className="text-3xl font-bold text-text-primary">{t("join_tournament")}</h2>
           </div>
 
           <div className="space-y-6">
             <div>
-              <label className="block text-text-primary font-semibold mb-3">Tournament Code</label>
+              <label className="block text-text-primary font-semibold mb-3">{t("tournament_code")}</label>
               <input
                 type="text"
                 value={joinTournamentId}
                 onChange={(e) => setJoinTournamentId(e.target.value.toUpperCase())}
-                placeholder="Enter tournament code"
+                placeholder={t("enter_tournament_code")}
                 className="w-full px-4 py-3 bg-background-primary border border-border-primary rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:border-text-tertiary font-mono text-lg tracking-wider"
                 maxLength={8}
               />
               <p className="text-text-secondary text-sm mt-2">
-                Enter the 8-character code provided by the tournament creator
+                {t("tournament_enter_code_hint")}
               </p>
             </div>
 
@@ -545,7 +547,7 @@ const Tournament: React.FC = () => {
               disabled={!!loading || joinTournamentId.length !== 8}
               className="w-full bg-text-secondary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
             >
-              {loading ? "Joining..." : "Join Tournament"}
+              {loading ? t("tournament_joining") : t("join_tournament")}
             </button>
           </div>
         </div>
@@ -558,10 +560,10 @@ const Tournament: React.FC = () => {
     if (!currentTournament) return null
 
     const getRoundName = (round: number, totalRounds: number) => {
-      if (round === totalRounds) return "Final"
-      if (round === totalRounds - 1) return "Semifinal"
-      if (round === totalRounds - 2) return "Quarterfinal"
-      return `Round ${round}`
+      if (round === totalRounds) return t("tournament_final")
+      if (round === totalRounds - 1) return t("tournament_semifinal")
+      if (round === totalRounds - 2) return t("tournament_quarterfinal")
+      return t("tournament_round").replace("{round}", String(round))
     }
 
     const totalRounds = Math.log2(currentTournament.maxPlayers)
@@ -586,9 +588,9 @@ const Tournament: React.FC = () => {
                 </svg>
               </button>
               <div>
-                <h2 className="text-3xl font-bold text-text-primary">Tournament #{currentTournament.id}</h2>
+                <h2 className="text-3xl font-bold text-text-primary">{t("tournament_title")} #{currentTournament.id}</h2>
                 <p className="text-text-secondary">
-                  {participants.length}/{currentTournament.maxPlayers} players
+                  {t("tournament_players_label").replace("{current}", String(participants.length)).replace("{max}", String(currentTournament.maxPlayers))}
                 </p>
               </div>
             </div>
@@ -599,7 +601,7 @@ const Tournament: React.FC = () => {
                 disabled={participants.length < currentTournament.maxPlayers}
                 className="bg-text-tertiary text-background-primary py-2 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
               >
-                Start Tournament
+                {t("start_tournament")}
               </button>
             )}
           </div>
@@ -618,13 +620,13 @@ const Tournament: React.FC = () => {
                   }`}
                 />
                 <span className="text-text-primary font-semibold">
-                  {currentTournament.status === "waiting" && "Waiting for players"}
-                  {currentTournament.status === "active" && "Tournament Active"}
-                  {currentTournament.status === "finished" && "Tournament Finished"}
+                  {currentTournament.status === "waiting" && t("tournament_waiting_for_players")}
+                  {currentTournament.status === "active" && t("tournament_active")}
+                  {currentTournament.status === "finished" && t("tournament_finished")}
                 </span>
               </div>
               <div className="text-text-secondary">
-                Tournament ID: <code className="font-mono">{currentTournament.id}</code>
+                {t("tournament_code")}: <code className="font-mono">{currentTournament.id}</code>
               </div>
             </div>
           </div>
@@ -656,11 +658,11 @@ const Tournament: React.FC = () => {
                               <span className="text-text-primary font-medium">{match.player1.alias}</span>
                             </>
                           ) : (
-                            <span className="text-text-secondary italic">Waiting for player...</span>
+                            <span className="text-text-secondary italic">{t("tournament_empty_slot")}</span>
                           )}
                         </div>
 
-                        <div className="text-center text-text-secondary text-sm py-2">VS</div>
+                        <div className="text-center text-text-secondary text-sm py-2">{t("tournament_vs")}</div>
 
                         {/* Player 2 */}
                         <div
@@ -678,7 +680,7 @@ const Tournament: React.FC = () => {
                               <span className="text-text-primary font-medium">{match.player2.alias}</span>
                             </>
                           ) : (
-                            <span className="text-text-secondary italic">Waiting for player...</span>
+                            <span className="text-text-secondary italic">{t("tournament_empty_slot")}</span>
                           )}
                         </div>
 
@@ -688,13 +690,13 @@ const Tournament: React.FC = () => {
                             onClick={() => handlePlayMatch(match.id)}
                             className="w-full mt-4 bg-text-tertiary text-background-primary py-2 px-4 rounded font-semibold hover:bg-opacity-80 transition-colors"
                           >
-                            Play
+                            {t("tournament_play")}
                           </button>
                         )}
 
                         {match.winner && (
                           <div className="text-center mt-4 text-green-500 font-semibold">
-                            Winner: {match.winner.alias}
+                            {t("tournament_winner").replace("{alias}", match.winner.alias)}
                           </div>
                         )}
                       </div>
@@ -707,7 +709,7 @@ const Tournament: React.FC = () => {
 
           {/* Current Players */}
           <div className="mt-8 bg-background-secondary rounded-xl p-6 border border-border-primary">
-            <h3 className="text-text-primary font-bold mb-4">Current Players</h3>
+            <h3 className="text-text-primary font-bold mb-4">{t("tournament_current_players")}</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {/* Participants */}
               {participants.map((player) => (
@@ -731,7 +733,7 @@ const Tournament: React.FC = () => {
                   className="flex items-center space-x-3 p-3 bg-background-primary rounded-lg border border-border-primary border-dashed"
                 >
                   <div className="w-8 h-8 rounded-full bg-background-secondary" />
-                  <span className="text-text-secondary italic">Waiting...</span>
+                  <span className="text-text-secondary italic">{t("tournament_empty_slot")}</span>
                 </div>
               ))}
             </div>
