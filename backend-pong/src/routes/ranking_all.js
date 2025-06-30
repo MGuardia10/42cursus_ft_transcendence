@@ -33,7 +33,7 @@ function get_stats( limit, page, includeTop3 )
 		SELECT
   			COUNT(*) AS total_rows
 		FROM players
-		WHERE (win_count + lose_count) > 0;
+		WHERE active=1 AND (win_count + lose_count) > 0;
 	`).get().total_rows - (includeTop3 ? 0 : 3);
 
 	return {
