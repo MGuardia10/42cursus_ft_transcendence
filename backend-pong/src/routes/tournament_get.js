@@ -34,8 +34,8 @@ function get_tournament_games(tournament_id) {
     return db.prepare(`
         SELECT 
             games.id as game_id,
-            games.phase,
-            games.ord,
+            tournament_games.phase,
+            tournament_games.ordr as ord,
             games.player_a_id,
             games.player_a_score,
             games.player_b_id,
@@ -44,7 +44,7 @@ function get_tournament_games(tournament_id) {
         FROM games
         JOIN tournament_games ON tournament_games.game_id = games.id
         WHERE tournament_games.tournament_id = ?
-        ORDER BY games.phase, games.ord
+        ORDER BY tournament_games.phase, tournament_games.ordr
     `).all(tournament_id).map(game => ({
         phase: game.phase,
         ord: game.ord,

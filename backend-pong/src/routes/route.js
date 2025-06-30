@@ -195,6 +195,19 @@ export default async function (fastify, options) {
   /* NOTE: Tournament */
   /********************/
 
+  fastify.post("/tournaments", {
+  schema: {
+    body: {
+      type: 'object',
+      required: ['configuration', 'players'],
+      properties: {
+        configuration: { type: 'object' },
+        players: { type: 'array', items: { type: 'integer' } }
+      }
+    }
+  }
+  }, tournament_create);
+
   fastify.get('/tournament/:id', {
     schema: {
       params: {
@@ -206,17 +219,4 @@ export default async function (fastify, options) {
       }
     }
   }, tournament_get);
-
-  fastify.post("/tournaments", {
-	schema: {
-		body: {
-			type: 'object',
-			required: ['configuration', 'players'],
-			properties: {
-				configuration: { type: 'object' },
-				players: { type: 'array', items: { type: 'integer' } }
-			}
-		}
-	}
-  }, tournament_create);
 }
