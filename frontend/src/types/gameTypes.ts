@@ -39,4 +39,5 @@ export interface GameState {
   gamePaused: boolean;
   gameWidth: number;
   gameHeight: number;
+  ballSpeedMultiplier?: number;
 }

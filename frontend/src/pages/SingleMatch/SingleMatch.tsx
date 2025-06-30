@@ -87,6 +87,7 @@ const SingleMatch: React.FC = () => {
     gamePaused: false,
     gameWidth: 800,
     gameHeight: 600,
+    ballSpeedMultiplier: 1,
   });
 
   // Clear game data when game ends
@@ -258,11 +259,16 @@ const SingleMatch: React.FC = () => {
               dx: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
               dy: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
             },
+            ballSpeedMultiplier: 1,
           }));
         }, finalServeDelay * 1000);
       } else {
         newBall.dx = (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED;
         newBall.dy = (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED;
+        setGameState((prev: GameState) => ({
+          ...prev,
+          ballSpeedMultiplier: 1,
+        }));
       }
       return newBall;
     },
@@ -304,8 +310,8 @@ const SingleMatch: React.FC = () => {
         );
       }
 
-      newState.ball.x += newState.ball.dx;
-      newState.ball.y += newState.ball.dy;
+      newState.ball.x += newState.ball.dx * (newState.ballSpeedMultiplier || 1);
+      newState.ball.y += newState.ball.dy * (newState.ballSpeedMultiplier || 1);
 
       if (newState.ball.y <= 0 || newState.ball.y >= gameHeight - BALL_SIZE) {
         newState.ball.dy *= -1;
@@ -321,6 +327,7 @@ const SingleMatch: React.FC = () => {
         const hitPos =
           (newState.ball.y - newState.playerPaddle.y) / PADDLE_HEIGHT;
         newState.ball.dy = (hitPos - 0.5) * BALL_SPEED * 2;
+        newState.ballSpeedMultiplier = (newState.ballSpeedMultiplier || 1) * 1.5;
       }
 
       if (
@@ -333,6 +340,7 @@ const SingleMatch: React.FC = () => {
         const hitPos =
           (newState.ball.y - newState.enemyPaddle.y) / PADDLE_HEIGHT;
         newState.ball.dy = (hitPos - 0.5) * BALL_SPEED * 2;
+        newState.ballSpeedMultiplier = (newState.ballSpeedMultiplier || 1) * 1.5;
       }
 
       if (newState.ball.x < -BALL_SIZE) {
@@ -343,6 +351,7 @@ const SingleMatch: React.FC = () => {
           dx: 0,
           dy: 0,
         };
+        newState.ballSpeedMultiplier = 1;
 
         setTimeout(() => {
           setGameState((prev: GameState) => ({
@@ -373,6 +382,7 @@ const SingleMatch: React.FC = () => {
           dx: 0,
           dy: 0,
         };
+        newState.ballSpeedMultiplier = 1;
 
         setTimeout(() => {
           setGameState((prev: GameState) => ({
