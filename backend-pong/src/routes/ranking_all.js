@@ -35,11 +35,12 @@ function get_stats( limit, page, includeTop3 )
 		FROM players
 		WHERE active=1 AND (win_count + lose_count) > 0;
 	`).get().total_rows - (includeTop3 ? 0 : 3);
+	const lastPageCalc = Math.ceil(total_rows / limit);
 
 	return {
 		totalPlayers: total_rows,
 		page: page,
-		lastPage: Math.ceil(total_rows / limit)
+		lastPage: lastPageCalc < 1 ? 1 : lastPageCalc
 	}
 }
 

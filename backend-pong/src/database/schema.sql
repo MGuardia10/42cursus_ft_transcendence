@@ -49,7 +49,7 @@ INSERT OR IGNORE INTO game_status(id, name) VALUES(2, 'Finished');
 CREATE TABLE IF NOT EXISTS games (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   status INTEGER NOT NULL DEFAULT 1,
-  date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  date TEXT NOT NULL DEFAULT (datetime('now','+02:00')),
 
   -- Players and puntuation
   player_a_id INTEGER NOT NULL,
