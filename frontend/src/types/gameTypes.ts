@@ -2,7 +2,7 @@
 export const PADDLE_HEIGHT = 80;
 export const PADDLE_WIDTH = 12;
 export const BALL_SIZE = 12;
-export const PADDLE_SPEED = 4;
+export const PADDLE_SPEED = 3;
 export const BALL_SPEED = 1;
 
 // Interfaces

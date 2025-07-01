@@ -246,91 +246,141 @@ const SingleMatch: React.FC = () => {
   }, [updateGameDimensions]);
 
   const gameLoop = useCallback(() => {
+    // Ratios y tamaños responsive
+    const PADDLE_WIDTH_RATIO = 0.02;
+    const BALL_SIZE_RATIO = 0.027;
+
+    // Movimiento de paddle
+    function movePaddle(y: number, up: boolean, gameHeight: number, paddleHeight: number, speed: number) {
+      if (up) return Math.max(0, y - speed);
+      return Math.min(gameHeight - paddleHeight, y + speed);
+    }
+
+    // Colisión con paredes
+    function checkWallCollision(ball: any, gameHeight: number, ballSize: number) {
+      if (ball.y <= 0 || ball.y >= gameHeight - ballSize) {
+        ball.dy *= -1;
+      }
+    }
+
+    // Colisión con paddle
+    function checkPaddleCollision(ball: any, paddleY: number, paddleX: number, paddleHeight: number, paddleWidth: number, ballSize: number, dxCondition: boolean, ballSpeed: number) {
+      if (
+        ball.x <= paddleX + paddleWidth &&
+        ball.x + ballSize >= paddleX &&
+        ball.y + ballSize >= paddleY &&
+        ball.y <= paddleY + paddleHeight &&
+        dxCondition
+      ) {
+        ball.dx *= -1;
+        const hitPos = (ball.y + ballSize / 2 - paddleY) / paddleHeight;
+        ball.dy = (hitPos - 0.5) * ballSpeed * 2;
+        return true; // Hubo colisión
+      }
+      return false;
+    }
+
+    // Reiniciar bola
+    function resetBall(gameWidth: number, gameHeight: number) {
+      return {
+        x: gameWidth / 2,
+        y: gameHeight / 2,
+        dx: 0,
+        dy: 0,
+      };
+    }
+
     setGameState((prev: GameState) => {
       if (!prev.gamePaused || gameEnded) return prev;
 
       const newState = { ...prev };
       const { gameWidth, gameHeight } = newState;
-
-      // Jugador 1: solo W y S
       const paddleHeight = gameHeight * PADDLE_HEIGHT_RATIO;
-      const paddleWidth = gameWidth * 0.02; // PADDLE_WIDTH_RATIO
-      const ballSize = gameWidth * 0.027;   // BALL_SIZE_RATIO
-      if (keysRef.current["w"] || keysRef.current["W"]) {
-        newState.playerPaddle.y = Math.max(
-          0,
-          newState.playerPaddle.y - PADDLE_SPEED
-        );
-      }
-      if (keysRef.current["s"] || keysRef.current["S"]) {
-        newState.playerPaddle.y = Math.min(
-          gameHeight - paddleHeight,
-          newState.playerPaddle.y + PADDLE_SPEED
-        );
-      }
+      const paddleWidth = gameWidth * PADDLE_WIDTH_RATIO;
+      const ballSize = gameWidth * BALL_SIZE_RATIO;
 
-      // Jugador 2: teclas O y L
-      if (keysRef.current["o"] || keysRef.current["O"]) {
-        newState.enemyPaddle.y = Math.max(
-          0,
-          newState.enemyPaddle.y - PADDLE_SPEED
-        );
-      }
-      if (keysRef.current["l"] || keysRef.current["L"]) {
-        newState.enemyPaddle.y = Math.min(
-          gameHeight - paddleHeight,
-          newState.enemyPaddle.y + PADDLE_SPEED
-        );
-      }
+      // Movimiento paddles
+      newState.playerPaddle.y = movePaddle(
+        newState.playerPaddle.y,
+        !!(keysRef.current["w"] || keysRef.current["W"]),
+        gameHeight,
+        paddleHeight,
+        PADDLE_SPEED
+      );
+      newState.playerPaddle.y = movePaddle(
+        newState.playerPaddle.y,
+        !(keysRef.current["s"] || keysRef.current["S"]),
+        gameHeight,
+        paddleHeight,
+        PADDLE_SPEED
+      );
+      newState.enemyPaddle.y = movePaddle(
+        newState.enemyPaddle.y,
+        !!(keysRef.current["o"] || keysRef.current["O"]),
+        gameHeight,
+        paddleHeight,
+        PADDLE_SPEED
+      );
+      newState.enemyPaddle.y = movePaddle(
+        newState.enemyPaddle.y,
+        !(keysRef.current["l"] || keysRef.current["L"]),
+        gameHeight,
+        paddleHeight,
+        PADDLE_SPEED
+      );
 
+      // Movimiento bola
       newState.ball.x += newState.ball.dx * (newState.ballSpeedMultiplier || 1);
       newState.ball.y += newState.ball.dy * (newState.ballSpeedMultiplier || 1);
 
-      if (newState.ball.y <= 0 || newState.ball.y >= gameHeight - ballSize) {
-        newState.ball.dy *= -1;
-      }
+      // Colisión con paredes
+      checkWallCollision(newState.ball, gameHeight, ballSize);
 
-      // Colisión con paddle izquierdo (jugador)
+      // Colisión con paddles
+      let paddleHit = false;
       if (
-        newState.ball.x <= paddleWidth &&
-        newState.ball.y + ballSize >= newState.playerPaddle.y &&
-        newState.ball.y <= newState.playerPaddle.y + paddleHeight &&
-        newState.ball.dx < 0
+        checkPaddleCollision(
+          newState.ball,
+          newState.playerPaddle.y,
+          0,
+          paddleHeight,
+          paddleWidth,
+          ballSize,
+          newState.ball.dx < 0,
+          BALL_SPEED
+        )
       ) {
-        newState.ball.dx *= -1;
-        const hitPos =
-          (newState.ball.y + ballSize / 2 - newState.playerPaddle.y) / paddleHeight;
-        newState.ball.dy = (hitPos - 0.5) * BALL_SPEED * 2;
-        newState.ballSpeedMultiplier = (newState.ballSpeedMultiplier || 1) * 1.2;
+        paddleHit = true;
       }
-
-      // Colisión con paddle derecho (enemigo)
       if (
-        newState.ball.x + ballSize >= gameWidth - paddleWidth &&
-        newState.ball.y + ballSize >= newState.enemyPaddle.y &&
-        newState.ball.y <= newState.enemyPaddle.y + paddleHeight &&
-        newState.ball.dx > 0
+        checkPaddleCollision(
+          newState.ball,
+          newState.enemyPaddle.y,
+          gameWidth - paddleWidth,
+          paddleHeight,
+          paddleWidth,
+          ballSize,
+          newState.ball.dx > 0,
+          BALL_SPEED
+        )
       ) {
-        newState.ball.dx *= -1;
-        const hitPos =
-          (newState.ball.y + ballSize / 2 - newState.enemyPaddle.y) / paddleHeight;
-        newState.ball.dy = (hitPos - 0.5) * BALL_SPEED * 2;
-        newState.ballSpeedMultiplier = (newState.ballSpeedMultiplier || 1) * 1.2;
+        paddleHit = true;
+      }
+      if (paddleHit) {
+        if (typeof newState.ballSpeedMultiplier !== 'number') newState.ballSpeedMultiplier = 1;
+        newState.ballSpeedMultiplier *= 1.25;
       }
 
+      // Gol enemigo
       if (newState.ball.x < -ballSize) {
         newState.gameScore.enemy++;
-        newState.ball = {
-          x: gameWidth / 2,
-          y: gameHeight / 2,
-          dx: 0,
-          dy: 0,
-        };
+        newState.gamePaused = false;
+        newState.ball = resetBall(gameWidth, gameHeight);
         newState.ballSpeedMultiplier = 1;
-
         setTimeout(() => {
           setGameState((prev: GameState) => ({
             ...prev,
+            gamePaused: true,
             ball: {
               ...prev.ball,
               dx: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
@@ -338,7 +388,6 @@ const SingleMatch: React.FC = () => {
             },
           }));
         }, finalServeDelay * 1000);
-
         if (newState.gameScore.enemy >= finalPointsToWin) {
           newState.gamePaused = false;
           setGameEnded(true);
@@ -351,17 +400,13 @@ const SingleMatch: React.FC = () => {
         }
       } else if (newState.ball.x > gameWidth + ballSize) {
         newState.gameScore.player++;
-        newState.ball = {
-          x: gameWidth / 2,
-          y: gameHeight / 2,
-          dx: 0,
-          dy: 0,
-        };
+        newState.gamePaused = false;
+        newState.ball = resetBall(gameWidth, gameHeight);
         newState.ballSpeedMultiplier = 1;
-
         setTimeout(() => {
           setGameState((prev: GameState) => ({
             ...prev,
+            gamePaused: true,
             ball: {
               ...prev.ball,
               dx: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
@@ -369,7 +414,6 @@ const SingleMatch: React.FC = () => {
             },
           }));
         }, finalServeDelay * 1000);
-
         if (newState.gameScore.player >= finalPointsToWin) {
           newState.gamePaused = false;
           setGameEnded(true);
