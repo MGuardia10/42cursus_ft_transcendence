@@ -8,9 +8,6 @@ import { useGame } from "@/hooks/useGame";
 import { useNotification } from "@/hooks/useNotification";
 import { useAuth } from "@/hooks/useAuth";
 import {
-  PADDLE_HEIGHT,
-  PADDLE_WIDTH,
-  BALL_SIZE,
   PADDLE_SPEED,
   BALL_SPEED,
   GameData,
@@ -19,6 +16,8 @@ import {
 import Scoreboard from "./components/Scoreboard";
 import FieldLayout from "./components/FieldLayout";
 import GameControls from "./components/GameControls";
+
+const PADDLE_HEIGHT_RATIO = 0.2; // 20% del alto del campo
 
 const SingleMatch: React.FC = () => {
   // Hooks
@@ -254,6 +253,9 @@ const SingleMatch: React.FC = () => {
       const { gameWidth, gameHeight } = newState;
 
       // Jugador 1: solo W y S
+      const paddleHeight = gameHeight * PADDLE_HEIGHT_RATIO;
+      const paddleWidth = gameWidth * 0.02; // PADDLE_WIDTH_RATIO
+      const ballSize = gameWidth * 0.027;   // BALL_SIZE_RATIO
       if (keysRef.current["w"] || keysRef.current["W"]) {
         newState.playerPaddle.y = Math.max(
           0,
@@ -262,7 +264,7 @@ const SingleMatch: React.FC = () => {
       }
       if (keysRef.current["s"] || keysRef.current["S"]) {
         newState.playerPaddle.y = Math.min(
-          gameHeight - PADDLE_HEIGHT,
+          gameHeight - paddleHeight,
           newState.playerPaddle.y + PADDLE_SPEED
         );
       }
@@ -276,7 +278,7 @@ const SingleMatch: React.FC = () => {
       }
       if (keysRef.current["l"] || keysRef.current["L"]) {
         newState.enemyPaddle.y = Math.min(
-          gameHeight - PADDLE_HEIGHT,
+          gameHeight - paddleHeight,
           newState.enemyPaddle.y + PADDLE_SPEED
         );
       }
@@ -284,37 +286,39 @@ const SingleMatch: React.FC = () => {
       newState.ball.x += newState.ball.dx * (newState.ballSpeedMultiplier || 1);
       newState.ball.y += newState.ball.dy * (newState.ballSpeedMultiplier || 1);
 
-      if (newState.ball.y <= 0 || newState.ball.y >= gameHeight - BALL_SIZE) {
+      if (newState.ball.y <= 0 || newState.ball.y >= gameHeight - ballSize) {
         newState.ball.dy *= -1;
       }
 
+      // Colisión con paddle izquierdo (jugador)
       if (
-        newState.ball.x <= PADDLE_WIDTH &&
-        newState.ball.y >= newState.playerPaddle.y &&
-        newState.ball.y <= newState.playerPaddle.y + PADDLE_HEIGHT &&
+        newState.ball.x <= paddleWidth &&
+        newState.ball.y + ballSize >= newState.playerPaddle.y &&
+        newState.ball.y <= newState.playerPaddle.y + paddleHeight &&
         newState.ball.dx < 0
       ) {
         newState.ball.dx *= -1;
         const hitPos =
-          (newState.ball.y - newState.playerPaddle.y) / PADDLE_HEIGHT;
+          (newState.ball.y + ballSize / 2 - newState.playerPaddle.y) / paddleHeight;
         newState.ball.dy = (hitPos - 0.5) * BALL_SPEED * 2;
-        newState.ballSpeedMultiplier = (newState.ballSpeedMultiplier || 1) * 1.5;
+        newState.ballSpeedMultiplier = (newState.ballSpeedMultiplier || 1) * 1.2;
       }
 
+      // Colisión con paddle derecho (enemigo)
       if (
-        newState.ball.x >= gameWidth - PADDLE_WIDTH - BALL_SIZE &&
-        newState.ball.y >= newState.enemyPaddle.y &&
-        newState.ball.y <= newState.enemyPaddle.y + PADDLE_HEIGHT &&
+        newState.ball.x + ballSize >= gameWidth - paddleWidth &&
+        newState.ball.y + ballSize >= newState.enemyPaddle.y &&
+        newState.ball.y <= newState.enemyPaddle.y + paddleHeight &&
         newState.ball.dx > 0
       ) {
         newState.ball.dx *= -1;
         const hitPos =
-          (newState.ball.y - newState.enemyPaddle.y) / PADDLE_HEIGHT;
+          (newState.ball.y + ballSize / 2 - newState.enemyPaddle.y) / paddleHeight;
         newState.ball.dy = (hitPos - 0.5) * BALL_SPEED * 2;
-        newState.ballSpeedMultiplier = (newState.ballSpeedMultiplier || 1) * 1.5;
+        newState.ballSpeedMultiplier = (newState.ballSpeedMultiplier || 1) * 1.2;
       }
 
-      if (newState.ball.x < -BALL_SIZE) {
+      if (newState.ball.x < -ballSize) {
         newState.gameScore.enemy++;
         newState.ball = {
           x: gameWidth / 2,
@@ -345,7 +349,7 @@ const SingleMatch: React.FC = () => {
             );
           }
         }
-      } else if (newState.ball.x > gameWidth + BALL_SIZE) {
+      } else if (newState.ball.x > gameWidth + ballSize) {
         newState.gameScore.player++;
         newState.ball = {
           x: gameWidth / 2,

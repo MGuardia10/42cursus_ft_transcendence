@@ -12,9 +12,10 @@ interface FieldLayoutProps {
   gameData: any;
 }
 
-const PADDLE_WIDTH = 16;
-const PADDLE_HEIGHT = 80;
-const BALL_SIZE = 16;
+// Define proporciones para paddles y pelota
+const PADDLE_WIDTH_RATIO = 0.020; // 2.5% del ancho del campo
+const PADDLE_HEIGHT_RATIO = 0.2;  // 20% del alto del campo
+const BALL_SIZE_RATIO = 0.027;    // 2.7% del ancho del campo (ajustable)
 
 const FieldLayout: React.FC<FieldLayoutProps> = ({
   gameRef,
@@ -56,8 +57,8 @@ const FieldLayout: React.FC<FieldLayoutProps> = ({
           style={{
             left: 0,
             top: `${(gameState.playerPaddle.y / gameState.gameHeight) * 100}%`,
-            width: `${(PADDLE_WIDTH / gameState.gameWidth) * 100}%`,
-            height: `${(PADDLE_HEIGHT / gameState.gameHeight) * 100}%`,
+            width: `${PADDLE_WIDTH_RATIO * 100}%`,
+            height: `${PADDLE_HEIGHT_RATIO * 100}%`,
             backgroundColor: finalBarColor,
           }}
         />
@@ -66,8 +67,8 @@ const FieldLayout: React.FC<FieldLayoutProps> = ({
           style={{
             right: 0,
             top: `${(gameState.enemyPaddle.y / gameState.gameHeight) * 100}%`,
-            width: `${(PADDLE_WIDTH / gameState.gameWidth) * 100}%`,
-            height: `${(PADDLE_HEIGHT / gameState.gameHeight) * 100}%`,
+            width: `${PADDLE_WIDTH_RATIO * 100}%`,
+            height: `${PADDLE_HEIGHT_RATIO * 100}%`,
             backgroundColor: finalBarColor,
           }}
         />
@@ -76,8 +77,8 @@ const FieldLayout: React.FC<FieldLayoutProps> = ({
           style={{
             left: `${(gameState.ball.x / gameState.gameWidth) * 100}%`,
             top: `${(gameState.ball.y / gameState.gameHeight) * 100}%`,
-            width: `${(BALL_SIZE / gameState.gameWidth) * 100}%`,
-            height: `${(BALL_SIZE / gameState.gameHeight) * 100}%`,
+            width: `${BALL_SIZE_RATIO * 100}%`,
+            height: `${(BALL_SIZE_RATIO * gameState.gameWidth / gameState.gameHeight) * 100}%`,
             backgroundColor: finalBallColor,
           }}
         />
