@@ -243,39 +243,6 @@ const SingleMatch: React.FC = () => {
     updateGameDimensions();
   }, [updateGameDimensions]);
 
-  const resetBall = useCallback(
-    (gameWidth: number, gameHeight: number, withDelay = true) => {
-      const newBall = {
-        x: gameWidth / 2,
-        y: gameHeight / 2,
-        dx: 0,
-        dy: 0,
-      };
-      if (withDelay) {
-        setTimeout(() => {
-          setGameState((prev: GameState) => ({
-            ...prev,
-            ball: {
-              ...prev.ball,
-              dx: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
-              dy: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
-            },
-            ballSpeedMultiplier: 1,
-          }));
-        }, finalServeDelay * 1000);
-      } else {
-        newBall.dx = (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED;
-        newBall.dy = (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED;
-        setGameState((prev: GameState) => ({
-          ...prev,
-          ballSpeedMultiplier: 1,
-        }));
-      }
-      return newBall;
-    },
-    [finalServeDelay]
-  );
-
   const gameLoop = useCallback(() => {
     setGameState((prev: GameState) => {
       if (!prev.gamePaused || gameEnded) return prev;
@@ -440,27 +407,6 @@ const SingleMatch: React.FC = () => {
     }));
   };
 
-  const resetGame = () => {
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-      animationRef.current = null;
-    }
-
-    setGameState((prev: GameState) => ({
-      ...prev,
-      ball: resetBall(prev.gameWidth, prev.gameHeight, false),
-      playerPaddle: { y: prev.gameHeight / 2 - PADDLE_HEIGHT / 2 },
-      enemyPaddle: { y: prev.gameHeight / 2 - PADDLE_HEIGHT / 2, direction: 1 },
-      gameScore: { player: 0, enemy: 0 },
-      gamePaused: false,
-    }));
-
-    setGameEnded(false);
-    setBackendGameId(null);
-    setGameCreated(false);
-    setGameUpdated(false);
-  };
-
   useEffect(() => {
     if (gameState.gamePaused && !gameEnded) {
       animationRef.current = requestAnimationFrame(gameLoop);
@@ -485,6 +431,14 @@ const SingleMatch: React.FC = () => {
     settingsLoading || defaultValue
       ? `#${import.meta.env.VITE_STICK_COLOR}`
       : barColor;
+
+  // Función para obtener la URL absoluta del avatar
+  const getAvatarUrl = (avatar: string | undefined | null): string => {
+    if (!avatar || avatar.trim() === "") return "/placeholder.svg";
+    if (avatar.startsWith("http")) return avatar;
+    const baseUrl = import.meta.env.VITE_API_URL || "";
+    return `${baseUrl}${avatar}`;
+  };
 
   // Show loading if game settings are loading
   if (settingsLoading) {
@@ -513,9 +467,11 @@ const SingleMatch: React.FC = () => {
             <div className="flex items-center justify-center gap-2 mb-2">
               {gameData?.player1.avatar && (
                 <img
-                  src={gameData.player1.avatar || "/placeholder.svg"}
-                  alt={gameData.player1.alias}
+                  src={`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${gameData?.player1.id}/avatar`}
+                  alt={gameData?.player1.alias || "Jugador 1"}
                   className="w-8 h-8 rounded-full border border-text-tertiary object-cover"
+                  onError={(e) => { e.currentTarget.src = "/placeholder.svg"; }}
+                  crossOrigin="use-credentials"
                 />
               )}
               <div className="text-text-secondary text-sm">
@@ -531,9 +487,11 @@ const SingleMatch: React.FC = () => {
             <div className="flex items-center justify-center gap-2 mb-2">
               {gameData?.player2.avatar && (
                 <img
-                  src={gameData.player2.avatar || "/placeholder.svg"}
-                  alt={gameData.player2.alias}
+                  src={`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${gameData?.player2.id}/avatar`}
+                  alt={gameData?.player2.alias || "Jugador 2"}
                   className="w-8 h-8 rounded-full border border-text-tertiary object-cover"
+                  onError={(e) => { e.currentTarget.src = "/placeholder.svg"; }}
+                  crossOrigin="use-credentials"
                 />
               )}
               <div className="text-text-secondary text-sm">
