@@ -52,7 +52,8 @@ function get_tournament_games(tournament_id) {
         if (!gamesByPhase[game.phase]) {
             gamesByPhase[game.phase] = {};
         }
-        gamesByPhase[game.phase][game.game_id] = {
+        gamesByPhase[game.phase]= {
+            id: game.game_id, 
             ord: game.ord,
             player_a_id: game.player_a_id,
             player_a_score: game.player_a_score,
