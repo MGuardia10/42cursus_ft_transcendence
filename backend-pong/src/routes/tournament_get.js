@@ -31,19 +31,39 @@ function get_tournament_players(tournament_id) {
 }
 
 function get_tournament_games(tournament_id) {
-    return db.prepare(`
+    const games = db.prepare(`
         SELECT 
             games.id as game_id,
             tournament_games.phase,
-            tournament_games.ordr as ord
+            tournament_games.ordr as ord,
+            games.player_a_id,
+            games.player_a_score,
+            games.player_b_id,
+            games.player_b_score,
+            games.status
         FROM games
         JOIN tournament_games ON tournament_games.game_id = games.id
         WHERE tournament_games.tournament_id = ?
         ORDER BY tournament_games.phase, tournament_games.ordr
-    `).all(tournament_id).map(game => ({
-        phase: game.phase,
-        ord: game.ord
-    }));
+    `).all(tournament_id);
+
+    const phases = {};
+    games.forEach(game => {
+        if (!phases[game.phase]) {
+            phases[game.phase] = [];
+        }
+        phases[game.phase].push({
+            id: game.game_id,
+            phase: game.phase,
+            ord: game.ord,
+            player_a_id: game.player_a_id,
+            player_a_score: game.player_a_score,
+            player_b_id: game.player_b_id,
+            player_b_score: game.player_b_score,
+            status: game.status
+        });
+    });
+    return Object.values(phases);
 }
 
 function merge_tournament_data(tournament_id, config, players, games) {
