@@ -16,6 +16,9 @@ import {
   GameData,
   GameState,
 } from "@/types/gameTypes";
+import Scoreboard from "./components/Scoreboard";
+import FieldLayout from "./components/FieldLayout";
+import GameControls from "./components/GameControls";
 
 const SingleMatch: React.FC = () => {
   // Hooks
@@ -462,178 +465,38 @@ const SingleMatch: React.FC = () => {
           <p className="text-text-secondary">{t("single_match_play")}</p>
         </div>
 
-        <div className="flex justify-center items-center mb-6 bg-background-secondary rounded-lg p-4">
-          <div className="text-center mx-8">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              {gameData?.player1.avatar && (
-                <img
-                  src={`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${gameData?.player1.id}/avatar`}
-                  alt={gameData?.player1.alias || "Jugador 1"}
-                  className="w-8 h-8 rounded-full border border-text-tertiary object-cover"
-                  onError={(e) => { e.currentTarget.src = "/placeholder.svg"; }}
-                  crossOrigin="use-credentials"
-                />
-              )}
-              <div className="text-text-secondary text-sm">
-                {gameData?.player1.alias || "Jugador 1"}
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-text-tertiary">
-              {gameState.gameScore.player}
-            </div>
-          </div>
-          <div className="text-2xl text-text-primary mx-4">-</div>
-          <div className="text-center mx-8">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              {gameData?.player2.avatar && (
-                <img
-                  src={`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${gameData?.player2.id}/avatar`}
-                  alt={gameData?.player2.alias || "Jugador 2"}
-                  className="w-8 h-8 rounded-full border border-text-tertiary object-cover"
-                  onError={(e) => { e.currentTarget.src = "/placeholder.svg"; }}
-                  crossOrigin="use-credentials"
-                />
-              )}
-              <div className="text-text-secondary text-sm">
-                {gameData?.player2.alias || "Jugador 2"}
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-text-tertiary">
-              {gameState.gameScore.enemy}
-            </div>
-          </div>
-        </div>
+        {/* Scoreboard */}
+        <Scoreboard
+          player1={{ id: gameData?.player1.id?.toString() || "", alias: gameData?.player1.alias || "" }}
+          player2={{ id: gameData?.player2.id?.toString() || "", alias: gameData?.player2.alias || "" }}
+          score={gameState.gameScore}
+        />
 
-        <div className="flex justify-center mb-6">
-          <div
-            ref={gameRef}
-            className="relative rounded-lg overflow-hidden"
-            style={{
-              width: "100%",
-              maxWidth: "600px",
-              height: "auto",
-              aspectRatio: "4/3",
-              backgroundColor: finalBgColor,
-              border: `1px solid ${finalBarColor}`,
-            }}
-          >
-            <div
-              className="absolute opacity-50"
-              style={{
-                left: "50%",
-                top: 0,
-                width: "2px",
-                height: "100%",
-                transform: "translateX(-50%)",
-                backgroundColor: finalBarColor,
-              }}
-            />
-            <div
-              className="absolute rounded-sm"
-              style={{
-                left: 0,
-                top: `${
-                  (gameState.playerPaddle.y / gameState.gameHeight) * 100
-                }%`,
-                width: `${(PADDLE_WIDTH / gameState.gameWidth) * 100}%`,
-                height: `${(PADDLE_HEIGHT / gameState.gameHeight) * 100}%`,
-                backgroundColor: finalBarColor,
-              }}
-            />
-            <div
-              className="absolute rounded-sm"
-              style={{
-                right: 0,
-                top: `${
-                  (gameState.enemyPaddle.y / gameState.gameHeight) * 100
-                }%`,
-                width: `${(PADDLE_WIDTH / gameState.gameWidth) * 100}%`,
-                height: `${(PADDLE_HEIGHT / gameState.gameHeight) * 100}%`,
-                backgroundColor: finalBarColor,
-              }}
-            />
-            <div
-              className="absolute rounded-full"
-              style={{
-                left: `${(gameState.ball.x / gameState.gameWidth) * 100}%`,
-                top: `${(gameState.ball.y / gameState.gameHeight) * 100}%`,
-                width: `${(BALL_SIZE / gameState.gameWidth) * 100}%`,
-                height: `${(BALL_SIZE / gameState.gameHeight) * 100}%`,
-                backgroundColor: finalBallColor,
-              }}
-            />
-            {!gameState.gamePaused && (
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
-                <div className="mb-2 text-xl font-bold text-text-tertiary drop-shadow">
-                  {t("firstToScore").replace("{score}", finalPointsToWin)}
-                </div>
-                <div className="text-base text-text-primary">
-                  {gameState.gameScore.player === 0 &&
-                  gameState.gameScore.enemy === 0
-                    ? t("pressToStart")
-                    : gameState.gameScore.player >= finalPointsToWin
-                    ? `${gameData?.player1.alias || "Player 1"} ${t("wins")}`
-                    : gameState.gameScore.enemy >= finalPointsToWin
-                    ? `${gameData?.player2.alias || "Player 2"} ${t("wins")}`
-                    : t("gamePaused")}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* FieldLayout */}
+        <FieldLayout
+          gameRef={gameRef as React.RefObject<HTMLDivElement>}
+          gameState={gameState}
+          finalBgColor={finalBgColor}
+          finalBarColor={finalBarColor}
+          finalBallColor={finalBallColor}
+          finalPointsToWin={finalPointsToWin}
+          t={t as (key: string) => string}
+          gameData={gameData}
+        />
 
-        <div className="flex flex-col items-center space-y-4">
-          <div className="flex space-x-4">
-            {gameState.gameScore.player < finalPointsToWin &&
-              gameState.gameScore.enemy < finalPointsToWin && (
-                <>
-                  {gameState.gameScore.player === 0 &&
-                  gameState.gameScore.enemy === 0 &&
-                  !gameState.gamePaused ? (
-                    <button
-                      onClick={startGame}
-                      disabled={gameLoading}
-                      className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
-                    >
-                      {gameLoading ? "Creating Game..." : t("start")}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={pauseGame}
-                      className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
-                    >
-                      {gameState.gamePaused
-                        ? t("pause")
-                        : t("resume")}
-                    </button>
-                  )}
-                </>
-              )}
-          </div>
-          <div className="text-center text-text-secondary text-sm max-w-md">
-            <p className="mb-2">
-              {gameData?.player1.alias || "Jugador 1"}: W/S |{" "}
-              {gameData?.player2.alias || "Jugador 2"}: O/L
-            </p>
-            {gameError && (
-              <p className="text-red-400 mt-2">Error: {gameError.message}</p>
-            )}
-          </div>
-          {gameError && (
-            <div className="text-center text-red-400 text-sm mt-2">Error: {gameError.message}</div>
-          )}
-        </div>
-
-        {gameEnded && (
-          <div className="mt-6 flex justify-center">
-            <button
-              onClick={() => navigate("/")}
-              className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
-            >
-              {t("backToHome")}
-            </button>
-          </div>
-        )}
+        {/* Game Controls */}
+        <GameControls
+          gameState={gameState}
+          gameEnded={gameEnded}
+          gameLoading={gameLoading}
+          onStart={startGame}
+          onPause={pauseGame}
+          onBackToHome={() => navigate("/")}
+          t={t as (key: string) => string}
+          finalPointsToWin={finalPointsToWin}
+          gameData={gameData}
+          gameError={gameError}
+        />
       </div>
     </div>
   );
