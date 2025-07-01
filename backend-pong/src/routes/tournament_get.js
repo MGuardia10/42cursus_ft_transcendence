@@ -33,7 +33,7 @@ function get_tournament_players(tournament_id) {
 function get_tournament_games(tournament_id) {
     const games = db.prepare(`
         SELECT 
-            games.id as game_id,
+            games.id,
             tournament_games.phase,
             tournament_games.ordr as ord,
             games.player_a_id,
@@ -50,22 +50,21 @@ function get_tournament_games(tournament_id) {
     const gamesByPhase = {};
     games.forEach(game => {
         if (!gamesByPhase[game.phase]) {
-            gamesByPhase[game.phase] = {};
+            gamesByPhase[game.phase] = [];
         }
-        gamesByPhase[game.phase]= {
-            id: game.game_id, 
+        gamesByPhase[game.phase].push({
+            id: game.id,
             ord: game.ord,
             player_a_id: game.player_a_id,
             player_a_score: game.player_a_score,
             player_b_id: game.player_b_id,
             player_b_score: game.player_b_score,
             status: game.status
-        };
+        });
     });
 
     return gamesByPhase;
 }
-
 function merge_tournament_data(tournament_id, config, players, games) {
     return {
         tournament_id,
