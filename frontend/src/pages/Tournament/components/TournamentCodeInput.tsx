@@ -16,6 +16,7 @@ const TournamentCodeInput: React.FC<TournamentCodeInputProps> = ({ length = 6, o
   /* useState hook for numbers */
   const [values, setValues] = useState<string[]>(Array(length).fill(""))
   const [loading, setLoading] = useState<boolean>(false)
+  const [hasSubmitted, setHasSubmitted] = useState(false)
   const { t } = useLanguage()
 
   /* Refs for inputs */
@@ -81,12 +82,15 @@ const TournamentCodeInput: React.FC<TournamentCodeInputProps> = ({ length = 6, o
   /* Reset if resetKey change */
   useEffect(() => {
     setValues(Array(length).fill(""))
+    setHasSubmitted(false)
     focusInput(0)
   }, [resetKey, length])
 
   /* Check all numbers filled and call function to handle 2FA */
   useEffect(() => {
-    if (values.every((v) => v !== "")) {
+    if (values.every((v) => v !== "") && !hasSubmitted) {
+      setHasSubmitted(true)
+      console.log("Intentando validar código:", values.join(""))
       ;(async () => {
         setLoading(true)
         try {
@@ -96,7 +100,7 @@ const TournamentCodeInput: React.FC<TournamentCodeInputProps> = ({ length = 6, o
         }
       })()
     }
-  }, [values, onComplete])
+  }, [values, onComplete, hasSubmitted])
 
   return (
     <div className="flex flex-col items-center gap-0 p-0 m-0">

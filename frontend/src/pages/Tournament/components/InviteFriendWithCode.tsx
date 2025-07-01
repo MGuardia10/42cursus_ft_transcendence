@@ -75,6 +75,7 @@ const InviteFriendWithCode: React.FC<InviteFriendWithCodeProps> = ({
       addNotification(`${error}`, "error")
       setWaitingForResponse(false)
       setInputVisible(false)
+      setResetKey((k) => k + 1)
       return
     }
   }
@@ -154,6 +155,7 @@ const InviteFriendWithCode: React.FC<InviteFriendWithCodeProps> = ({
       setInputVisible(false)
     } catch (error) {
       addNotification(`${error}`, "error")
+      setResetKey((k) => k + 1)
     }
   }
 
