@@ -11,7 +11,6 @@ export default async function tournament_delete(request, reply) {
         if (!tournament)
             return reply.code(404).send({ error: 'Tournament not found' });
 
-        db.prepare("PRAGMA foreign_keys = OFF").run();
         db.prepare("DELETE FROM tournament_players WHERE tournament_id = ?").run(id);
         db.prepare("DELETE FROM tournament_games WHERE tournament_id = ?").run(id);
         
@@ -23,12 +22,10 @@ export default async function tournament_delete(request, reply) {
             db.prepare("DELETE FROM configuration WHERE id = ?").run(config_id);
 
         db.prepare("DELETE FROM tournaments WHERE id = ?").run(id);
-        db.prepare("PRAGMA foreign_keys = ON").run();
 
         return reply.code(200).send();
         
     } catch (err) {
-        db.prepare("PRAGMA foreign_keys = ON").run();
         return reply.code(500).send({ error: err });
     }
 }
