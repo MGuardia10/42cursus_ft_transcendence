@@ -108,28 +108,28 @@ export default async function tournament_update(request, reply) {
 
     const tournament = get_tournament_data(id);
     if (!tournament)
-        return reply.code(404).send({ error: 'Tournament not found' });
+        return reply.code(404).send();
 
     const current_phase = get_current_phase(id);
     const max_phase = get_max_phase(id);
     const is_8_player = is_8_player_tournament(id);
     
     if (current_phase === null)
-        return reply.code(400).send({ error: 'No completed phases available' });
+        return reply.code(400).send();
     
     if (current_phase >= max_phase)
-        return reply.code(400).send({ error: 'Tournament already finished' });
+        return reply.code(400).send();
 
     const winners = get_winners(id, current_phase);
     const required_winners = is_8_player ? (current_phase === 1 ? 4 : 2) : 2;
 
     if (winners.length !== required_winners)
-        return reply.code(400).send({ error: `${required_winners} winners required` });
+        return reply.code(400).send();
 
     try {
         update_next_phase(id, current_phase, winners);
         return reply.code(200).send();
     } catch (err) {
-        return reply.code(500).send({ error: 'Update error' });
+        return reply.code(500).send({ error: err });
     }
 }
