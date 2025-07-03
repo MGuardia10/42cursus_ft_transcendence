@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS users (
   last_active date NOT NULL DEFAULT (datetime('now','+02:00'))
 );
 
-
 -- Friend status
 CREATE TABLE IF NOT EXISTS friend_status (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

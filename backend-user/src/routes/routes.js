@@ -11,6 +11,12 @@ import { update_user_data_by_id, update_user_avatar_by_id } from './update_user_
 import delete_user_by_id from './delete_user_by_id.js';
 import active_user from './active_user.js';
 
+function cookieChecker(request, reply, done) {
+  if (!request.cookies || typeof request.cookies.token !== 'string')
+    return reply.status(400).send({ error: 'The "token" cookie is mandatory' });
+  done();
+}
+
 export default async function (fastify, options) {
   
   /***********************/
@@ -191,6 +197,20 @@ export default async function (fastify, options) {
           id: { type: 'integer' }
         }
       }
-    }
+    },
+    preValidation: cookieChecker
   }, delete_user_by_id);
+
+  fastify.delete('/friends', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['from', 'to'],
+        properties: {
+          from: { type: 'integer' },
+          to: { type: 'integer' }
+        }
+      }
+    }
+  }, delete_friends);
 };
