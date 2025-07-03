@@ -9,6 +9,7 @@ import add_friend from './add_friend.js';
 import { update_user_data_by_id, update_user_avatar_by_id } from './update_user_by_id.js';
 
 import delete_user_by_id from './delete_user_by_id.js';
+import delete_friends from './delete_friends.js';
 import active_user from './active_user.js';
 
 function cookieChecker(request, reply, done) {
