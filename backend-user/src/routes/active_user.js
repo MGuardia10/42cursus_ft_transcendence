@@ -32,6 +32,7 @@ function get_now_time() {
 export default async function active_user( request, reply )
 {
 	const { id } = request.params;
+	const { token } = request.cookies;
 
 	try
 	{
@@ -39,6 +40,20 @@ export default async function active_user( request, reply )
 		const user_search = db.prepare("SELECT id FROM users WHERE id = ?").get(id);
 		if (!user_search)
 			return reply.code(404).send({ error: 'User not found' })
+
+		/* Check if the user is correct */
+		const token_check = await fetch(`${process.env.AUTH_API_BASEURL_INTERNAL}/me`, {
+			method: 'GET',
+			headers: {
+				'Cookie': `token=${token}`
+			}
+		})
+		if (!token_check || !token_check.ok)
+			return reply.code(400).send({ error: 'Invalid token' })
+		const token_check_json = await token_check.json();
+		const auth_id = token_check_json.user_id;
+		if (auth_id === undefined || auth_id != id)
+			return reply.code(403).send({ error: "You cannot do this in another user's account" })
 
 		/* Set the new date */
 		db

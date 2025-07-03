@@ -159,7 +159,8 @@ export default async function (fastify, options) {
           id: { type: 'integer' }
         }
       },
-    }
+    },
+    preValidation: cookieChecker
   }, active_user)
 
   /*************************/
