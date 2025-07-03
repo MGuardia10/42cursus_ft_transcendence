@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT NOT NULL UNIQUE,
   avatar TEXT DEFAULT NULL,
   language TEXT NOT NULL,
-  tfa INTEGER NOT NULL DEFAULT 0
+  tfa INTEGER NOT NULL DEFAULT 0,
+  last_active date NOT NULL DEFAULT (datetime('now','+02:00'))
 );
 
 
