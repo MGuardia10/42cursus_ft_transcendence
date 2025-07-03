@@ -160,17 +160,22 @@ function set_game_punctuation( game_id, player_a_score, player_b_score )
 function update_game( id, data )
 {
 	/* Get all the info */
-	const { player_a_score, player_b_score, state } = data;
+	const { player_a_id, player_b_id, player_a_score, player_b_score, state } = data;
 
 	/* Update each field */
 	if (player_a_score !== undefined && player_b_score !== undefined)
 		set_game_punctuation( id, player_a_score, player_b_score );
 
+	if (player_a_id !== undefined)
+		set_game_data( id, "player_a_id", player_a_id );
+	if (player_b_id !== undefined)
+		set_game_data( id, "player_b_id", player_b_id );
+
 	if (state !== undefined)
 	{
 		const search_state = db
 			.prepare("SELECT id FROM game_status WHERE name = ?")
-			.get(state);
+			.get(state).id;
 		if (search_state === undefined)
 			return false;
 		set_game_data( id, "status", search_state );
