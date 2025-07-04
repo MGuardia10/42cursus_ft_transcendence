@@ -10,6 +10,7 @@ import { update_user_data_by_id, update_user_avatar_by_id } from './update_user_
 
 import delete_user_by_id from './delete_user_by_id.js';
 import delete_friends from './delete_friends.js';
+import active_user from './active_user.js';
 
 function cookieChecker(request, reply, done) {
   if (!request.cookies || typeof request.cookies.token !== 'string')
@@ -148,6 +149,19 @@ export default async function (fastify, options) {
       },
     }
   }, update_user_avatar_by_id);
+
+  fastify.put('/:id/active', {
+    schema: {
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'integer' }
+        }
+      },
+    },
+    preValidation: cookieChecker
+  }, active_user)
 
   /*************************/
   /* NOTE: PATCH endpoints */
