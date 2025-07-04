@@ -12,6 +12,8 @@ import tournament_get from './tournament_get.js';
 import tournament_create from "./tournament_create.js";
 import tournament_delete from './tournament_delete.js';
 import tournament_join from './tournament_join.js';
+import tournament_update from './tournament_update.js';
+
 
 /* This function is used to check if the cookie is present in the request */
 function cookieChecker(request, reply, done) {
@@ -255,4 +257,21 @@ export default async function (fastify, options) {
     },
     tournament_join
   );
+
+  fastify.post(
+    "/tournament/:id/update",
+    {
+      schema: {
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: {
+            id: { type: "string", minLength: 1 }
+          }
+        },
+      },
+    },
+    tournament_update
+  )
+
 }

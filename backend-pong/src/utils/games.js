@@ -1,4 +1,5 @@
 import db from "../database/database.js"
+import game_update_endpoint from '../routes/game_update.js';
 
 /*********************************************************************/
 
@@ -91,6 +92,7 @@ function set_game_punctuation( game_id, player_a_score, player_b_score )
 	function get_player_data( player )
 	{
 		const field = `${player}_id`
+		
 		const player_id = db
 			.prepare(`SELECT ${field} FROM games WHERE id = ?`)
 			.get(game_id)[field];
@@ -107,50 +109,52 @@ function set_game_punctuation( game_id, player_a_score, player_b_score )
 	const player_b_data = get_player_data('player_b')
 	const { player_id: player_b_id } = player_b_data;
 
-	/* Get the old game results */
-	const current_score = db
-		.prepare("SELECT player_a_score, player_b_score FROM games WHERE id = ?")
-		.get(game_id)
-	const { player_a_score: old_player_a_score, player_b_score: old_player_b_score } = current_score;
-	const player_a_diff = player_a_score - old_player_a_score;
-	const player_b_diff = player_b_score - old_player_b_score;
+	if (player_a_id != -1 && player_b_id != -1)
+	{
+		/* Get the old game results */
+		const current_score = db
+			.prepare("SELECT player_a_score, player_b_score FROM games WHERE id = ?")
+			.get(game_id)
+		const { player_a_score: old_player_a_score, player_b_score: old_player_b_score } = current_score;
+		const player_a_diff = player_a_score - old_player_a_score;
+		const player_b_diff = player_b_score - old_player_b_score;
 
-	/* Update the players points*/
-	db
-		.prepare("UPDATE players SET win_points = ?, lose_points = ? WHERE id = ?")
-		.run(
-			player_a_data.player_scores.win_points + player_a_diff,
-			player_a_data.player_scores.lose_points + player_b_diff,
-			player_a_id
-		);
-	db
-		.prepare("UPDATE players SET win_points = ?, lose_points = ? WHERE id = ?")
-		.run(
-			player_b_data.player_scores.win_points + player_b_diff,
-			player_b_data.player_scores.lose_points + player_a_diff,
-			player_b_id
-		);
+		/* Update the players points*/
+		db
+			.prepare("UPDATE players SET win_points = ?, lose_points = ? WHERE id = ?")
+			.run(
+				player_a_data.player_scores.win_points + player_a_diff,
+				player_a_data.player_scores.lose_points + player_b_diff,
+				player_a_id
+			);
+		db
+			.prepare("UPDATE players SET win_points = ?, lose_points = ? WHERE id = ?")
+			.run(
+				player_b_data.player_scores.win_points + player_b_diff,
+				player_b_data.player_scores.lose_points + player_a_diff,
+				player_b_id
+			);
 
-	/* Update the players wins/loses */
-	const who_was_winning = check_win(old_player_a_score, old_player_b_score);
-	const who_is_winning = check_win(player_a_score, player_b_score);
-	const { games_a_diff, games_b_diff } = calculate_win_diff( who_was_winning, who_is_winning );
+		/* Update the players wins/loses */
+		const who_was_winning = check_win(old_player_a_score, old_player_b_score);
+		const who_is_winning = check_win(player_a_score, player_b_score);
+		const { games_a_diff, games_b_diff } = calculate_win_diff( who_was_winning, who_is_winning );
 
-	db
-		.prepare("UPDATE players SET win_count = ?, lose_count = ? WHERE id = ?")
-		.run(
-			player_a_data.player_scores.win_count + games_a_diff,
-			player_a_data.player_scores.lose_count + games_b_diff,
-			player_a_id
-		)
-	db
-		.prepare("UPDATE players SET win_count = ?, lose_count = ? WHERE id = ?")
-		.run(
-			player_b_data.player_scores.win_count + games_b_diff,
-			player_b_data.player_scores.lose_count + games_a_diff,
-			player_b_id
-		)
-
+		db
+			.prepare("UPDATE players SET win_count = ?, lose_count = ? WHERE id = ?")
+			.run(
+				player_a_data.player_scores.win_count + games_a_diff,
+				player_a_data.player_scores.lose_count + games_b_diff,
+				player_a_id
+			)
+		db
+			.prepare("UPDATE players SET win_count = ?, lose_count = ? WHERE id = ?")
+			.run(
+				player_b_data.player_scores.win_count + games_b_diff,
+				player_b_data.player_scores.lose_count + games_a_diff,
+				player_b_id
+			)
+	}
 
 	/* Update the match info */
 	set_game_data( game_id, 'player_a_score', player_a_score );
