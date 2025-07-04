@@ -52,7 +52,7 @@ export const translations = {
     dashboard_points_won: "Points Won",
     dashboard_points_lost: "Points Lost",
     dashboard_match_history: "Match History",
-    dashboard_no_stats: "Win a match to see your stats",
+    dashboard_no_stats: "Play to see stats",
     dashboard_no_data: "No data to display",
     dashboard_match_details: "Match Details",
     // Leaderboard
@@ -126,11 +126,14 @@ export const translations = {
     wins: "wins!",
     // --- Tournament ---
     tournament_title: "Tournament",
-    tournament_subtitle: "Create or join a tournament to compete with other players",
+    tournament_subtitle:
+      "Create or join a tournament to compete with other players",
     create_tournament: "Create Tournament",
-    create_tournament_subtitle: "Start a new tournament and invite players to join",
+    create_tournament_subtitle:
+      "Start a new tournament and invite players to join",
     join_tournament: "Join Tournament",
-    join_tournament_subtitle: "Enter a tournament code to join an existing tournament",
+    join_tournament_subtitle:
+      "Enter a tournament code to join an existing tournament",
     start_tournament: "Start Tournament",
     enter_tournament: "Enter Tournament",
     tournament_code: "Tournament Code",
@@ -149,7 +152,8 @@ export const translations = {
     tournament_vs: "VS",
     tournament_play: "Play",
     tournament_joining: "Joining...",
-    tournament_enter_code_hint: "Enter the 8-character code provided by the tournament creator",
+    tournament_enter_code_hint:
+      "Enter the 8-character code provided by the tournament creator",
     tournament_players_label: "Players: {current}/{max}",
     tournament_empty_slot: "Waiting...",
     tournament_invited: "✓ Invited",
@@ -172,7 +176,8 @@ export const translations = {
     tfa_error: "Incorrect authentication code",
     invalid_code_error: "Incorrect code",
     hash_not_found_error: "Verification hash not found",
-    max_attempts_error: "Maximum number of attempts reached. Please invite the user again.",
+    max_attempts_error:
+      "Maximum number of attempts reached. Please invite the user again.",
     tfa_success: "Authentication code correct",
     // --- TwoFactorInput ---
     two_factor_title: "Two Factor Authentication",
@@ -231,7 +236,7 @@ export const translations = {
     dashboard_points_won: "Puntos Ganados",
     dashboard_points_lost: "Puntos Perdidos",
     dashboard_match_history: "Historial de partidas",
-    dashboard_no_stats: "Gana una partida para ver tus estadísticas",
+    dashboard_no_stats: "Juega una partida para ver estadísticas",
     dashboard_no_data: "No hay datos para mostrar",
     dashboard_match_details: "Detalles de la Partida",
     // Leaderboard
@@ -308,11 +313,14 @@ export const translations = {
     wins: "gana!",
     // --- Tournament ---
     tournament_title: "Torneo",
-    tournament_subtitle: "Crea o únete a un torneo para competir con otros jugadores",
+    tournament_subtitle:
+      "Crea o únete a un torneo para competir con otros jugadores",
     create_tournament: "Crear Torneo",
-    create_tournament_subtitle: "Inicia un nuevo torneo e invita a jugadores a unirse",
+    create_tournament_subtitle:
+      "Inicia un nuevo torneo e invita a jugadores a unirse",
     join_tournament: "Unirse a Torneo",
-    join_tournament_subtitle: "Introduce un código para unirte a un torneo existente",
+    join_tournament_subtitle:
+      "Introduce un código para unirte a un torneo existente",
     start_tournament: "Iniciar Torneo",
     enter_tournament: "Entrar al Torneo",
     tournament_code: "Código del Torneo",
@@ -331,7 +339,8 @@ export const translations = {
     tournament_vs: "VS",
     tournament_play: "Jugar",
     tournament_joining: "Uniéndose...",
-    tournament_enter_code_hint: "Introduce el código de 8 caracteres proporcionado por el creador del torneo",
+    tournament_enter_code_hint:
+      "Introduce el código de 8 caracteres proporcionado por el creador del torneo",
     tournament_players_label: "Jugadores: {current}/{max}",
     tournament_empty_slot: "Esperando...",
     tournament_invited: "✓ Invitado",
@@ -354,7 +363,8 @@ export const translations = {
     tfa_error: "Código de autenticación incorrecto",
     invalid_code_error: "Código incorrecto",
     hash_not_found_error: "Hash de verificación no encontrado",
-    max_attempts_error: "Máximo número de intentos alcanzado. Vuelve a invitar al usuario.",
+    max_attempts_error:
+      "Máximo número de intentos alcanzado. Vuelve a invitar al usuario.",
     tfa_success: "Código de autenticación correcto",
     // --- TwoFactorInput ---
     two_factor_title: "Autenticación en dos factores",
@@ -413,7 +423,7 @@ export const translations = {
     dashboard_points_won: "Pontos Ganhos",
     dashboard_points_lost: "Pontos Perdidos",
     dashboard_match_history: "Histórico de Jogos",
-    dashboard_no_stats: "ganhe um jogo para ver suas estatísticas",
+    dashboard_no_stats: "Jogue uma partida para ver estatísticas",
     dashboard_no_data: "Sem dados para exibir",
     dashboard_match_details: "Detalhes do Jogo",
     // Leaderboard
@@ -490,11 +500,14 @@ export const translations = {
     wins: "vence!",
     // --- Tournament ---
     tournament_title: "Torneio",
-    tournament_subtitle: "Crie ou entre em um torneio para competir com outros jogadores",
+    tournament_subtitle:
+      "Crie ou entre em um torneio para competir com outros jogadores",
     create_tournament: "Criar Torneio",
-    create_tournament_subtitle: "Inicie um novo torneio e convide jogadores para participar",
+    create_tournament_subtitle:
+      "Inicie um novo torneio e convide jogadores para participar",
     join_tournament: "Entrar no Torneio",
-    join_tournament_subtitle: "Digite um código para entrar em um torneio existente",
+    join_tournament_subtitle:
+      "Digite um código para entrar em um torneio existente",
     start_tournament: "Iniciar Torneio",
     enter_tournament: "Entrar no Torneio",
     tournament_code: "Código do Torneio",
@@ -513,7 +526,8 @@ export const translations = {
     tournament_vs: "VS",
     tournament_play: "Jogar",
     tournament_joining: "Entrando...",
-    tournament_enter_code_hint: "Digite o código de 8 caracteres fornecido pelo criador do torneio",
+    tournament_enter_code_hint:
+      "Digite o código de 8 caracteres fornecido pelo criador do torneio",
     tournament_players_label: "Jogadores: {current}/{max}",
     tournament_empty_slot: "Aguardando...",
     tournament_invited: "✓ Convidado",
@@ -521,7 +535,8 @@ export const translations = {
     tournament_full: "Cheio",
     // --- GameInvite ---
     game_invite_title: "Convidar para Jogar",
-    game_invite_description: "Selecione um amigo para convidar para uma partida",
+    game_invite_description:
+      "Selecione um amigo para convidar para uma partida",
     select_friend: "Selecione um Amigo",
     no_friends_available: "Você não tem amigos disponíveis para convidar",
     online: "Online",
@@ -536,7 +551,8 @@ export const translations = {
     tfa_error: "Código de autenticação incorreto",
     invalid_code_error: "Código incorreto",
     hash_not_found_error: "Hash de verificação não encontrado",
-    max_attempts_error: "Número máximo de tentativas atingido. Convide o usuário novamente.",
+    max_attempts_error:
+      "Número máximo de tentativas atingido. Convide o usuário novamente.",
     tfa_success: "Código de autenticação correto",
     // --- TwoFactorInput ---
     two_factor_title: "Autenticação de dois fatores",
