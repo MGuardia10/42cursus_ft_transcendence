@@ -130,6 +130,6 @@ export default async function tournament_update(request, reply) {
         update_next_phase(id, current_phase, winners);
         return reply.code(200).send();
     } catch (err) {
-        return reply.code(200).send({ error: err });
+        return reply.code(500).send({ error: err });
     }
 }
