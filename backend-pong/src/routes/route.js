@@ -70,10 +70,10 @@ export default async function (fastify, options) {
           type: "object",
           properties: {
             configuration: { type: "object" },
-            win_count: { type: "integer", minimum: 1 },
-            lose_count: { type: "integer", minimum: 1 },
-            win_points: { type: "integer", minimum: 1 },
-            lose_points: { type: "integer", minimum: 1 },
+            win_count: { type: "integer", minimum: 0 },
+            lose_count: { type: "integer", minimum: 0 },
+            win_points: { type: "integer", minimum: 0 },
+            lose_points: { type: "integer", minimum: 0 },
           },
         },
       },
@@ -181,8 +181,8 @@ export default async function (fastify, options) {
         body: {
           type: "object",
           properties: {
-            player_a_score: { type: "integer", minimum: 1 },
-            player_b_score: { type: "integer", minimum: 1 },
+            player_a_score: { type: "integer", minimum: 0 },
+            player_b_score: { type: "integer", minimum: 0 },
             state: { type: "string" },
           },
         },
