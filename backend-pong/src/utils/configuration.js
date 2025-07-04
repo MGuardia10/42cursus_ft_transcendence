@@ -14,7 +14,6 @@ function create_configuration( configuration )
 	}
 	catch (err)
 	{
-		console.log("Error: ", err);
 		return undefined;
 	}
 }
