@@ -1,7 +1,8 @@
-import { Navigate } from 'react-router';
-import { useAuth } from '@/hooks/useAuth';
-import { routeProps } from '@/types/authContext';
-import Spinner from '@/layout/Spinner/Spinner';
+import { Navigate } from "react-router";
+import { useAuth } from "@/hooks/useAuth";
+import { routeProps } from "@/types/authContext";
+import Spinner from "@/layout/Spinner/Spinner";
+import { ActivityTracker } from "@/router/ActivityTracker";
 
 const PrivateRoute: React.FC<routeProps> = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -18,7 +19,12 @@ const PrivateRoute: React.FC<routeProps> = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <ActivityTracker />
+      {children}
+    </>
+  );
 };
 
 export default PrivateRoute;
