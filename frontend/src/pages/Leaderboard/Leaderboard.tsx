@@ -2,8 +2,12 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
 import Spinner from "@/layout/Spinner/Spinner";
+import { Link, useNavigate } from "react-router";
 
 const Leaderboard: React.FC = () => {
+  // useNavigate hook
+  const navigate = useNavigate();
+
   // useLanguage hook
   const { t } = useLanguage();
 
@@ -20,8 +24,13 @@ const Leaderboard: React.FC = () => {
     setCurrentPage,
   } = useLeaderboard();
 
-  // If loading
-  // if (loadingTop || loadingPage) return <Spinner />;
+  const handleClick = (playerId: string) => {
+    if (!playerId || playerId === "0") {
+      return;
+    }
+
+    navigate(`/users/${playerId}`);
+  };
 
   // If error
   if (errorTop || errorPage) {
@@ -63,7 +72,8 @@ const Leaderboard: React.FC = () => {
                 }}
                 crossOrigin="use-credentials"
                 alt={topPlayers[1] ? topPlayers[1].alias : "No data"}
-                className="w-14 h-14 md:w-16 md:h-16 rounded-full mb-2 border-2 border-gray-300"
+                className="w-14 h-14 md:w-16 md:h-16 rounded-full mb-2 border-2 border-gray-300 cursor-pointer"
+                onClick={() => handleClick(topPlayers[1]?.id || "0")}
               />
               <span className="font-bold">
                 {topPlayers[1] ? topPlayers[1].alias : "No data"}
@@ -85,7 +95,8 @@ const Leaderboard: React.FC = () => {
                 }}
                 crossOrigin="use-credentials"
                 alt={topPlayers[0] ? topPlayers[0].alias : "No data"}
-                className="w-20 h-20 md:w-24 md:h-24 rounded-full mb-2 border-2 border-yellow-500"
+                className="w-20 h-20 md:w-24 md:h-24 rounded-full mb-2 border-2 border-yellow-500 cursor-pointer"
+                onClick={() => handleClick(topPlayers[0]?.id || "0")}
               />
               <span className="font-bold">
                 {topPlayers[0] ? topPlayers[0].alias : "No data"}
@@ -107,7 +118,8 @@ const Leaderboard: React.FC = () => {
                 }}
                 crossOrigin="use-credentials"
                 alt={topPlayers[2] ? topPlayers[2].alias : "No data"}
-                className="w-14 h-14 md:w-16 md:h-16 rounded-full mb-2 border-2 border-orange-800"
+                className="w-14 h-14 md:w-16 md:h-16 rounded-full mb-2 border-2 border-orange-800 cursor-pointer"
+                onClick={() => handleClick(topPlayers[2]?.id || "0")}
               />
               <span className="font-bold">
                 {topPlayers[2] ? topPlayers[2].alias : "No data"}
@@ -139,7 +151,8 @@ const Leaderboard: React.FC = () => {
           ) : currentPlayers.length !== 0 ? (
             <ul className="flex flex-col gap-3">
               {currentPlayers.map((player) => (
-                <li
+                <Link
+                  to={`/users/${player.id}`}
                   key={player.id}
                   className="flex flex-row items-center justify-between gap-4 p-3 bg-background-primary rounded-md hover:cursor-pointer transition-all duration-300"
                 >
@@ -165,7 +178,7 @@ const Leaderboard: React.FC = () => {
                       {player.win_percentage}% {t("leaderboard_wins")}
                     </p>
                   </div>
-                </li>
+                </Link>
               ))}
             </ul>
           ) : (

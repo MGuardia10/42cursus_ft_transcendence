@@ -14,6 +14,7 @@ import LeaderBoard from '@/pages/Leaderboard/Leaderboard';
 import Profile from '@/pages/Profile/Profile';
 import GameSettings from '@/pages/Settings/GameSettings';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
+import GameInvite from '@/pages/GameInvite/GameInvite';
 
 const RouterApp: React.FC = () => {
 	return (
@@ -33,6 +34,7 @@ const RouterApp: React.FC = () => {
 						<Route path="/leaderboard" element={<LeaderBoard />} />
 						<Route path="/profile" element={<Profile />} />
 						<Route path="/game-settings" element={<GameSettings />} />
+						<Route path="/game-invite" element={<GameInvite/>} />
 				</Route>
 
 				<Route path="*" element={<NotFoundPage />} />

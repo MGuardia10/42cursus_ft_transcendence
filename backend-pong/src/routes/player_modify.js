@@ -54,6 +54,14 @@ export default async function player_modify( request, reply )
 
 	const { configuration, win_count, lose_count, win_points, lose_points } = request.body;
 
+	// Permitir solo si viene de un script especial (cabecera secreta)
+	const isAdmin = request.headers["x-admin-secret"] === process.env.ADMIN_SECRET;
+
+	// Si no es admin y se intenta modificar stats, rechazar
+	if (!isAdmin && (win_count !== undefined || lose_count !== undefined || win_points !== undefined || lose_points !== undefined)) {
+		return reply.code(403).send({ error: "No está permitido modificar win_count, lose_count, win_points o lose_points desde el frontend." })
+	}
+
 	try
 	{
 		update_stats( id, win_count, lose_count, win_points, lose_points );
@@ -62,6 +70,6 @@ export default async function player_modify( request, reply )
 	}
 	catch(err)
 	{
-		return reply.code(500).send({ error: err })
+		return reply.code(500).send({ error: err.message || err })
 	}
 }

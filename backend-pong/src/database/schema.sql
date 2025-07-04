@@ -49,7 +49,7 @@ INSERT OR IGNORE INTO game_status(id, name) VALUES(2, 'Finished');
 CREATE TABLE IF NOT EXISTS games (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   status INTEGER NOT NULL DEFAULT 1,
-  date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  date TEXT NOT NULL DEFAULT (datetime('now','+02:00')),
 
   -- Players and puntuation
   player_a_id INTEGER NOT NULL,
@@ -58,9 +58,7 @@ CREATE TABLE IF NOT EXISTS games (
   player_b_score INTEGER NOT NULL DEFAULT 0,
 
   -- Constraints
-  FOREIGN KEY (status) REFERENCES game_status(id),
-  FOREIGN KEY (player_a_id) REFERENCES players(id) ON DELETE CASCADE,
-  FOREIGN KEY (player_b_id) REFERENCES players(id) ON DELETE CASCADE
+  FOREIGN KEY (status) REFERENCES game_status(id)
 );
 
 
@@ -70,7 +68,7 @@ CREATE TABLE IF NOT EXISTS games (
 
 -- Tournaments
 CREATE TABLE IF NOT EXISTS tournaments (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id TEXT PRIMARY KEY,
   configuration_id INTEGER NOT NULL,
 
   -- Constraints
