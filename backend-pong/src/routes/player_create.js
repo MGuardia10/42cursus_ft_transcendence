@@ -22,7 +22,7 @@ export default async function player_create(request, reply)
 			sc: process.env.STICK_COLOR
 		});
 		if (conf_id === undefined)
-			return reply.code(500).send({ error: "Error creating the player configuration" });
+			return reply.code(400).send({ error: "Error creating the player configuration" });
 
 		/* Save the player */
 		db
