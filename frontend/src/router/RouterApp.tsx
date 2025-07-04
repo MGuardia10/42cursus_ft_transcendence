@@ -15,7 +15,6 @@ import Profile from '@/pages/Profile/Profile';
 import GameSettings from '@/pages/Settings/GameSettings';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 
-
 const RouterApp: React.FC = () => {
 	return (
 		<BrowserRouter>
@@ -27,6 +26,7 @@ const RouterApp: React.FC = () => {
 
 				<Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
 						<Route path="/" element={<Home />} />
+						<Route path="/users/:id" element={<Dashboard />} />
 						<Route path="/single-match" element={<SingleMatch />} />
 						<Route path="/tournament" element={<Tournament />} />
 						<Route path="/dashboard" element={<Dashboard />} />

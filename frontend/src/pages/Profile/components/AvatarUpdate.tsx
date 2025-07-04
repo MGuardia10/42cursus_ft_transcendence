@@ -1,5 +1,7 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useUpdateAvatar } from '@/hooks/useUpdateAvatar';
+import { useAuth } from '@/hooks/useAuth';
 
 import { VscFolderActive } from "react-icons/vsc";
 import { VscFolder } from "react-icons/vsc";
@@ -8,26 +10,55 @@ import { useNotification } from '@/hooks/useNotification';
 
 const AvatarUpdate: React.FC = () => {
 
-	// useLanguage hook
+	/* useAuth hook */
+	const { refreshUser } = useAuth();
+
+	/* useUpdateAvatar hook */
+	const { updateAvatar, loading, error } = useUpdateAvatar();
+
+	/* useLanguage hook */
 	const { t } = useLanguage();
 
-	// useNotification hook
+	/* useNotification hook */
 	const { addNotification } = useNotification();
 
-	// useState hook
+	/* useState hook */
 	const [avatar, setAvatar] = useState<File | null>(null);
 	
-	// hadle avatar submit function
-	const handleAvatarSubmit = (e: FormEvent<HTMLFormElement>) => {
+	/* hadle avatar submit function */
+	const handleAvatarSubmit = async (e: FormEvent<HTMLFormElement>) => {
+
+		// Prevent default form submission
 		e.preventDefault();
-		// Lógica para actualizar el avatar en su endpoint
+
+		// If no avatar, return
 		if (!avatar) return;
-	
-		console.log('Actualizando avatar:', avatar);
+
+		const MAX_SIZE_BYTES = 1024 * 1024; // 1 MB
 		
+		// Check if the file size is larger than the maximum size
+		if (avatar.size > MAX_SIZE_BYTES) {
+			addNotification(t('notifications_avatar_error_size'), 'error');
+			return;
+		}
+	
+		await updateAvatar(avatar);
+		
+		// Check for errors
+		if (error) {
+			addNotification(t('notifications_avatar_error'), 'error');
+			setAvatar(null);
+			return;
+		}
+
+		// Refresh user data
+		await refreshUser();
+
 		// Show notification
-		addNotification(`${t("notifications_avatar_success")}`, 'success');
-		// addNotification(`${t("notifications_avatar_error")}`, 'error');
+		addNotification(t('notifications_avatar_success'), 'success');
+
+		// Set avatar to null
+		setAvatar(null);
 	
 	  };
 	  
@@ -55,11 +86,13 @@ const AvatarUpdate: React.FC = () => {
 				<input
 					id="avatar"
 					type="file"
+					disabled={loading}
 					accept="image/*"
 					onChange={handleAvatarChange}
 					className="hidden"
 				/>
 				<button
+					disabled={loading}
 					type="submit"
 					className="text-sm md:text-base text-white p-1.5 md:p-2 rounded-xs bg-text-secondary hover:bg-text-tertiary hover:cursor-pointer transition-all duration-300"
 				>
