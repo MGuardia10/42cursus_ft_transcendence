@@ -1,25 +1,29 @@
-import React, { useEffect } from "react"
-import type { Player, TournamentView } from "@/types/tournamentTypes"
-import InviteFriendWithCode from "./InviteFriendWithCode"
+import React, { useEffect } from "react";
+import type { Player, TournamentView } from "@/types/tournamentTypes";
+import InviteFriendWithCode from "./InviteFriendWithCode";
 
-interface Friend { id: number; alias: string; avatar?: string }
+interface Friend {
+  id: number;
+  alias: string;
+  avatar?: string;
+}
 
 interface CreateViewProps {
-  setCurrentView: (view: TournamentView) => void
-  t: (key: any) => string
-  user: any
-  friends: Friend[]
-  addNotification: (msg: string, type: "success" | "error") => void
-  validatedUsers: Set<number>
-  setValidatedUsers: React.Dispatch<React.SetStateAction<Set<number>>>
-  participants: Player[]
-  setParticipants: React.Dispatch<React.SetStateAction<Player[]>>
-  selectedPlayers: number
-  setSelectedPlayers: React.Dispatch<React.SetStateAction<number>>
-  tournamentId: string
-  handleCreateTournament: () => void
-  loading: boolean
-  apiUrl: string
+  setCurrentView: (view: TournamentView) => void;
+  t: (key: any) => string;
+  user: any;
+  friends: Friend[];
+  addNotification: (msg: string, type: "success" | "error") => void;
+  validatedUsers: Set<number>;
+  setValidatedUsers: React.Dispatch<React.SetStateAction<Set<number>>>;
+  participants: Player[];
+  setParticipants: React.Dispatch<React.SetStateAction<Player[]>>;
+  selectedPlayers: number;
+  setSelectedPlayers: React.Dispatch<React.SetStateAction<number>>;
+  tournamentId: string;
+  handleCreateTournament: () => void;
+  loading: boolean;
+  apiUrl: string;
 }
 
 const CreateView: React.FC<CreateViewProps> = ({
@@ -44,10 +48,9 @@ const CreateView: React.FC<CreateViewProps> = ({
       creatorId: user?.id,
       creatorAlias: user?.alias,
       maxPlayers: selectedPlayers,
-      friends: friends.map(f => ({ id: f.id, alias: f.alias })),
-    }
-    console.log("[Game Settings]", gameSettings)
-  }, [])
+      friends: friends.map((f) => ({ id: f.id, alias: f.alias })),
+    };
+  }, []);
 
   return (
     <div className="px-4 py-8 flex justify-center">
@@ -58,15 +61,29 @@ const CreateView: React.FC<CreateViewProps> = ({
               onClick={() => setCurrentView("main")}
               className="text-text-secondary hover:text-text-primary mr-4"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
-            <h2 className="text-3xl font-bold text-text-primary">{t("create_tournament")}</h2>
+            <h2 className="text-3xl font-bold text-text-primary">
+              {t("create_tournament")}
+            </h2>
           </div>
           <div className="space-y-6">
             <div>
-              <label className="block text-text-primary font-semibold mb-3">{t("tournament_players")}</label>
+              <label className="block text-text-primary font-semibold mb-3">
+                {t("tournament_players")}
+              </label>
               <div className="grid grid-cols-2 gap-4">
                 {[4, 8].map((num) => (
                   <button
@@ -86,12 +103,18 @@ const CreateView: React.FC<CreateViewProps> = ({
             </div>
             {/* Lista de amigos */}
             <div className="bg-background-primary rounded-lg p-6 border border-border-primary mb-6">
-              <h3 className="text-text-primary font-semibold mb-4">{t("home_friends")}</h3>
+              <h3 className="text-text-primary font-semibold mb-4">
+                {t("home_friends")}
+              </h3>
               <div className="mb-2 text-text-secondary font-mono">
-                {t("tournament_players_label").replace("{current}", String(participants.length)).replace("{max}", String(selectedPlayers))}
+                {t("tournament_players_label")
+                  .replace("{current}", String(participants.length))
+                  .replace("{max}", String(selectedPlayers))}
               </div>
               {friends.length === 0 ? (
-                <div className="text-text-secondary">{t("tournament_no_friends")}</div>
+                <div className="text-text-secondary">
+                  {t("tournament_no_friends")}
+                </div>
               ) : (
                 <ul className="space-y-3">
                   {friends.map((friend) => (
@@ -116,9 +139,9 @@ const CreateView: React.FC<CreateViewProps> = ({
               <button
                 onClick={() => {
                   if (!tournamentId) {
-                    handleCreateTournament()
+                    handleCreateTournament();
                   }
-                  setCurrentView("tournament")
+                  setCurrentView("tournament");
                 }}
                 disabled={participants.length < selectedPlayers || loading}
                 className="flex-1 bg-text-tertiary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
@@ -130,7 +153,7 @@ const CreateView: React.FC<CreateViewProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CreateView 
+export default CreateView;

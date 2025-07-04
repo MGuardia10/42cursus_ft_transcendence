@@ -184,7 +184,6 @@ const GameInvite: React.FC = () => {
       setResetKey((k) => k + 1);
       const newAttempts = failedAttempts + 1;
       setFailedAttempts(newAttempts);
-      console.log(`Intento de 2FA fallido. Intentos totales: ${newAttempts}`);
     }
   };
 

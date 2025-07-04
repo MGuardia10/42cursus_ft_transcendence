@@ -69,7 +69,6 @@ const SingleMatch: React.FC = () => {
         const parsedData = JSON.parse(storedGameData);
         setGameData(parsedData);
       } catch (error) {
-        console.error("Error parsing game data:", error);
         addNotification("Error loading game data", "error");
         redirectAttemptedRef.current = true;
         navigate("/game-invite");
@@ -122,14 +121,12 @@ const SingleMatch: React.FC = () => {
 
       if (result) {
         setBackendGameId(result.game_id);
-        console.log("✅ Game created with ID:", result.game_id); // <--- AÑADIDO
         setGameCreated(true);
         setGameUpdated(false);
       } else {
         addNotification("Error creating game in backend", "error");
       }
     } catch (error) {
-      console.error("Error creating backend game:", error);
       addNotification("Error creating game in backend", "error");
     }
   }, [gameData, user, gameCreated, createGame, addNotification]);
@@ -142,24 +139,6 @@ const SingleMatch: React.FC = () => {
       updateGameCalledRef.current = true;
       try {
         setGameUpdated(true);
-        console.log("[SingleMatch] Llamando a updateBackendGame", {
-          backendGameId,
-          playerScore,
-          enemyScore,
-        });
-        console.log("[SingleMatch] Game Data:", gameData);
-        console.log(
-          "[SingleMatch] Player A ID:",
-          gameData?.player1.id,
-          "| Player B ID:",
-          gameData?.player2.id
-        );
-        console.log(
-          "[SingleMatch] Sending to backend - Player A Score:",
-          playerScore,
-          "| Player B Score:",
-          enemyScore
-        );
 
         const success = await updateGame(backendGameId, {
           player_a_score: playerScore,
@@ -168,18 +147,9 @@ const SingleMatch: React.FC = () => {
         });
         if (success) {
           // 👉 Logs informativos
-          console.log("✅ Game ID:", backendGameId);
-          console.log(
-            "🎯 Final Score - Player A:",
-            playerScore,
-            "| Player B:",
-            enemyScore
-          );
           if (gameData) {
             const winner =
               playerScore > enemyScore ? gameData.player1 : gameData.player2;
-            console.log("🏆 Winner ID:", winner.id);
-            console.log("🏆 Winner Name:", winner.alias);
           }
           // Refresh player stats after game completion
           // await refreshPlayerStats();
@@ -190,7 +160,6 @@ const SingleMatch: React.FC = () => {
           addNotification("Error updating game result", "error");
         }
       } catch (error) {
-        console.error("Error updating backend game:", error);
         addNotification("Error updating game result", "error");
         setGameUpdated(false);
         updateGameCalledRef.current = false;
@@ -251,20 +220,39 @@ const SingleMatch: React.FC = () => {
     const BALL_SIZE_RATIO = 0.027;
 
     // Movimiento de paddle
-    function movePaddle(y: number, up: boolean, gameHeight: number, paddleHeight: number, speed: number) {
+    function movePaddle(
+      y: number,
+      up: boolean,
+      gameHeight: number,
+      paddleHeight: number,
+      speed: number
+    ) {
       if (up) return Math.max(0, y - speed);
       return Math.min(gameHeight - paddleHeight, y + speed);
     }
 
     // Colisión con paredes
-    function checkWallCollision(ball: any, gameHeight: number, ballSize: number) {
+    function checkWallCollision(
+      ball: any,
+      gameHeight: number,
+      ballSize: number
+    ) {
       if (ball.y <= 0 || ball.y >= gameHeight - ballSize) {
         ball.dy *= -1;
       }
     }
 
     // Colisión con paddle
-    function checkPaddleCollision(ball: any, paddleY: number, paddleX: number, paddleHeight: number, paddleWidth: number, ballSize: number, dxCondition: boolean, ballSpeed: number) {
+    function checkPaddleCollision(
+      ball: any,
+      paddleY: number,
+      paddleX: number,
+      paddleHeight: number,
+      paddleWidth: number,
+      ballSize: number,
+      dxCondition: boolean,
+      ballSpeed: number
+    ) {
       if (
         ball.x <= paddleX + paddleWidth &&
         ball.x + ballSize >= paddleX &&
@@ -367,7 +355,8 @@ const SingleMatch: React.FC = () => {
         paddleHit = true;
       }
       if (paddleHit) {
-        if (typeof newState.ballSpeedMultiplier !== 'number') newState.ballSpeedMultiplier = 1;
+        if (typeof newState.ballSpeedMultiplier !== "number")
+          newState.ballSpeedMultiplier = 1;
         newState.ballSpeedMultiplier *= 1.25;
       }
 
@@ -515,8 +504,14 @@ const SingleMatch: React.FC = () => {
 
         {/* Scoreboard */}
         <Scoreboard
-          player1={{ id: gameData?.player1.id?.toString() || "", alias: gameData?.player1.alias || "" }}
-          player2={{ id: gameData?.player2.id?.toString() || "", alias: gameData?.player2.alias || "" }}
+          player1={{
+            id: gameData?.player1.id?.toString() || "",
+            alias: gameData?.player1.alias || "",
+          }}
+          player2={{
+            id: gameData?.player2.id?.toString() || "",
+            alias: gameData?.player2.alias || "",
+          }}
           score={gameState.gameScore}
         />
 
