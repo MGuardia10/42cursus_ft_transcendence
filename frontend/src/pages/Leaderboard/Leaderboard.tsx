@@ -40,7 +40,7 @@ const Leaderboard: React.FC = () => {
           {t("leaderboard_error_fetching")}
         </h2>
         <p className="text-text-secondary">
-          {errorTop?.message || errorPage?.message || "HOLA"}
+          {errorTop?.message || errorPage?.message || "Error fetching data."}
         </p>
       </div>
     );
