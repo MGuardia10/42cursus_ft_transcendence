@@ -13,6 +13,7 @@ import tournament_create from "./tournament_create.js";
 import tournament_delete from "./tournament_delete.js";
 import tournament_join from "./tournament_join.js";
 import tournament_update from "./tournament_update.js";
+import game_get_by_id from "./game_get_by_id.js";
 
 /* This function is used to check if the cookie is present in the request */
 function cookieChecker(request, reply, done) {
@@ -172,11 +173,28 @@ export default async function (fastify, options) {
     game_get
   );
 
+  fastify.get(
+    "/games/:id",
+    {
+      schema: {
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: {
+            id: { type: "integer" },
+          },
+        },
+      },
+    },
+    game_get_by_id
+  );
+
   fastify.patch(
     "/game/:id",
     {
       schema: {
         params: {
+          type: 'object',
           required: ["id"],
           properties: {
             id: { type: "integer" },

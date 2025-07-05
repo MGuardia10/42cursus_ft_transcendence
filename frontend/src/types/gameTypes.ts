@@ -16,6 +16,7 @@ export interface PlayerData {
 export interface GameData {
   player1: PlayerData;
   player2: PlayerData;
+  gameId?: number;
 }
 
 export interface GameState {

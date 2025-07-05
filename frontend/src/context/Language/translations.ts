@@ -47,6 +47,7 @@ export const translations = {
     dashboard_losses: "Losses",
     dashboard_games: "Total Games",
     dashboard_games_wins: "Games Won",
+    dashboard_games_tie: "Ties",
     dashboard_games_lost: "Games Lost",
     dashboard_points: "Total Points",
     dashboard_points_won: "Points Won",
@@ -124,6 +125,11 @@ export const translations = {
     firstToScore: "First to reach {score} points wins!",
     backToHome: "Back to Home",
     wins: "wins!",
+    game_loading_error: "Error loading game.",
+    game_no_data_found: "No game data found. Please start a match.",
+    game_no_available: "No match available. Redirecting home...",
+    game_update_error: "Error updating game result. Redirecting to home...",
+    game_complete: "Game Complete!",
     // --- Tournament ---
     tournament_title: "Tournament",
     tournament_subtitle:
@@ -179,6 +185,7 @@ export const translations = {
     max_attempts_error:
       "Maximum number of attempts reached. Please invite the user again.",
     tfa_success: "Authentication code correct",
+    game_create_error: "Error creating game. Redirecting home...",
     // --- TwoFactorInput ---
     two_factor_title: "Two Factor Authentication",
     two_factor_subtitle: "Please, insert the submitted code.",
@@ -231,6 +238,7 @@ export const translations = {
     dashboard_losses: "Derr.",
     dashboard_games: "Partidas Totales",
     dashboard_games_wins: "Partidas Ganadas",
+    dashboard_games_tie: "Empates",
     dashboard_games_lost: "Partidas Perdidas",
     dashboard_points: "Puntos Totales",
     dashboard_points_won: "Puntos Ganados",
@@ -311,6 +319,13 @@ export const translations = {
     firstToScore: "¡El primero en llegar a {score} puntos gana!",
     backToHome: "Volver al inicio",
     wins: "gana!",
+    game_loading_error: "Error al cargar el juego.",
+    game_no_data_found:
+      "No se encontraron datos del juego. Inicia una nueva partida.",
+    game_no_available: "No hay partida disponible. Redirigiendo al home...",
+    game_update_error:
+      "Error al actualizar el resultado del juego. Redirigiendo al home...",
+    game_complete: "¡Juego Completo!",
     // --- Tournament ---
     tournament_title: "Torneo",
     tournament_subtitle:
@@ -366,6 +381,7 @@ export const translations = {
     max_attempts_error:
       "Máximo número de intentos alcanzado. Vuelve a invitar al usuario.",
     tfa_success: "Código de autenticación correcto",
+    game_create_error: "Error al crear el juego. Redirigiendo al home...",
     // --- TwoFactorInput ---
     two_factor_title: "Autenticación en dos factores",
     two_factor_subtitle: "Por favor, introduce el código recibido.",
@@ -418,6 +434,7 @@ export const translations = {
     dashboard_losses: "Der.",
     dashboard_games: "Jogos Totais",
     dashboard_games_wins: "Jogos Ganhos",
+    dashboard_games_tie: "Empates",
     dashboard_games_lost: "Jogos Perdidos",
     dashboard_points: "Pontos Totais",
     dashboard_points_won: "Pontos Ganhos",
@@ -498,6 +515,13 @@ export const translations = {
     firstToScore: "O primeiro a chegar a {score} pontos vence!",
     backToHome: "Voltar ao início",
     wins: "vence!",
+    game_loading_error: "Erro ao carregar o jogo.",
+    game_no_data_found: "Nenhum dado de jogo encontrado. Inicie uma partida.",
+    game_no_available:
+      "Nenhuma partida disponível. Redirecionando para o início...",
+    game_update_error:
+      "Erro ao atualizar o jogo. Redirecionando para o início...",
+    game_complete: "Jogo Completo!",
     // --- Tournament ---
     tournament_title: "Torneio",
     tournament_subtitle:
@@ -554,6 +578,7 @@ export const translations = {
     max_attempts_error:
       "Número máximo de tentativas atingido. Convide o usuário novamente.",
     tfa_success: "Código de autenticação correto",
+    game_create_error: "Erro ao criar o jogo. Redirecionando para o início...",
     // --- TwoFactorInput ---
     two_factor_title: "Autenticação de dois fatores",
     two_factor_subtitle: "Por favor, insira o código recebido.",

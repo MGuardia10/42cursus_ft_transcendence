@@ -3,6 +3,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { DashboardProps } from "@/types/dashboardProps";
 import { useUserStats } from "@/hooks/useUserStats";
 import Spinner from "@/layout/Spinner/Spinner";
+import { useUserMatches } from "@/hooks/useUserMatches";
 
 const GameStats: React.FC<DashboardProps> = ({ id }) => {
   // useLanguage hook
@@ -10,16 +11,19 @@ const GameStats: React.FC<DashboardProps> = ({ id }) => {
 
   // useUserStats hook
   const { stats, error, loading } = useUserStats(id);
+  const { matches } = useUserMatches(id);
+  const tieLength = matches?.filter((m) => m.status === "Tie").length || 0;
 
   const wins = stats?.winCount || 0;
   const losses = stats?.loseCount || 0;
-  const total = wins + losses;
+  const total = wins + losses + tieLength;
   const pointsWon = stats?.winPointsCount || 0;
   const pointsLost = stats?.losePointsCount || 0;
   const totalPoints = pointsWon + pointsLost;
 
   // Cálculo de ancho en porcentaje para cada barra
   const gameWonWidth = (wins / total) * 100;
+  const gameTieWidth = (tieLength / total) * 100;
   const gameLossWidth = (losses / total) * 100;
   const pointsWonWidth = (pointsWon / totalPoints) * 100;
   const pointsLossWidth = (pointsLost / totalPoints) * 100;
@@ -59,6 +63,19 @@ const GameStats: React.FC<DashboardProps> = ({ id }) => {
           <div
             className="h-1.5 md:h-2 rounded-full bg-text-tertiary"
             style={{ width: `${isNaN(gameWonWidth) ? 0 : gameWonWidth}%` }}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="flex justify-between text-sm md:text-base">
+          <p>{t("dashboard_games_tie")}</p>
+          <p className="text-sm">{tieLength}</p>
+        </div>
+        <div className="w-full bg-background-secondary rounded-full h-1.5 md:h-2">
+          <div
+            className="h-1.5 md:h-2 rounded-full bg-gray-400"
+            style={{ width: `${isNaN(gameTieWidth) ? 0 : gameTieWidth}%` }}
           />
         </div>
       </div>

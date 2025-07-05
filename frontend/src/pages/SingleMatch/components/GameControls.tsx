@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 
 interface GameControlsProps {
@@ -37,14 +38,14 @@ const GameControls: React.FC<GameControlsProps> = ({
                 <button
                   onClick={onStart}
                   disabled={gameLoading}
-                  className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
+                  className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {gameLoading ? "Creating Game..." : t("start")}
                 </button>
               ) : (
                 <button
                   onClick={onPause}
-                  className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
+                  className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors cursor-pointer"
                 >
                   {gameState.gamePaused ? t("pause") : t("resume")}
                 </button>
@@ -54,20 +55,23 @@ const GameControls: React.FC<GameControlsProps> = ({
       </div>
       <div className="text-center text-text-secondary text-sm max-w-md">
         <p className="mb-2">
-          {gameData?.player1.alias || "Jugador 1"}: W/S | {gameData?.player2.alias || "Jugador 2"}: O/L
+          {gameData?.player1.alias || "Jugador 1"}: W/S |{" "}
+          {gameData?.player2.alias || "Jugador 2"}: O/L
         </p>
         {gameError && (
           <p className="text-red-400 mt-2">Error: {gameError.message}</p>
         )}
       </div>
       {gameError && (
-        <div className="text-center text-red-400 text-sm mt-2">Error: {gameError.message}</div>
+        <div className="text-center text-red-400 text-sm mt-2">
+          Error: {gameError.message}
+        </div>
       )}
       {gameEnded && (
         <div className="mt-6 flex justify-center">
           <button
             onClick={onBackToHome}
-            className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors"
+            className="px-6 py-3 bg-text-tertiary text-background-primary rounded-lg font-semibold hover:bg-opacity-80 transition-colors cursor-pointer"
           >
             {t("backToHome")}
           </button>
@@ -77,4 +81,4 @@ const GameControls: React.FC<GameControlsProps> = ({
   );
 };
 
-export default GameControls; 
+export default GameControls;

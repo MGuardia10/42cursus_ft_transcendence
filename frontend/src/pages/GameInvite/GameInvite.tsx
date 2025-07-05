@@ -10,13 +10,6 @@ import type { Friend } from "@/types/friendsContext";
 import Spinner from "@/layout/Spinner/Spinner";
 import TwoFactorInput from "@/pages/TwoFactorAuth/components/TwoFactorInput";
 
-// interface GameInvitation {
-//   id: string;
-//   senderId: string;
-//   receiverId: string;
-//   status: "pending" | "accepted" | "rejected";
-// }
-
 const GameInvite: React.FC = () => {
   const { t } = useLanguage();
   const { friends, loading } = useFriends();
@@ -25,10 +18,6 @@ const GameInvite: React.FC = () => {
   const navigate = useNavigate();
 
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
-  // const [invitationSent, setInvitationSent] = useState(false);
-  // const [pendingInvitations, setPendingInvitations] = useState<
-  //   GameInvitation[]
-  // >([]);
   const [waitingForResponse, setWaitingForResponse] = useState(false);
   const [resetKey, setResetKey] = useState(0);
   const [verificationCode, setVerificationCode] = useState<string>("");
@@ -153,32 +142,59 @@ const GameInvite: React.FC = () => {
         throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      await response.json();
       addNotification(
         t("tfa_success") || "Código de autenticación correcto",
         "success"
       );
+
+      // set failed to 0
       setFailedAttempts(0);
+
+      // Create game in the backend
+      const gameResponse = await fetch(
+        `${import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL}/games`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            player_a_id: user?.id,
+            player_b_id: selectedFriend?.id,
+          }),
+        }
+      );
+
+      if (!gameResponse.ok) {
+        addNotification(t("game_create_error"), "error");
+
+        navigate("/");
+      }
+
+      const { game_id } = await gameResponse.json();
 
       // Store player data for the game
       const gameData = {
+        gameId: game_id,
         player1: {
-          id: user.id,
-          name: user.name,
-          alias: user.alias,
-          avatar: user.avatar,
+          id: user?.id,
+          name: user?.name,
+          alias: user?.alias,
+          avatar: user?.avatar,
         },
         player2: {
-          id: selectedFriend.id,
-          name: selectedFriend.name,
-          alias: selectedFriend.alias,
-          avatar: selectedFriend.avatar,
+          id: selectedFriend?.id,
+          name: selectedFriend?.alias,
+          alias: selectedFriend?.alias,
+          avatar: selectedFriend?.avatar,
         },
       };
       sessionStorage.setItem("gameData", JSON.stringify(gameData));
 
       // Redirect to the single match page
-      window.location.href = "https://localhost:8080/single-match";
+      navigate("/single-match");
     } catch (error) {
       addNotification(`${error}`, "error");
       setResetKey((k) => k + 1);
