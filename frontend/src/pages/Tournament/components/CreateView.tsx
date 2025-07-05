@@ -59,7 +59,7 @@ const CreateView: React.FC<CreateViewProps> = ({
           <div className="flex items-center mb-6">
             <button
               onClick={() => setCurrentView("main")}
-              className="text-text-secondary hover:text-text-primary mr-4"
+              className="text-text-secondary hover:text-text-primary mr-4 cursor-pointer"
             >
               <svg
                 className="w-6 h-6"
@@ -89,9 +89,9 @@ const CreateView: React.FC<CreateViewProps> = ({
                   <button
                     key={num}
                     onClick={() => setSelectedPlayers(num)}
-                    className={`p-4 rounded-lg border-2 transition-colors ${
+                    className={`cursor-pointer p-4 rounded-lg border-2 transition-colors ${
                       selectedPlayers === num
-                        ? "border-text-tertiary text-text-secondary bg-opacity-10 text-text-tertiary"
+                        ? "border-text-tertiary bg-opacity-10 text-text-tertiary"
                         : "border-border-secondary text-text-secondary hover:border-text-secondary"
                     }`}
                   >

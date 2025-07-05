@@ -1,42 +1,47 @@
-"use client"
-
-import type React from "react"
-import { useState } from "react"
-import { useAuth } from "@/hooks/useAuth"
-import { useNavigate } from "react-router"
-import { useFriends } from "@/hooks/useFriends"
-import { useNotification } from "@/hooks/useNotification"
-import { useLanguage } from "@/hooks/useLanguage"
-import type { Player, Match, Tournament, TournamentView } from "@/types/tournamentTypes"
-import { generateBracket } from "./utils/bracket"
-import { generateTournamentId } from "./utils/id"
-import MainView from "./components/MainView"
-import CreateView from "./components/CreateView"
-import JoinView from "./components/JoinView"
-import TournamentViewComponent from "./components/TournamentView"
+import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router";
+import { useFriends } from "@/hooks/useFriends";
+import { useNotification } from "@/hooks/useNotification";
+import { useLanguage } from "@/hooks/useLanguage";
+import type {
+  Player,
+  Match,
+  Tournament,
+  TournamentView,
+} from "@/types/tournamentTypes";
+import { generateBracket } from "./utils/bracket";
+import { generateTournamentId } from "./utils/id";
+import MainView from "./components/MainView";
+import CreateView from "./components/CreateView";
+import JoinView from "./components/JoinView";
+import TournamentViewComponent from "./components/TournamentView";
 
 const Tournament: React.FC = () => {
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const { t } = useLanguage()
+  // hooks
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { friends } = useFriends();
+  const { addNotification } = useNotification();
+  const { t } = useLanguage();
 
-  const [currentView, setCurrentView] = useState<TournamentView>("main")
-  const [selectedPlayers, setSelectedPlayers] = useState<number>(4)
-  const [tournamentId, setTournamentId] = useState<string>("")
-  const [joinTournamentId, setJoinTournamentId] = useState<string>("")
-  const [currentTournament, setCurrentTournament] = useState<Tournament | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [validatedUsers, setValidatedUsers] = useState<Set<number>>(new Set())
-  const [participants, setParticipants] = useState<Player[]>([])
-
-  const { friends } = useFriends()
-  const { addNotification } = useNotification()
+  // states
+  const [currentView, setCurrentView] = useState<TournamentView>("main");
+  const [selectedPlayers, setSelectedPlayers] = useState<number>(4);
+  const [tournamentId, setTournamentId] = useState<string>("");
+  const [joinTournamentId, setJoinTournamentId] = useState<string>("");
+  const [currentTournament, setCurrentTournament] = useState<Tournament | null>(
+    null
+  );
+  const [loading, setLoading] = useState<boolean>(false);
+  const [validatedUsers, setValidatedUsers] = useState<Set<number>>(new Set());
+  const [participants, setParticipants] = useState<Player[]>([]);
 
   // Create tournament
   const handleCreateTournament = () => {
-    setLoading(true)
-    const newTournamentId = generateTournamentId()
-    const matches = generateBracket(selectedPlayers)
+    setLoading(true);
+    const newTournamentId = generateTournamentId();
+    const matches = generateBracket(selectedPlayers);
 
     const tournament: Tournament = {
       id: newTournamentId,
@@ -53,47 +58,62 @@ const Tournament: React.FC = () => {
       matches,
       status: "waiting",
       createdBy: Number(user?.id) || 0,
-    }
+    };
 
-    setCurrentTournament(tournament)
-    setTournamentId(newTournamentId)
-    setLoading(false)
-  }
+    setCurrentTournament(tournament);
+    setTournamentId(newTournamentId);
+    setLoading(false);
+  };
 
   // Join tournament
   const handleJoinTournament = () => {
-    setLoading(true)
+    setLoading(true);
     setTimeout(() => {
       const mockTournament: Tournament = {
         id: joinTournamentId,
         maxPlayers: 4,
         currentPlayers: [
-          { id: 1, alias: "Player1", avatar: "/placeholder.svg?height=40&width=40" },
-          { id: 2, alias: "Player2", avatar: "/placeholder.svg?height=40&width=40" },
-          { id: Number(user?.id) || 3, alias: user?.alias || "You", avatar: user?.avatar },
+          {
+            id: 1,
+            alias: "Player1",
+            avatar: "/placeholder.svg?height=40&width=40",
+          },
+          {
+            id: 2,
+            alias: "Player2",
+            avatar: "/placeholder.svg?height=40&width=40",
+          },
+          {
+            id: Number(user?.id) || 3,
+            alias: user?.alias || "You",
+            avatar: user?.avatar,
+          },
         ],
         matches: generateBracket(4),
         status: "waiting",
         createdBy: 1,
-      }
-      setCurrentTournament(mockTournament)
-      setCurrentView("tournament")
-      setLoading(false)
-    }, 1000)
-  }
+      };
+      setCurrentTournament(mockTournament);
+      setCurrentView("tournament");
+      setLoading(false);
+    }, 1000);
+  };
 
   // Start tournament
   const handleStartTournament = () => {
     if (currentTournament) {
-      const updatedTournament = { ...currentTournament, status: "active" as const }
-      setCurrentTournament(updatedTournament)
+      const updatedTournament = {
+        ...currentTournament,
+        status: "active" as const,
+      };
+      setCurrentTournament(updatedTournament);
     }
-  }
+  };
 
   // Play match
   const handlePlayMatch = (matchId: string) => {
-    navigate("/single-match", { state: { tournamentMatch: matchId } })
-  }
+    navigate("/single-match", { state: { tournamentMatch: matchId } });
+  };
 
   // Render current view
   const renderCurrentView = () => {
@@ -115,9 +135,9 @@ const Tournament: React.FC = () => {
             tournamentId={tournamentId}
             handleCreateTournament={handleCreateTournament}
             loading={loading}
-            apiUrl={(import.meta as any).env?.VITE_AUTH_API_BASEURL_EXTERNAL || ""}
+            apiUrl={import.meta.env?.VITE_AUTH_API_BASEURL_EXTERNAL}
           />
-        )
+        );
       case "join":
         return (
           <JoinView
@@ -128,7 +148,7 @@ const Tournament: React.FC = () => {
             handleJoinTournament={handleJoinTournament}
             loading={loading}
           />
-        )
+        );
       case "tournament":
         return (
           <TournamentViewComponent
@@ -140,7 +160,7 @@ const Tournament: React.FC = () => {
             handlePlayMatch={handlePlayMatch}
             user={user}
           />
-        )
+        );
       default:
         return (
           <MainView
@@ -151,11 +171,15 @@ const Tournament: React.FC = () => {
             setParticipants={setParticipants}
             selectedPlayers={selectedPlayers}
           />
-        )
+        );
     }
-  }
+  };
 
-  return <div className="min-h-screen bg-background-primary">{renderCurrentView()}</div>
-}
+  return (
+    <div className="min-h-screen bg-background-primary w-full">
+      {renderCurrentView()}
+    </div>
+  );
+};
 
-export default Tournament
+export default Tournament;

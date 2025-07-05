@@ -156,7 +156,7 @@ const InviteFriendWithCode: React.FC<InviteFriendWithCodeProps> = ({
       <div className="flex items-center gap-3 justify-between">
         <div className="flex items-center gap-3">
           <img
-            src={friend.avatar || "/placeholder.svg?height=32&width=32"}
+            src={friend.avatar || "/placeholder.webp"}
             alt={friend.alias}
             className="w-8 h-8 rounded-full border border-border-primary object-cover"
           />
@@ -170,7 +170,7 @@ const InviteFriendWithCode: React.FC<InviteFriendWithCodeProps> = ({
               ? "bg-yellow-500 text-white cursor-not-allowed"
               : isFull
               ? "bg-gray-400 text-white cursor-not-allowed"
-              : "bg-text-tertiary text-background-primary hover:bg-opacity-80"
+              : "bg-text-tertiary text-background-primary hover:bg-opacity-80 cursor-pointer"
           }`}
           onClick={
             isValidated || waitingForResponse || isFull
@@ -198,7 +198,7 @@ const InviteFriendWithCode: React.FC<InviteFriendWithCodeProps> = ({
             />
           </div>
           <button
-            className="w-full bg-[#d35d48] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[#b94c39] transition-colors max-w-xs"
+            className="w-full bg-[#d35d48] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[#b94c39] transition-colors max-w-xs cursor-pointer"
             style={{ margin: "0 auto" }}
             onClick={() => {
               setInputVisible(false);
