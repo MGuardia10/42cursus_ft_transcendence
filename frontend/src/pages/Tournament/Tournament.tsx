@@ -112,7 +112,37 @@ const Tournament: React.FC = () => {
 
   // Play match
   const handlePlayMatch = (matchId: string) => {
-    navigate("/single-match", { state: { tournamentMatch: matchId } });
+    // Crear estructura de datos del torneo
+    const tournamentGameData = {
+      gameId: parseInt(matchId),
+      tournamentId: currentTournament?.id || "unknown",
+      player1: {
+        id: 1,
+        name: "Player 1",
+        alias: "player1",
+        avatar: "/placeholder.svg?height=40&width=40",
+      },
+      player2: {
+        id: 2,
+        name: "Player 2", 
+        alias: "player2",
+        avatar: "/placeholder.svg?height=40&width=40",
+      },
+      configuration: {
+        default_value: true,
+        points_to_win: "5",
+        serve_delay: "3",
+        ball_color: "FFFFFF",
+        stick_color: "FFFFFF",
+        field_color: "FFFFFF"
+      }
+    };
+
+    // Guardar en sessionStorage
+    sessionStorage.setItem("tournamentGameData", JSON.stringify(tournamentGameData));
+    
+    // Navegar a la partida
+    navigate("/tournament-single-match");
   };
 
   // Render current view

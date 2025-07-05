@@ -8,6 +8,7 @@ import Login from '@/pages/Login/Login';
 import TwoFactorAuth from '@/pages/TwoFactorAuth/TwoFactorAuth';
 import Home from '@/pages/Home/Home';
 import SingleMatch from '@/pages/SingleMatch/SingleMatch';
+import TournamentSingleMatch from '@/pages/TournamentSingleMatch/TournamentSingleMatch';
 import Tournament from '@/pages/Tournament/Tournament';
 import Dashboard from '@/pages/Dashboard/Dashboard';
 import LeaderBoard from '@/pages/Leaderboard/Leaderboard';
@@ -29,6 +30,7 @@ const RouterApp: React.FC = () => {
 						<Route path="/" element={<Home />} />
 						<Route path="/users/:id" element={<Dashboard />} />
 						<Route path="/single-match" element={<SingleMatch />} />
+						<Route path="/tournament-single-match" element={<TournamentSingleMatch />} />
 						<Route path="/tournament" element={<Tournament />} />
 						<Route path="/dashboard" element={<Dashboard />} />
 						<Route path="/leaderboard" element={<LeaderBoard />} />
