@@ -281,8 +281,16 @@ const GameInvite: React.FC = () => {
                         <p className="font-semibold text-text-primary">
                           {friend.alias}
                         </p>
-                        <p className="text-sm text-green-500">
-                          {t("online") || "En línea"}
+                        <p
+                          className={`text-sm ${
+                            friend.online
+                              ? "text-green-500"
+                              : "opacity-50 text-red-500"
+                          }`}
+                        >
+                          {friend.online
+                            ? `${t("home_online")}`
+                            : `${t("home_offline")}`}
                         </p>
                       </div>
                     </div>
