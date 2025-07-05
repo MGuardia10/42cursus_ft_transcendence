@@ -7,7 +7,8 @@ function analyze_query( player_id )
 	let query = "SELECT * FROM games";
 	if (player_id !== undefined)
 		query += " WHERE player_a_id = ? OR player_b_id = ?";
-	
+	query += " ORDER BY date DESC;"
+
 	/* Save the query params */
 	const params = player_id !== undefined
 		? [player_id, player_id]
