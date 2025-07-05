@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS players (
   -- Games/punctuation data
   win_count INTEGER NOT NULL DEFAULT 0,
   lose_count INTEGER NOT NULL DEFAULT 0,
+  total_count INTEGER NOT NULL DEFAULT 0,
   win_points INTEGER NOT NULL DEFAULT 0,
   lose_points INTEGER NOT NULL DEFAULT 0,
 

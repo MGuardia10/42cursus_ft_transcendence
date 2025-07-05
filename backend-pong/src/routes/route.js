@@ -177,6 +177,7 @@ export default async function (fastify, options) {
     {
       schema: {
         params: {
+          type: 'object',
           required: ["id"],
           properties: {
             id: { type: "integer" },
