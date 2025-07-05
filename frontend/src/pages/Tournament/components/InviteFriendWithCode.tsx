@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import type { Player } from "../types/tournament";
+// import { Friend } from "@/types/friendsContext";
+import type { Player } from "@/types/tournamentTypes";
 import TournamentCodeInput from "./TournamentCodeInput";
 
 interface InviteFriendWithCodeProps {
@@ -11,7 +13,6 @@ interface InviteFriendWithCodeProps {
   setValidatedUsers: React.Dispatch<React.SetStateAction<Set<number>>>;
   isFull: boolean;
   setParticipants: React.Dispatch<React.SetStateAction<Player[]>>;
-  participants: Player[];
   t: (key: string) => string;
 }
 
@@ -24,7 +25,6 @@ const InviteFriendWithCode: React.FC<InviteFriendWithCodeProps> = ({
   setValidatedUsers,
   isFull,
   setParticipants,
-  participants,
   t,
 }) => {
   const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
