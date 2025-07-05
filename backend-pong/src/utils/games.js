@@ -161,6 +161,47 @@ function set_game_punctuation( game_id, player_a_score, player_b_score )
 	set_game_data( game_id, 'player_b_score', player_b_score );
 }
 
+function set_game_state( id, state )
+{
+	function add_player_game( player_id )
+	{
+		/* Check if the user is correct */
+		if (player_id !== undefined && player_id == -1)
+			return undefined
+
+		/* Get the previous data */
+		const total_count = db
+			.prepare("SELECT total_count FROM players WHERE id = ?")
+			.get(player_id).total_count;
+
+		/* Set the new value */
+		db
+			.prepare("UPDATE players SET total_count = ? WHERE id = ?")
+			.run(total_count + 1, player_id)
+	}
+
+	/* Get the state id to change */
+	const search_state = db
+		.prepare("SELECT id FROM game_status WHERE name = ?")
+		.get(state).id;
+	if (search_state === undefined)
+		return false;
+
+	/* Check if the change is WAITING => FINISHED */
+	const current_state = db
+		.prepare("SELECT status FROM games WHERE id = ?")
+		.get(id).status;
+	if (current_state < search_state)
+	{
+		const game_players = db
+			.prepare("SELECT player_a_id, player_b_id FROM games WHERE id = ?")
+			.get(id);
+		add_player_game(game_players.player_a_id)
+		add_player_game(game_players.player_b_id)
+	}
+	set_game_data( id, "status", search_state );
+}
+
 function update_game( id, data )
 {
 	/* Get all the info */
@@ -176,14 +217,7 @@ function update_game( id, data )
 		set_game_data( id, "player_b_id", player_b_id );
 
 	if (state !== undefined)
-	{
-		const search_state = db
-			.prepare("SELECT id FROM game_status WHERE name = ?")
-			.get(state).id;
-		if (search_state === undefined)
-			return false;
-		set_game_data( id, "status", search_state );
-	}
+		set_game_state( id, state );
 
 	return true;
 }
