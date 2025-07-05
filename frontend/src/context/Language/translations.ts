@@ -138,8 +138,7 @@ export const translations = {
     create_tournament_subtitle:
       "Start a new tournament and invite players to join",
     join_tournament: "Join Tournament",
-    join_tournament_subtitle:
-      "Enter a tournament code to join an existing tournament",
+    join_tournament_subtitle: "Enter code to join an existing tournament",
     start_tournament: "Start Tournament",
     enter_tournament: "Enter Tournament",
     tournament_code: "Tournament Code",
@@ -165,6 +164,15 @@ export const translations = {
     tournament_invited: "✓ Invited",
     tournament_pending: "Pending...",
     tournament_full: "Full",
+    tournament_not_enough_players:
+      "Not enough players to start the tournament.",
+    tournament_disclaimer:
+      "game settings of the creator will be used during the tournament.",
+    tournament_join_error:
+      "Invalid code or user does not belong to the tournament.",
+    tournament_join_success: "You have successfully joined the tournament!",
+    tournament_create_success: "Tournament created successfully!",
+    tournament_create_error: "Error creating tournament",
     // --- GameInvite ---
     game_invite_title: "Invite to Play",
     game_invite_description: "Select a friend to invite to a match",
@@ -361,6 +369,14 @@ export const translations = {
     tournament_invited: "✓ Invitado",
     tournament_pending: "Pendiente...",
     tournament_full: "Lleno",
+    tournament_not_enough_players:
+      "No hay suficientes jugadores para iniciar el torneo.",
+    tournament_disclaimer:
+      "Los ajustes del juego del creador se utilizarán durante el torneo.",
+    tournament_join_error: "Código inválido o usuario no pertenece al torneo.",
+    tournament_join_success: "¡Te has unido al torneo con éxito!",
+    tournament_create_success: "¡Torneo creado con éxito!",
+    tournament_create_error: "Error al crear el torneo",
     // --- GameInvite ---
     game_invite_title: "Invitar a Jugar",
     game_invite_description: "Selecciona un amigo para invitarlo a una partida",
@@ -557,6 +573,15 @@ export const translations = {
     tournament_invited: "✓ Convidado",
     tournament_pending: "Pendente...",
     tournament_full: "Cheio",
+    tournament_not_enough_players:
+      "Não há jogadores suficientes para iniciar o torneio.",
+    tournament_disclaimer:
+      "As configurações do jogo do criador serão usadas durante o torneio.",
+    tournament_join_error:
+      "Código inválido ou usuário não pertence ao torneio.",
+    tournament_join_success: "Você entrou no torneio com sucesso!",
+    tournament_create_success: "Torneio criado com sucesso!",
+    tournament_create_error: "Erro ao criar o torneio",
     // --- GameInvite ---
     game_invite_title: "Convidar para Jogar",
     game_invite_description:
