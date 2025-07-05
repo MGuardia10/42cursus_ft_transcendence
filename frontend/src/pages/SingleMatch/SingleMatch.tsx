@@ -1,10 +1,10 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useGameSettings } from "@/hooks/useGameSettings";
 import { useGame } from "@/hooks/useGame";
-// import { usePlayer } from "@/hooks/usePlayer";
 import { useNotification } from "@/hooks/useNotification";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -27,13 +27,11 @@ const SingleMatch: React.FC = () => {
   const navigate = useNavigate();
 
   const {
-    createGame,
+    findGame,
     updateGame,
     loading: gameLoading,
     error: gameError,
   } = useGame();
-
-  // const { refreshPlayerStats } = usePlayer();
 
   // Get player game settings
   const {
@@ -69,17 +67,24 @@ const SingleMatch: React.FC = () => {
         const parsedData = JSON.parse(storedGameData);
         setGameData(parsedData);
       } catch (error) {
-        addNotification("Error loading game data", "error");
+        addNotification(
+          t("game_loading_error") || "Error loading game data",
+          "error"
+        );
         redirectAttemptedRef.current = true;
         navigate("/game-invite");
       }
     } else {
       // No game data found, redirect to game invite
-      addNotification("No game data found. Please start a new game.", "error");
+      addNotification(
+        t("game_no_data_found") ||
+          "No game data found. Please start a new game.",
+        "error"
+      );
       redirectAttemptedRef.current = true;
       navigate("/game-invite");
     }
-  }, [addNotification, navigate]);
+  }, [addNotification, navigate, t]);
 
   const [gameState, setGameState] = useState<GameState>({
     ball: { x: 400, y: 300, dx: BALL_SPEED, dy: BALL_SPEED },
@@ -91,6 +96,28 @@ const SingleMatch: React.FC = () => {
     gameHeight: 600,
     ballSpeedMultiplier: 1,
   });
+
+  useEffect(() => {
+    if (!gameData) return;
+
+    // Initialize game state with player data
+    setGameState((prev: GameState) => ({
+      ...prev,
+      playerPaddle: {
+        y: prev.gameHeight / 2 - (prev.gameHeight * PADDLE_HEIGHT_RATIO) / 2,
+      },
+      enemyPaddle: {
+        y: prev.gameHeight / 2 - (prev.gameHeight * PADDLE_HEIGHT_RATIO) / 2,
+        direction: 1,
+      },
+      ball: {
+        x: prev.gameWidth / 2,
+        y: prev.gameHeight / 2,
+        dx: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
+        dy: (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED,
+      },
+    }));
+  }, [gameData]);
 
   // Clear game data when game ends
   useEffect(() => {
@@ -109,30 +136,36 @@ const SingleMatch: React.FC = () => {
       ? Number.parseInt(import.meta.env.VITE_POINTS_TO_WIN)
       : score;
 
-  // 🔥 Función para crear una partida usando el hook
+  // Función para crear una partida usando el hook
   const createBackendGame = useCallback(async () => {
     if (!gameData || !user || gameCreated) return;
 
     try {
-      const result = await createGame({
+      const result = await findGame({
         player_a_id: gameData.player1.id,
         player_b_id: gameData.player2.id,
+        game_id: gameData.gameId,
       });
 
-      if (result) {
+      if (result && result.game_id !== -1) {
         setBackendGameId(result.game_id);
         setGameCreated(true);
         setGameUpdated(false);
       } else {
-        addNotification("Error creating game in backend", "error");
+        addNotification(
+          t("game_no_available") || "No match available",
+          "error"
+        );
+        sessionStorage.removeItem("gameData");
+        navigate("/");
       }
     } catch (error) {
       addNotification("Error creating game in backend", "error");
     }
-  }, [gameData, user, gameCreated, createGame, addNotification]);
+  }, [gameData, user, gameCreated, findGame, addNotification, navigate, t]);
 
   const updateBackendGame = useCallback(
-    async (playerScore: number, enemyScore: number) => {
+    async (playerScore: number, enemyScore: number, end: boolean) => {
       if (!backendGameId || gameUpdated || updateGameCalledRef.current) {
         return;
       }
@@ -145,27 +178,36 @@ const SingleMatch: React.FC = () => {
           player_b_score: enemyScore,
           state: "Finished",
         });
-        if (success) {
-          // 👉 Logs informativos
-          if (gameData) {
-            const winner =
-              playerScore > enemyScore ? gameData.player1 : gameData.player2;
-          }
-          // Refresh player stats after game completion
-          // await refreshPlayerStats();
-          addNotification("Game completed and stats updated!", "success");
-        } else {
+        if (!success) {
           setGameUpdated(false);
           updateGameCalledRef.current = false;
-          addNotification("Error updating game result", "error");
+          addNotification(
+            t("game_update_error") ||
+              "Error updating game result. Redirecting to home...",
+            "error"
+          );
+          navigate("/");
+          return;
+        }
+
+        updateGameCalledRef.current = false;
+        setGameUpdated(false);
+
+        if (end) {
+          addNotification(t("game_complete") || "Game completed!", "success");
         }
       } catch (error) {
-        addNotification("Error updating game result", "error");
         setGameUpdated(false);
         updateGameCalledRef.current = false;
+        addNotification(
+          t("game_update_error") ||
+            "Error updating game result. Redirecting to home...",
+          "error"
+        );
+        navigate("/");
       }
     },
-    [backendGameId, gameUpdated, updateGame, addNotification, gameData]
+    [backendGameId, gameUpdated, updateGame, addNotification, navigate, t]
   );
 
   const updateGameDimensions = useCallback(() => {
@@ -324,48 +366,33 @@ const SingleMatch: React.FC = () => {
       // Colisión con paredes
       checkWallCollision(newState.ball, gameHeight, ballSize);
 
-      // Colisión con paddles
-      let paddleHit = false;
-      if (
-        checkPaddleCollision(
-          newState.ball,
-          newState.playerPaddle.y,
-          0,
-          paddleHeight,
-          paddleWidth,
-          ballSize,
-          newState.ball.dx < 0,
-          BALL_SPEED
-        )
-      ) {
-        paddleHit = true;
-      }
-      if (
-        checkPaddleCollision(
-          newState.ball,
-          newState.enemyPaddle.y,
-          gameWidth - paddleWidth,
-          paddleHeight,
-          paddleWidth,
-          ballSize,
-          newState.ball.dx > 0,
-          BALL_SPEED
-        )
-      ) {
-        paddleHit = true;
-      }
-      if (paddleHit) {
-        if (typeof newState.ballSpeedMultiplier !== "number")
-          newState.ballSpeedMultiplier = 1;
-        newState.ballSpeedMultiplier *= 1.25;
-      }
+      checkPaddleCollision(
+        newState.ball,
+        newState.playerPaddle.y,
+        0,
+        paddleHeight,
+        paddleWidth,
+        ballSize,
+        newState.ball.dx < 0,
+        BALL_SPEED
+      );
+
+      checkPaddleCollision(
+        newState.ball,
+        newState.enemyPaddle.y,
+        gameWidth - paddleWidth,
+        paddleHeight,
+        paddleWidth,
+        ballSize,
+        newState.ball.dx > 0,
+        BALL_SPEED
+      );
 
       // Gol enemigo
-      if (newState.ball.x < -ballSize) {
-        newState.gameScore.enemy++;
-        newState.gamePaused = false;
+      if (newState.ball.x < -ballSize && newState.ball.dx < 0) {
         newState.ball = resetBall(gameWidth, gameHeight);
-        newState.ballSpeedMultiplier = 1;
+        newState.gamePaused = false;
+        newState.gameScore.enemy++;
         setTimeout(() => {
           setGameState((prev: GameState) => ({
             ...prev,
@@ -383,15 +410,24 @@ const SingleMatch: React.FC = () => {
           if (!gameUpdated) {
             updateBackendGame(
               newState.gameScore.player,
-              newState.gameScore.enemy
+              newState.gameScore.enemy,
+              true
             );
           }
+        } else {
+          updateBackendGame(
+            newState.gameScore.player,
+            newState.gameScore.enemy,
+            false
+          );
         }
-      } else if (newState.ball.x > gameWidth + ballSize) {
-        newState.gameScore.player++;
-        newState.gamePaused = false;
+      } else if (
+        newState.ball.x > gameWidth + ballSize &&
+        newState.ball.dx > 0
+      ) {
         newState.ball = resetBall(gameWidth, gameHeight);
-        newState.ballSpeedMultiplier = 1;
+        newState.gamePaused = false;
+        newState.gameScore.player++;
         setTimeout(() => {
           setGameState((prev: GameState) => ({
             ...prev,
@@ -409,9 +445,16 @@ const SingleMatch: React.FC = () => {
           if (!gameUpdated) {
             updateBackendGame(
               newState.gameScore.player,
-              newState.gameScore.enemy
+              newState.gameScore.enemy,
+              true
             );
           }
+        } else {
+          updateBackendGame(
+            newState.gameScore.player,
+            newState.gameScore.enemy,
+            false
+          );
         }
       }
 
@@ -471,14 +514,6 @@ const SingleMatch: React.FC = () => {
     settingsLoading || defaultValue
       ? `#${import.meta.env.VITE_STICK_COLOR}`
       : barColor;
-
-  // Función para obtener la URL absoluta del avatar
-  const getAvatarUrl = (avatar: string | undefined | null): string => {
-    if (!avatar || avatar.trim() === "") return "/placeholder.svg";
-    if (avatar.startsWith("http")) return avatar;
-    const baseUrl = import.meta.env.VITE_API_URL || "";
-    return `${baseUrl}${avatar}`;
-  };
 
   // Show loading if game settings are loading
   if (settingsLoading) {
