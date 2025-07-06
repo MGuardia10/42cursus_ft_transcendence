@@ -81,7 +81,7 @@ const TournamentId: React.FC = () => {
 
     // Redirect to the match page
     // console.log("Tournament game data:", tournamentGameData);
-    // navigate("/tournament-single-match");
+    navigate("/tournament-single-match");
   };
 
   // loading

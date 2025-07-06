@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { get } from "http";
 import { useState, useCallback } from "react";
 
 // export interface Tournament {

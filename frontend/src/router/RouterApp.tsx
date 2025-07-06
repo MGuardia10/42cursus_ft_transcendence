@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router";
 import AuthLayout from "@/layout/AuthLayout/AuthLayout";
 import AppLayout from "@/layout/AppLayout/AppLayout";
@@ -16,6 +15,7 @@ import GameSettings from "@/pages/Settings/GameSettings";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage";
 import GameInvite from "@/pages/GameInvite/GameInvite";
 import TournamentId from "@/pages/Tournament/components/TournamentId";
+import TournamentSingleMatch from "@/pages/TournamentSingleMatch/TournamentSingleMatch";
 
 const RouterApp: React.FC = () => {
   return (
@@ -43,6 +43,10 @@ const RouterApp: React.FC = () => {
           <Route path="/users/:id" element={<Dashboard />} />
           <Route path="/single-match" element={<SingleMatch />} />
           <Route path="/tournament" element={<Tournament />} />
+          <Route
+            path="/tournament-single-match"
+            element={<TournamentSingleMatch />}
+          />
           <Route path="/tournament/:id" element={<TournamentId />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/leaderboard" element={<LeaderBoard />} />

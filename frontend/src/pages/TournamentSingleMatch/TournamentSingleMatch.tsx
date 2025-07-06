@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useGameSettings } from "@/hooks/useGameSettings";
 import { useGame } from "@/hooks/useGame";
@@ -19,12 +19,39 @@ import GameControls from "./components/GameControls";
 
 const PADDLE_HEIGHT_RATIO = 0.2; // 20% del alto del campo
 
-const SingleMatch: React.FC = () => {
+// Nueva interfaz para datos de torneo
+interface TournamentGameData {
+  gameId: number;
+  tournamentId: string;
+  player1: {
+    id: number;
+    name: string;
+    alias: string;
+    avatar: string;
+  };
+  player2: {
+    id: number;
+    name: string;
+    alias: string;
+    avatar: string;
+  };
+  configuration: {
+    default_value: boolean;
+    points_to_win: string;
+    serve_delay: string;
+    ball_color: string;
+    stick_color: string;
+    field_color: string;
+  };
+}
+
+const TournamentSingleMatch: React.FC = () => {
   // Hooks
   const { t } = useLanguage();
   const { user } = useAuth();
   const { addNotification } = useNotification();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     findGame,
@@ -33,7 +60,7 @@ const SingleMatch: React.FC = () => {
     error: gameError,
   } = useGame();
 
-  // Get player game settings
+  // Get player game settings (fallback)
   const {
     ballColor,
     bgColor,
@@ -49,7 +76,8 @@ const SingleMatch: React.FC = () => {
   const keysRef = useRef<{ [key: string]: boolean }>({});
   const redirectAttemptedRef = useRef(false);
 
-  // Load player data from sessionStorage
+  // Load tournament game data from sessionStorage
+  const [tournamentGameData, setTournamentGameData] = useState<TournamentGameData | null>(null);
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [gameEnded, setGameEnded] = useState(false);
   const [backendGameId, setBackendGameId] = useState<number | null>(null);
@@ -58,31 +86,54 @@ const SingleMatch: React.FC = () => {
 
   const updateGameCalledRef = useRef(false);
 
+  // Función para limpiar datos de sesión y redirigir
+  const clearSessionAndRedirect = useCallback((tournamentId: string) => {
+    sessionStorage.removeItem("tournamentGameData");
+    navigate(`/tournament/${tournamentId}`);
+  }, [navigate]);
+
   useEffect(() => {
     if (redirectAttemptedRef.current) return;
 
-    const storedGameData = sessionStorage.getItem("gameData");
-    if (storedGameData) {
+    const storedTournamentData = sessionStorage.getItem("tournamentGameData");
+    if (storedTournamentData) {
       try {
-        const parsedData = JSON.parse(storedGameData);
-        setGameData(parsedData);
+        const parsedData: TournamentGameData = JSON.parse(storedTournamentData);
+        setTournamentGameData(parsedData);
+        
+        // Convertir a formato GameData
+        const convertedGameData: GameData = {
+          gameId: parsedData.gameId.toString(),
+          player1: {
+            id: parsedData.player1.id.toString(),
+            alias: parsedData.player1.alias,
+            avatar: parsedData.player1.avatar,
+          },
+          player2: {
+            id: parsedData.player2.id.toString(),
+            alias: parsedData.player2.alias,
+            avatar: parsedData.player2.avatar,
+          },
+        };
+        setGameData(convertedGameData);
       } catch (error) {
         addNotification(
-          t("game_loading_error") || "Error loading game data",
+          t("game_loading_error") || "Error loading tournament match data",
           "error"
         );
         redirectAttemptedRef.current = true;
-        navigate("/game-invite");
+        // Redirigir a torneo general si no hay tournamentId
+        navigate("/tournament");
       }
     } else {
-      // No game data found, redirect to game invite
+      // No tournament match data found, redirect to tournament
       addNotification(
         t("game_no_data_found") ||
-          "No game data found. Please start a new game.",
+          "No tournament match data found. Please return to tournament.",
         "error"
       );
       redirectAttemptedRef.current = true;
-      navigate("/game-invite");
+      navigate("/tournament");
     }
   }, [addNotification, navigate, t]);
 
@@ -121,20 +172,23 @@ const SingleMatch: React.FC = () => {
 
   // Clear game data when game ends
   useEffect(() => {
-    if (gameEnded) {
-      sessionStorage.removeItem("gameData");
+    if (gameEnded && tournamentGameData) {
+      clearSessionAndRedirect(tournamentGameData.tournamentId);
     }
-  }, [gameEnded]);
+  }, [gameEnded, tournamentGameData, clearSessionAndRedirect]);
 
-  // Use player's custom game settings only if custom settings are enabled and not loading
-  const finalServeDelay =
-    settingsLoading || defaultValue
-      ? Number.parseInt(import.meta.env.VITE_SERVE_DELAY)
-      : serveDelay;
-  const finalPointsToWin =
-    settingsLoading || defaultValue
-      ? Number.parseInt(import.meta.env.VITE_POINTS_TO_WIN)
-      : score;
+  // Use tournament configuration if available, otherwise fallback to user settings
+  const finalServeDelay = tournamentGameData?.configuration
+    ? Number.parseInt(tournamentGameData.configuration.serve_delay)
+    : settingsLoading || defaultValue
+    ? Number.parseInt(import.meta.env.VITE_SERVE_DELAY)
+    : serveDelay;
+    
+  const finalPointsToWin = tournamentGameData?.configuration
+    ? Number.parseInt(tournamentGameData.configuration.points_to_win)
+    : settingsLoading || defaultValue
+    ? Number.parseInt(import.meta.env.VITE_POINTS_TO_WIN)
+    : score;
 
   // Función para crear una partida usando el hook
   const createBackendGame = useCallback(async () => {
@@ -153,16 +207,19 @@ const SingleMatch: React.FC = () => {
         setGameUpdated(false);
       } else {
         addNotification(
-          t("game_no_available") || "No match available",
+          t("game_no_available") || "No tournament match available",
           "error"
         );
-        sessionStorage.removeItem("gameData");
-        navigate("/");
+        if (tournamentGameData) {
+          clearSessionAndRedirect(tournamentGameData.tournamentId);
+        } else {
+          navigate("/tournament");
+        }
       }
     } catch (error) {
-      addNotification("Error creating game in backend", "error");
+      addNotification("Error creating tournament game in backend", "error");
     }
-  }, [gameData, user, gameCreated, findGame, addNotification, navigate, t]);
+  }, [gameData, user, gameCreated, findGame, addNotification, navigate, t, tournamentGameData, clearSessionAndRedirect]);
 
   const updateBackendGame = useCallback(
     async (playerScore: number, enemyScore: number, end: boolean) => {
@@ -183,10 +240,14 @@ const SingleMatch: React.FC = () => {
           updateGameCalledRef.current = false;
           addNotification(
             t("game_update_error") ||
-              "Error updating game result. Redirecting to home...",
+              "Error updating tournament game result. Redirecting to tournament...",
             "error"
           );
-          navigate("/");
+          if (tournamentGameData) {
+            clearSessionAndRedirect(tournamentGameData.tournamentId);
+          } else {
+            navigate("/tournament");
+          }
           return;
         }
 
@@ -194,20 +255,24 @@ const SingleMatch: React.FC = () => {
         setGameUpdated(false);
 
         if (end) {
-          addNotification(t("game_complete") || "Game completed!", "success");
+          addNotification(t("game_complete") || "Tournament match completed!", "success");
         }
       } catch (error) {
         setGameUpdated(false);
         updateGameCalledRef.current = false;
         addNotification(
           t("game_update_error") ||
-            "Error updating game result. Redirecting to home...",
+            "Error updating tournament game result. Redirecting to tournament...",
           "error"
         );
-        navigate("/");
+        if (tournamentGameData) {
+          clearSessionAndRedirect(tournamentGameData.tournamentId);
+        } else {
+          navigate("/tournament");
+        }
       }
     },
-    [backendGameId, gameUpdated, updateGame, addNotification, navigate, t]
+    [backendGameId, gameUpdated, updateGame, addNotification, navigate, t, tournamentGameData, clearSessionAndRedirect]
   );
 
   const updateGameDimensions = useCallback(() => {
@@ -501,26 +566,32 @@ const SingleMatch: React.FC = () => {
     };
   }, [gameState.gamePaused, gameLoop, gameEnded]);
 
-  // Use player's custom ball color only if custom settings are enabled and not loading
-  const finalBallColor =
-    settingsLoading || defaultValue
-      ? `#${import.meta.env.VITE_BALL_COLOR}`
-      : ballColor;
-  const finalBgColor =
-    settingsLoading || defaultValue
-      ? `#${import.meta.env.VITE_FIELD_COLOR}`
-      : bgColor;
-  const finalBarColor =
-    settingsLoading || defaultValue
-      ? `#${import.meta.env.VITE_STICK_COLOR}`
-      : barColor;
-// Show loading if game settings are loading
-  if (settingsLoading) {
+  // Use tournament configuration colors if available, otherwise fallback to user settings
+  const finalBallColor = tournamentGameData?.configuration
+    ? `#${tournamentGameData.configuration.ball_color}`
+    : settingsLoading || defaultValue
+    ? `#${import.meta.env.VITE_BALL_COLOR}`
+    : ballColor;
+    
+  const finalBgColor = tournamentGameData?.configuration
+    ? `#${tournamentGameData.configuration.field_color}`
+    : settingsLoading || defaultValue
+    ? `#${import.meta.env.VITE_FIELD_COLOR}`
+    : bgColor;
+    
+  const finalBarColor = tournamentGameData?.configuration
+    ? `#${tournamentGameData.configuration.stick_color}`
+    : settingsLoading || defaultValue
+    ? `#${import.meta.env.VITE_STICK_COLOR}`
+    : barColor;
+
+  // Show loading if game settings are loading and no tournament configuration
+  if (settingsLoading && !tournamentGameData?.configuration) {
     return (
       <div className="container mx-auto flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-text-tertiary mx-auto"></div>
-          <p className="mt-4 text-text-secondary">Loading game settings...</p>
+          <p className="mt-4 text-text-secondary">Loading tournament game settings...</p>
         </div>
       </div>
     );
@@ -531,9 +602,9 @@ const SingleMatch: React.FC = () => {
       <div className="w-full max-w-6xl mx-auto">
         <div className="text-center mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
-            {t("singleMatch")}
+            {t("tournamentMatch") || "Tournament Match"}
           </h1>
-          <p className="text-text-secondary">{t("single_match_play")}</p>
+          <p className="text-text-secondary">{t("tournament_match_play") || "Tournament match in progress"}</p>
         </div>
 
         {/* Scoreboard */}
@@ -568,7 +639,7 @@ const SingleMatch: React.FC = () => {
           gameLoading={gameLoading}
           onStart={startGame}
           onPause={pauseGame}
-          onBackToHome={() => navigate("/")}
+          onBackToHome={() => tournamentGameData ? clearSessionAndRedirect(tournamentGameData.tournamentId) : navigate("/tournament")}
           t={t as (key: string) => string}
           finalPointsToWin={finalPointsToWin}
           gameData={gameData}
@@ -579,4 +650,4 @@ const SingleMatch: React.FC = () => {
   );
 };
 
-export default SingleMatch;
+export default TournamentSingleMatch; 
