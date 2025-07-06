@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Colors and messages
 ORANGE="\033[38;5;214m"
 RESET="\033[0m"
 WARNING_MSG="${ORANGE}[ WARNING ]${RESET}"
@@ -23,12 +22,16 @@ declare -A env_example
 # Read .env into env array
 while IFS='=' read -r key value; do
   [[ -z "$key" || "$key" =~ ^# ]] && continue
+  key=$(echo "$key" | xargs)
+  value=$(echo "$value" | xargs)
   env[$key]="$value"
 done < .env
 
 # Read .env.example into env_example array
 while IFS='=' read -r key value; do
   [[ -z "$key" || "$key" =~ ^# ]] && continue
+  key=$(echo "$key" | xargs)
+  value=$(echo "$value" | xargs)
   env_example[$key]="$value"
 done < .env.example
 
