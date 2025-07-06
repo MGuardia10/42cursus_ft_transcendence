@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useCallback, useEffect } from "react";
+import { get } from "http";
+import { useState, useCallback } from "react";
 
 // export interface Tournament {
 //   id: number;
@@ -21,76 +23,69 @@ import { useState, useCallback, useEffect } from "react";
 // 	"players": [ 1, 2, 3, 4 ]
 // }
 
-export function useTournament(initialId?: string) {
+export function useTournament() {
   // useState variables
   const [tournament, setTournament] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Get tournament by id
-  const getTournament = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL}/tournament/${id}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      if (!res.ok)
-        throw new Error(`Error fetching tournament: ${res.statusText}`);
-      const data = await res.json();
-      setTournament(data);
-      return data;
-    } catch (err: any) {
-      setError(err.message || "Unknown error");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Util: transformGames
+  const transformGames = async (
+    gamesObj: Record<string, any[]>
+  ): Promise<any[][]> => {
+    const gamesArray = Object.keys(gamesObj)
+      .sort((a, b) => Number(a) - Number(b))
+      .map((key) => gamesObj[key]);
 
-  const createTournament = useCallback(
-    async (data: any) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL}/tournaments`,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+    for (const roundGames of gamesArray) {
+      for (const game of roundGames) {
+        // Fetch name of player A
+        if (game.player_a_id !== -1) {
+          try {
+            const res = await fetch(
+              `${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${
+                game.player_a_id
+              }`,
+              { credentials: "include" }
+            );
+            const data = await res.json();
+            game.player_a_alias = data.alias;
+          } catch {
+            game.player_a_alias = "Unknown Player";
           }
-        );
-        if (!res.ok) throw new Error(`Error creating: ${res.statusText}`);
-        const { tournament_id } = await res.json();
-
-        if (!tournament_id) {
-          throw new Error("Tournament ID not returned from server");
         }
 
-        const tournamentData = await getTournament(tournament_id);
+        // Fetch name of player B
+        if (game.player_b_id !== -1) {
+          try {
+            const res = await fetch(
+              `${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${
+                game.player_b_id
+              }`,
+              { credentials: "include" }
+            );
+            const data = await res.json();
+            game.player_b_alias = data.alias;
+          } catch {
+            game.player_b_alias = "Unknown Player";
+          }
+        }
 
-        setTournament(tournamentData || null);
-        return tournamentData;
-      } catch (err: any) {
-        setError(err.message || "Unknown error");
-        return null;
-      } finally {
-        setLoading(false);
+        Object.assign(game, {
+          status: game.status === 1 ? "Waiting" : "Finished",
+        });
       }
-    },
-    [getTournament]
-  );
+    }
 
+    return gamesArray;
+  };
+
+  // Update tournament
   const updateTournament = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(
+      await fetch(
         `${
           import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL
         }/tournament/${id}/update`,
@@ -99,10 +94,68 @@ export function useTournament(initialId?: string) {
           credentials: "include",
         }
       );
-      if (!res.ok) throw new Error(`Error updating: ${res.statusText}`);
-      const updated = await res.json();
-      setTournament(updated);
-      return updated;
+      return;
+    } catch (err: any) {
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Get tournament by id
+  const getTournament = useCallback(
+    async (id: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Update tournament before getting it
+        await updateTournament(id);
+
+        // Fetch torunament data
+        const res = await fetch(
+          `${import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL}/tournament/${id}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        if (!res.ok)
+          throw new Error(`Error fetching tournament: ${res.statusText}`);
+        const data = await res.json();
+
+        const transformed = {
+          ...data,
+          games: await transformGames(data.games),
+        };
+        setTournament(transformed);
+        return transformed;
+      } catch (err: any) {
+        setError(err.message || "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [updateTournament]
+  );
+
+  // Create tournament
+  const createTournament = useCallback(async (data: any) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_PONG_API_BASEURL_EXTERNAL}/tournaments`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
+      if (!res.ok) throw new Error(`Error creating: ${res.statusText}`);
+      const { tournament_id } = await res.json();
+
+      return tournament_id;
     } catch (err: any) {
       setError(err.message || "Unknown error");
       return null;
@@ -111,6 +164,7 @@ export function useTournament(initialId?: string) {
     }
   }, []);
 
+  // Join tournament
   const joinTournament = useCallback(
     async (tournamentId: string, userId: string) => {
       setLoading(true);
@@ -142,6 +196,98 @@ export function useTournament(initialId?: string) {
     []
   );
 
+  // Get game from tournament
+  const getGameDataFromTournament = useCallback(
+    async (tournamentId: string, gameId: number) => {
+      if (!tournamentId || !gameId) return null;
+
+      // Get refreshed tournament
+      const refreshedTournament = await getTournament(tournamentId);
+
+      if (
+        !refreshedTournament ||
+        !refreshedTournament.games ||
+        !refreshedTournament.configuracion
+      )
+        return null;
+
+      let refreshedGame;
+      for (const round of refreshedTournament.games) {
+        for (const game of round) {
+          if (game.id === gameId) {
+            // Fetch name of player A
+            if (game.player_a_id !== -1) {
+              try {
+                const res = await fetch(
+                  `${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${
+                    game.player_a_id
+                  }`,
+                  { credentials: "include" }
+                );
+                const data = await res.json();
+                game.player_a_alias = data.alias;
+              } catch {
+                game.player_a_alias = "Unknown Player";
+              }
+            }
+
+            // Fetch name of player B
+            if (game.player_b_id !== -1) {
+              try {
+                const res = await fetch(
+                  `${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${
+                    game.player_b_id
+                  }`,
+                  { credentials: "include" }
+                );
+                const data = await res.json();
+                game.player_b_alias = data.alias;
+              } catch {
+                game.player_b_alias = "Unknown Player";
+              }
+            }
+
+            // Assign game based on status too
+            if (game.status === "Waiting") {
+              refreshedGame = game;
+            }
+          }
+        }
+      }
+
+      if (
+        !refreshedGame ||
+        !refreshedGame.player_a_id ||
+        !refreshedGame.player_b_id
+      )
+        return null;
+
+      const tournamentGameData = {
+        gameId: gameId,
+        tournamentId: tournamentId,
+        player1: {
+          id: refreshedGame.player_a_id,
+          alias: refreshedGame.player_a_alias,
+          avatar: `${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${
+            refreshedGame.player_a_id
+          }/avatar`,
+        },
+        player2: {
+          id: refreshedGame.player_b_id,
+          alias: refreshedGame.player_b_alias,
+          avatar: `${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${
+            refreshedGame.player_b_id
+          }/avatar`,
+        },
+        configuration: refreshedTournament.configuracion,
+      };
+
+      return tournamentGameData;
+    },
+    [getTournament]
+  );
+
+  // Delete tournament
   const deleteTournament = useCallback(async (id: number) => {
     setLoading(true);
     setError(null);
@@ -164,17 +310,12 @@ export function useTournament(initialId?: string) {
     }
   }, []);
 
-  useEffect(() => {
-    if (initialId) {
-      getTournament(initialId);
-    }
-  }, [initialId, getTournament]);
-
   return {
     tournament,
     loading,
     error,
     getTournament,
+    getGameDataFromTournament,
     createTournament,
     updateTournament,
     joinTournament,

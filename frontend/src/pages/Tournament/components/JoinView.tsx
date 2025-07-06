@@ -30,8 +30,6 @@ const JoinView: React.FC<JoinViewProps> = ({ setCurrentView, t }) => {
 
     const joinData = await joinTournament(tournamentId, user?.id || "0");
 
-    console.log("Join data:", joinData);
-
     if (!joinData) {
       addNotification(t("tournament_join_error"), "error");
       return;

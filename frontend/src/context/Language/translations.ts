@@ -156,6 +156,9 @@ export const translations = {
     tournament_winner: "Winner: {alias}",
     tournament_vs: "VS",
     tournament_play: "Play",
+    tournament_refresh: "Refresh Matches",
+    tournament_refresh_error: "Error refreshing matches",
+    tournament_refresh_success: "Matches refreshed successfully!",
     tournament_joining: "Joining...",
     tournament_enter_code_hint:
       "Enter the 8-character code provided by the tournament creator",
@@ -361,6 +364,9 @@ export const translations = {
     tournament_winner: "Ganador: {alias}",
     tournament_vs: "VS",
     tournament_play: "Jugar",
+    tournament_refresh: "Actualizar Partidas",
+    tournament_refresh_error: "Error al actualizar partidas",
+    tournament_refresh_success: "Partidas actualizadas con éxito!",
     tournament_joining: "Uniéndose...",
     tournament_enter_code_hint:
       "Introduce el código de 8 caracteres proporcionado por el creador del torneo",
@@ -565,6 +571,9 @@ export const translations = {
     tournament_winner: "Vencedor: {alias}",
     tournament_vs: "VS",
     tournament_play: "Jogar",
+    tournament_refresh: "Atualizar Partidas",
+    tournament_refresh_error: "Erro ao atualizar partidas",
+    tournament_refresh_success: "Partidas atualizadas com sucesso!",
     tournament_joining: "Entrando...",
     tournament_enter_code_hint:
       "Digite o código de 8 caracteres fornecido pelo criador do torneio",

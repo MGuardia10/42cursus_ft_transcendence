@@ -94,17 +94,17 @@ const CreateView: React.FC<CreateViewProps> = ({
     };
 
     // Create tournament
-    const newTournament = await createTournament(TournamentData);
+    const newTournamentId = await createTournament(TournamentData);
 
     // If no tournament ID returned
-    if (!newTournament.tournament_id) {
+    if (!newTournamentId) {
       addNotification(t("tournament_create_error"), "error");
       return;
     }
 
     // Navigate to the new tournament
     addNotification(t("tournament_create_success"), "success");
-    navigate(`/tournament/${newTournament.tournament_id}`);
+    navigate(`/tournament/${newTournamentId}`);
   };
 
   return (
