@@ -8,7 +8,7 @@ export const BALL_SPEED = 1;
 // Interfaces
 export interface PlayerData {
   id: string;
-  name: string;
+  name?: string;
   alias: string;
   avatar?: string;
 }
