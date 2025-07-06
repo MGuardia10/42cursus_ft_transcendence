@@ -7,15 +7,19 @@ import {
 } from 'react';
 import Spinner from '@/layout/Spinner/Spinner';
 import { TwoFactorInputProps} from '@/types/twoFactorAuth';
+import { useLanguage } from '@/hooks/useLanguage';
 
   const TwoFactorInput: React.FC<TwoFactorInputProps> = ({ length = 6, onComplete, resetKey = 0 }) => {
 
 	/* useState hook for numbers */
 	const [values, setValues] = useState<string[]>(Array(length).fill(''));
 	const [loading, setLoading] = useState<boolean>(false);
+	const [hasSubmitted, setHasSubmitted] = useState(false);
 
 	/* Refs for inputs */
 	const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
+
+	const { t } = useLanguage();
 
 	/* Move focus to next input */
 	const focusInput = (index: number) => {
@@ -77,28 +81,30 @@ import { TwoFactorInputProps} from '@/types/twoFactorAuth';
 	/* Reset if resetKey change */
 	useEffect(() => {
 		setValues(Array(length).fill(''));
+		setHasSubmitted(false);
 		focusInput(0);
 	}, [resetKey, length]);
 
 	/* Check all numbers filled and call function to handle 2FA */
 	useEffect(() => {
-		if (values.every((v) => v !== '')) {
-		  (async () => {
-			setLoading(true);
-			try {
-			  await onComplete(values.join(''));
-			} finally {
-			  setLoading(false);
-			}
-		  })();
+		if (values.every((v) => v !== '') && !hasSubmitted) {
+			setHasSubmitted(true);
+			(async () => {
+				setLoading(true);
+				try {
+					await onComplete(values.join(''));
+				} finally {
+					setLoading(false);
+				}
+			})();
 		}
-	  }, [values, onComplete]);
+	}, [values, onComplete, hasSubmitted]);
 
 	return (
 		<div className='flex flex-col items-center gap-10'>
 			<div className='flex flex-col items-center gap-2'>
-				<h1 className='text-2xl font-bold'>Two Factor Authentication</h1>
-				<p className='text-center text-gray-600'>Please, insert the submitted code.</p>
+				<h1 className='text-2xl font-bold'>{t('two_factor_title')}</h1>
+				<p className='text-center text-gray-600'>{t('two_factor_subtitle')}</p>
 			</div>
 			<div className="flex gap-2">
 				{values.map((val, idx) => (

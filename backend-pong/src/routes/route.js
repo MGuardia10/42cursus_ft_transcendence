@@ -8,12 +8,12 @@ import player_modify from "./player_modify.js";
 import ranking_all from "./ranking_all.js";
 import ranking_specific_player from "./ranking_specific_player.js";
 
-import tournament_get from './tournament_get.js';
+import tournament_get from "./tournament_get.js";
 import tournament_create from "./tournament_create.js";
-import tournament_delete from './tournament_delete.js';
-import tournament_join from './tournament_join.js';
-import tournament_update from './tournament_update.js';
-
+import tournament_delete from "./tournament_delete.js";
+import tournament_join from "./tournament_join.js";
+import tournament_update from "./tournament_update.js";
+import game_get_by_id from "./game_get_by_id.js";
 
 /* This function is used to check if the cookie is present in the request */
 function cookieChecker(request, reply, done) {
@@ -173,6 +173,22 @@ export default async function (fastify, options) {
     game_get
   );
 
+  fastify.get(
+    "/games/:id",
+    {
+      schema: {
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: {
+            id: { type: "integer" },
+          },
+        },
+      },
+    },
+    game_get_by_id
+  );
+
   fastify.patch(
     "/game/:id",
     {
@@ -201,30 +217,38 @@ export default async function (fastify, options) {
   /* NOTE: Tournament */
   /********************/
 
-  fastify.get('/tournament/:id', {
-    schema: {
-      params: {
-        type: 'object',
-        required: ['id'],
-        properties: {
-          id: { type: 'string' }
-        }
-      }
-    }
-  }, tournament_get);
+  fastify.get(
+    "/tournament/:id",
+    {
+      schema: {
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: {
+            id: { type: "string" },
+          },
+        },
+      },
+    },
+    tournament_get
+  );
 
-  fastify.post("/tournaments", {
-    schema: {
-      body: {
-        type: 'object',
-        required: ['configuration', 'players'],
-        properties: {
-          configuration: { type: 'object' },
-          players: { type: 'array', items: { type: 'integer' } }
-        }
-      }
-    }
-  }, tournament_create);
+  fastify.post(
+    "/tournaments",
+    {
+      schema: {
+        body: {
+          type: "object",
+          required: ["configuration", "players"],
+          properties: {
+            configuration: { type: "object" },
+            players: { type: "array", items: { type: "integer" } },
+          },
+        },
+      },
+    },
+    tournament_create
+  );
 
   fastify.delete(
     "/tournament/:id",
@@ -267,12 +291,11 @@ export default async function (fastify, options) {
           type: "object",
           required: ["id"],
           properties: {
-            id: { type: "string", minLength: 1 }
-          }
+            id: { type: "string", minLength: 1 },
+          },
         },
       },
     },
     tournament_update
-  )
-
+  );
 }

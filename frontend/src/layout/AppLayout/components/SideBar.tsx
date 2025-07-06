@@ -31,7 +31,7 @@ const SideBar: React.FC<SideBarProps> = ({ showSidebar, setShowSidebar }) => {
 	const menuItems: MenuItem[] = [
 		{ name: t("sidebar_home"), url: "/", icon: AiOutlineHome },
 		{ name: t("sidebar_play") },
-		{ name: t("sidebar_single_match"), url: "/single-match", icon: PiPingPongBold },
+		{ name: t("sidebar_single_match"), url: "/game-invite", icon: PiPingPongBold },
 		{ name: t("sidebar_tournament"), url: "/tournament", icon: TbTournament },
 		{ name: t("sidebar_stats") },
 		{ name: t("sidebar_dashboard"), url: "/dashboard", icon: IoStatsChartSharp },
