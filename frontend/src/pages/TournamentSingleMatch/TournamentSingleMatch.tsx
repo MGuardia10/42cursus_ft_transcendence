@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useGameSettings } from "@/hooks/useGameSettings";
 import { useGame } from "@/hooks/useGame";
@@ -25,13 +25,13 @@ interface TournamentGameData {
   tournamentId: string;
   player1: {
     id: number;
-    name: string;
+    name?: string;
     alias: string;
     avatar: string;
   };
   player2: {
     id: number;
-    name: string;
+    name?: string;
     alias: string;
     avatar: string;
   };
@@ -51,7 +51,6 @@ const TournamentSingleMatch: React.FC = () => {
   const { user } = useAuth();
   const { addNotification } = useNotification();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const {
     findGame,
@@ -77,7 +76,8 @@ const TournamentSingleMatch: React.FC = () => {
   const redirectAttemptedRef = useRef(false);
 
   // Load tournament game data from sessionStorage
-  const [tournamentGameData, setTournamentGameData] = useState<TournamentGameData | null>(null);
+  const [tournamentGameData, setTournamentGameData] =
+    useState<TournamentGameData | null>(null);
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [gameEnded, setGameEnded] = useState(false);
   const [backendGameId, setBackendGameId] = useState<number | null>(null);
@@ -87,10 +87,13 @@ const TournamentSingleMatch: React.FC = () => {
   const updateGameCalledRef = useRef(false);
 
   // Función para limpiar datos de sesión y redirigir
-  const clearSessionAndRedirect = useCallback((tournamentId: string) => {
-    sessionStorage.removeItem("tournamentGameData");
-    navigate(`/tournament/${tournamentId}`);
-  }, [navigate]);
+  const clearSessionAndRedirect = useCallback(
+    (tournamentId: string) => {
+      sessionStorage.removeItem("tournamentGameData");
+      navigate(`/tournament/${tournamentId}`);
+    },
+    [navigate]
+  );
 
   useEffect(() => {
     if (redirectAttemptedRef.current) return;
@@ -100,10 +103,10 @@ const TournamentSingleMatch: React.FC = () => {
       try {
         const parsedData: TournamentGameData = JSON.parse(storedTournamentData);
         setTournamentGameData(parsedData);
-        
+
         // Convertir a formato GameData
         const convertedGameData: GameData = {
-          gameId: parsedData.gameId.toString(),
+          gameId: parsedData.gameId,
           player1: {
             id: parsedData.player1.id.toString(),
             alias: parsedData.player1.alias,
@@ -183,7 +186,7 @@ const TournamentSingleMatch: React.FC = () => {
     : settingsLoading || defaultValue
     ? Number.parseInt(import.meta.env.VITE_SERVE_DELAY)
     : serveDelay;
-    
+
   const finalPointsToWin = tournamentGameData?.configuration
     ? Number.parseInt(tournamentGameData.configuration.points_to_win)
     : settingsLoading || defaultValue
@@ -219,7 +222,17 @@ const TournamentSingleMatch: React.FC = () => {
     } catch (error) {
       addNotification("Error creating tournament game in backend", "error");
     }
-  }, [gameData, user, gameCreated, findGame, addNotification, navigate, t, tournamentGameData, clearSessionAndRedirect]);
+  }, [
+    gameData,
+    user,
+    gameCreated,
+    findGame,
+    addNotification,
+    navigate,
+    t,
+    tournamentGameData,
+    clearSessionAndRedirect,
+  ]);
 
   const updateBackendGame = useCallback(
     async (playerScore: number, enemyScore: number, end: boolean) => {
@@ -255,7 +268,10 @@ const TournamentSingleMatch: React.FC = () => {
         setGameUpdated(false);
 
         if (end) {
-          addNotification(t("game_complete") || "Tournament match completed!", "success");
+          addNotification(
+            t("game_complete") || "Tournament match completed!",
+            "success"
+          );
         }
       } catch (error) {
         setGameUpdated(false);
@@ -272,7 +288,16 @@ const TournamentSingleMatch: React.FC = () => {
         }
       }
     },
-    [backendGameId, gameUpdated, updateGame, addNotification, navigate, t, tournamentGameData, clearSessionAndRedirect]
+    [
+      backendGameId,
+      gameUpdated,
+      updateGame,
+      addNotification,
+      navigate,
+      t,
+      tournamentGameData,
+      clearSessionAndRedirect,
+    ]
   );
 
   const updateGameDimensions = useCallback(() => {
@@ -572,13 +597,13 @@ const TournamentSingleMatch: React.FC = () => {
     : settingsLoading || defaultValue
     ? `#${import.meta.env.VITE_BALL_COLOR}`
     : ballColor;
-    
+
   const finalBgColor = tournamentGameData?.configuration
     ? `#${tournamentGameData.configuration.field_color}`
     : settingsLoading || defaultValue
     ? `#${import.meta.env.VITE_FIELD_COLOR}`
     : bgColor;
-    
+
   const finalBarColor = tournamentGameData?.configuration
     ? `#${tournamentGameData.configuration.stick_color}`
     : settingsLoading || defaultValue
@@ -591,7 +616,9 @@ const TournamentSingleMatch: React.FC = () => {
       <div className="container mx-auto flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-text-tertiary mx-auto"></div>
-          <p className="mt-4 text-text-secondary">Loading tournament game settings...</p>
+          <p className="mt-4 text-text-secondary">
+            Loading tournament game settings...
+          </p>
         </div>
       </div>
     );
@@ -602,9 +629,11 @@ const TournamentSingleMatch: React.FC = () => {
       <div className="w-full max-w-6xl mx-auto">
         <div className="text-center mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
-            {t("tournamentMatch") || "Tournament Match"}
+            {t("tournament_match") || "Tournament Match"}
           </h1>
-          <p className="text-text-secondary">{t("tournament_match_play") || "Tournament match in progress"}</p>
+          <p className="text-text-secondary">
+            {t("tournament_match_play") || "Tournament match in progress"}
+          </p>
         </div>
 
         {/* Scoreboard */}
@@ -639,7 +668,11 @@ const TournamentSingleMatch: React.FC = () => {
           gameLoading={gameLoading}
           onStart={startGame}
           onPause={pauseGame}
-          onBackToHome={() => tournamentGameData ? clearSessionAndRedirect(tournamentGameData.tournamentId) : navigate("/tournament")}
+          onBackToHome={() =>
+            tournamentGameData
+              ? clearSessionAndRedirect(tournamentGameData.tournamentId)
+              : navigate("/tournament")
+          }
           t={t as (key: string) => string}
           finalPointsToWin={finalPointsToWin}
           gameData={gameData}
@@ -650,4 +683,4 @@ const TournamentSingleMatch: React.FC = () => {
   );
 };
 
-export default TournamentSingleMatch; 
+export default TournamentSingleMatch;
