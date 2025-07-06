@@ -10,8 +10,7 @@ USERS_DATABASE = 'backend-user/database.sqlite'
 PLAYERS_API_URL = 'http://localhost:8081/api/pong'
 PLAYERS_DATABASE = 'backend-pong/database.sqlite'
 
-GAMES_STATS_COUNT = 100
-GAMES_COUNT = 10
+GAMES_COUNT = 100
 
 def error_code(msg: str, code: int) -> None:
 	"""
