@@ -24,9 +24,6 @@ const Leaderboard: React.FC = () => {
     setCurrentPage,
   } = useLeaderboard();
 
-  // console.log("Top Players:", topPlayers);
-  // console.log("Current Players:", currentPlayers);
-
   const handleClick = (playerId: string) => {
     if (!playerId || playerId === "0") {
       return;

@@ -2,26 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from "react";
 
-// export interface Tournament {
-//   id: number;
-//   name: string;
-//   dateStart: string;
-//   dateEnd?: string;
-//   [key: string]: any;
-// }
-
-// {
-// 	"configuration": {
-// 		"default_value": true,
-// 		"points_to_win": "5",
-// 		"serve_delay": "3",
-// 		"ball_color": "FFFFFF",
-// 		"stick_color": "FFFFFF",
-// 		"field_color": "FFFFFF"
-// 	},
-// 	"players": [ 1, 2, 3, 4 ]
-// }
-
 export function useTournament() {
   // useState variables
   const [tournament, setTournament] = useState<any | null>(null);

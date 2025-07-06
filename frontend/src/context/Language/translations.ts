@@ -178,6 +178,8 @@ export const translations = {
     tournament_create_error: "Error creating tournament",
     tournament_game_error: "Error crating tournament game.",
     tournament_game_success: "Tournament game created successfully!",
+    tournament_delete_error: "Error deleting tournament",
+    tournament_delete_success: "Tournament deleted successfully!",
     // --- GameInvite ---
     game_invite_title: "Invite to Play",
     game_invite_description: "Select a friend to invite to a match",
@@ -387,6 +389,8 @@ export const translations = {
     tournament_create_error: "Error al crear el torneo",
     tournament_game_error: "Error al crear el juego del torneo.",
     tournament_game_success: "¡Juego del torneo creado con éxito!",
+    tournament_delete_error: "Error al eliminar el torneo",
+    tournament_delete_success: "¡Torneo eliminado con éxito!",
     // --- GameInvite ---
     game_invite_title: "Invitar a Jugar",
     game_invite_description: "Selecciona un amigo para invitarlo a una partida",
@@ -597,6 +601,8 @@ export const translations = {
     tournament_join_success: "Você entrou no torneio com sucesso!",
     tournament_create_success: "Torneio criado com sucesso!",
     tournament_create_error: "Erro ao criar o torneio",
+    tournament_delete_error: "Erro ao excluir o torneio",
+    tournament_delete_success: "Torneio excluído com sucesso!",
     // --- GameInvite ---
     game_invite_title: "Convidar para Jogar",
     game_invite_description:

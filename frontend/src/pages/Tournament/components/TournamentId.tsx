@@ -54,7 +54,7 @@ const TournamentId: React.FC = () => {
   const handleDeleteTournament = async () => {
     // If no ID, show error notification
     if (!id) {
-      addNotification(t("tournament_refresh_error"), "error");
+      addNotification(t("tournament_delete_error"), "error");
       return;
     }
 
@@ -62,10 +62,10 @@ const TournamentId: React.FC = () => {
     const success = await deleteTournament(id);
 
     if (success) {
-      addNotification(t("tournament_refresh_success"), "success");
+      addNotification(t("tournament_delete_success"), "success");
       navigate("/tournament");
     } else {
-      addNotification(t("tournament_refresh_error"), "error");
+      addNotification(t("tournament_delete_error"), "error");
     }
   };
 
