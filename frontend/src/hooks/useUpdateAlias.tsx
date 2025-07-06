@@ -1,50 +1,49 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { User } from '@/types/authContext';
-import { useLanguage } from '@/hooks/useLanguage';
+import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { User } from "@/types/authContext";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export function useUpdateAlias() {
+  /* Get userID */
+  const { user } = useAuth();
+  const { id } = user as User;
 
-	/* Get userID */
-	const { user } = useAuth();
-	const { id } = user as User;
+  /* Get traductions */
+  const { t } = useLanguage();
 
-	/* Get traductions */
-	const { t } = useLanguage();
+  /* Loading state */
+  const [loading, setLoading] = useState(false);
 
-	/* Loading state */
-	const [loading, setLoading] = useState(false);
+  /* Function to update the alias */
+  async function updateAlias(newAlias: string) {
+    try {
+      setLoading(true);
+      // setError(null);
 
-	/* Error state */
-	const [error, setError] = useState<string | null>(null);
+      const res = await fetch(
+        `${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${id}`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ alias: newAlias }),
+        }
+      );
 
-	/* Function to update the alias */
-	async function updateAlias(newAlias: string) {
-		try {
-			setLoading(true);
-			setError(null);
+      if (!res.ok) {
+        if (res.status === 409)
+          throw new Error(`${t("notifications_alias_repeated")}`);
+        else throw new Error(`${t("notifications_alias_error")}`);
+      }
 
-			const res = await fetch(`${import.meta.env.VITE_USER_API_BASEURL_EXTERNAL}/${id}`, {
-				method: 'PATCH',
-				credentials: 'include',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ alias: newAlias }),
-			});
+      return { success: true };
+    } catch (e: any) {
+      return { success: false, error: e.message };
+    } finally {
+      setLoading(false);
+    }
+  }
 
-			if (!res.ok) {
-				if (res.status === 409)
-					throw new Error(`${t('notifications_alias_repeated')}`);
-				else
-					throw new Error(`${t('notifications_alias_error')}`);
-			}
-		
-		} catch (e: any) {
-			setError(e.message || 'Error');
-		} finally {
-			setLoading(false);
-		}
-	}
-
-  return { updateAlias, loading, error };
+  return { updateAlias, loading };
 }

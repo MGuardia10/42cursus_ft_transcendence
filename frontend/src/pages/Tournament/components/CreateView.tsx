@@ -1,6 +1,9 @@
-import React, { useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Player, TournamentView } from "@/types/tournamentTypes";
 import InviteFriendWithCode from "./InviteFriendWithCode";
+import { useTournament } from "@/hooks/useTournament";
+import { useGameSettings } from "@/hooks/useGameSettings";
+import { useNavigate } from "react-router";
 
 interface Friend {
   id: number;
@@ -20,11 +23,34 @@ interface CreateViewProps {
   setParticipants: React.Dispatch<React.SetStateAction<Player[]>>;
   selectedPlayers: number;
   setSelectedPlayers: React.Dispatch<React.SetStateAction<number>>;
-  tournamentId: string;
-  handleCreateTournament: () => void;
-  loading: boolean;
   apiUrl: string;
 }
+
+interface gameSettings {
+  default_value: boolean;
+  points_to_win: string;
+  serve_delay: string;
+  ball_color: string;
+  stick_color: string;
+  field_color: string;
+}
+
+interface createTournamentData {
+  configuration: gameSettings;
+  players: number[];
+}
+
+// {
+// 	"configuration": {
+// 		"default_value": true,
+// 		"points_to_win": "5",
+// 		"serve_delay": "3",
+// 		"ball_color": "FFFFFF",
+// 		"stick_color": "FFFFFF",
+// 		"field_color": "FFFFFF"
+// 	},
+// 	"players": [ 1, 2, 3, 4 ]
+// }
 
 const CreateView: React.FC<CreateViewProps> = ({
   setCurrentView,
@@ -38,19 +64,48 @@ const CreateView: React.FC<CreateViewProps> = ({
   setParticipants,
   selectedPlayers,
   setSelectedPlayers,
-  tournamentId,
-  handleCreateTournament,
-  loading,
   apiUrl,
 }) => {
-  useEffect(() => {
-    const gameSettings = {
-      creatorId: user?.id,
-      creatorAlias: user?.alias,
-      maxPlayers: selectedPlayers,
-      friends: friends.map((f) => ({ id: f.id, alias: f.alias })),
+  // Hooks
+  const { createTournament } = useTournament();
+  const { defaultValue, score, serveDelay, bgColor, barColor, ballColor } =
+    useGameSettings();
+  const navigate = useNavigate();
+
+  // Handle onClick for creating a tournament
+  const handleCreateTournament = async () => {
+    // If not all participants
+    if (participants.length < selectedPlayers) {
+      addNotification(t("tournament_not_enough_players"), "error");
+      return;
+    }
+
+    // Data to create the tournament
+    const TournamentData: createTournamentData = {
+      configuration: {
+        default_value: defaultValue,
+        points_to_win: score,
+        serve_delay: serveDelay,
+        ball_color: ballColor,
+        stick_color: barColor,
+        field_color: bgColor,
+      },
+      players: participants.map((p) => p.id),
     };
-  }, []);
+
+    // Create tournament
+    const newTournamentId = await createTournament(TournamentData);
+
+    // If no tournament ID returned
+    if (!newTournamentId) {
+      addNotification(t("tournament_create_error"), "error");
+      return;
+    }
+
+    // Navigate to the new tournament
+    addNotification(t("tournament_create_success"), "success");
+    navigate(`/tournament/${newTournamentId}`);
+  };
 
   return (
     <div className="px-4 py-8 flex justify-center">
@@ -59,7 +114,7 @@ const CreateView: React.FC<CreateViewProps> = ({
           <div className="flex items-center mb-6">
             <button
               onClick={() => setCurrentView("main")}
-              className="text-text-secondary hover:text-text-primary mr-4"
+              className="text-text-secondary hover:text-text-primary mr-4 cursor-pointer"
             >
               <svg
                 className="w-6 h-6"
@@ -89,9 +144,9 @@ const CreateView: React.FC<CreateViewProps> = ({
                   <button
                     key={num}
                     onClick={() => setSelectedPlayers(num)}
-                    className={`p-4 rounded-lg border-2 transition-colors ${
+                    className={`cursor-pointer p-4 rounded-lg border-2 transition-colors ${
                       selectedPlayers === num
-                        ? "border-text-tertiary text-text-secondary bg-opacity-10 text-text-tertiary"
+                        ? "border-text-tertiary bg-opacity-10 text-text-tertiary"
                         : "border-border-secondary text-text-secondary hover:border-text-secondary"
                     }`}
                   >
@@ -128,7 +183,6 @@ const CreateView: React.FC<CreateViewProps> = ({
                       setValidatedUsers={setValidatedUsers}
                       isFull={participants.length >= selectedPlayers}
                       setParticipants={setParticipants}
-                      participants={participants}
                       t={t}
                     />
                   ))}
@@ -137,18 +191,16 @@ const CreateView: React.FC<CreateViewProps> = ({
             </div>
             <div className="flex space-x-4">
               <button
-                onClick={() => {
-                  if (!tournamentId) {
-                    handleCreateTournament();
-                  }
-                  setCurrentView("tournament");
-                }}
-                disabled={participants.length < selectedPlayers || loading}
-                className="flex-1 bg-text-tertiary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50"
+                onClick={handleCreateTournament}
+                disabled={participants.length < selectedPlayers}
+                className="flex-1 bg-text-tertiary text-background-primary py-3 px-6 rounded-lg font-semibold hover:bg-opacity-80 transition-colors disabled:opacity-50 cursor-pointer"
               >
-                {t("enter_tournament")}
+                {t("create_tournament")}
               </button>
             </div>
+            <p className="text-sm text-text-secondary">
+              {t("tournament_disclaimer")}
+            </p>
           </div>
         </div>
       </div>

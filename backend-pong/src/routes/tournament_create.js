@@ -55,7 +55,7 @@ export default async function tournament_create(request, reply) {
 
   /* Check if the number of players is valid */
   if (players.length != 4 && players.length != 8)
-    return reply.code(500).send({ error: "Incorrect number of players" });
+    return reply.code(400).send({ error: "Incorrect number of players" });
 
   /* Create the configuration */
   const conf_id = create_configuration({

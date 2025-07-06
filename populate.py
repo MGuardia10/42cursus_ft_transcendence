@@ -10,8 +10,7 @@ USERS_DATABASE = 'backend-user/database.sqlite'
 PLAYERS_API_URL = 'http://localhost:8081/api/pong'
 PLAYERS_DATABASE = 'backend-pong/database.sqlite'
 
-GAMES_STATS_COUNT = 100
-GAMES_COUNT = 10
+GAMES_COUNT = 100
 
 def error_code(msg: str, code: int) -> None:
 	"""
@@ -71,27 +70,6 @@ def create_relation(id_from: int, id_to: int, mutual: bool =False) -> None:
 				f"Error while accepting the request {id_from} -> {id_to}",
 				response.status_code
 			)
-
-def set_stats(id: int) -> None:
-	"""
-	"""
-	games_won = random.randint(0, GAMES_STATS_COUNT)
-	games_lost = GAMES_STATS_COUNT - games_won
-	points_won = random.randint(1, 1000)
-	points_lose = random.randint(1, 1000)
-
-	requests.patch(
-		f"{PLAYERS_API_URL}/player/{id}",
-		headers={
-			'Content-Type': 'application/json'
-		},
-		json={
-			'win_count': games_won,
-			'lose_count': games_lost,
-			'win_points': points_won,
-			'lose_points': points_lose,
-		},
-	)
 
 def generate_games(host: Dict, enemies: List[Dict], count) -> None:
 	"""
@@ -250,10 +228,6 @@ def main():
 	create_relation(grimmchild['id'], mato['id'])
 	create_relation(grimmchild['id'], quirel['id'])
 	create_relation(mato['id'], elderbug['id'], True)
-
-	# Place random scores
-	for user in users:
-		set_stats(user['id'])
 
 	# Create random games
 	generate_games(knight, users[1:], GAMES_COUNT)

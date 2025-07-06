@@ -138,8 +138,7 @@ export const translations = {
     create_tournament_subtitle:
       "Start a new tournament and invite players to join",
     join_tournament: "Join Tournament",
-    join_tournament_subtitle:
-      "Enter a tournament code to join an existing tournament",
+    join_tournament_subtitle: "Enter code to join an existing tournament",
     start_tournament: "Start Tournament",
     enter_tournament: "Enter Tournament",
     tournament_code: "Tournament Code",
@@ -157,6 +156,9 @@ export const translations = {
     tournament_winner: "Winner: {alias}",
     tournament_vs: "VS",
     tournament_play: "Play",
+    tournament_refresh: "Refresh Matches",
+    tournament_refresh_error: "Error refreshing matches",
+    tournament_refresh_success: "Matches refreshed successfully!",
     tournament_joining: "Joining...",
     tournament_enter_code_hint:
       "Enter the 8-character code provided by the tournament creator",
@@ -165,6 +167,19 @@ export const translations = {
     tournament_invited: "✓ Invited",
     tournament_pending: "Pending...",
     tournament_full: "Full",
+    tournament_not_enough_players:
+      "Not enough players to start the tournament.",
+    tournament_disclaimer:
+      "game settings of the creator will be used during the tournament.",
+    tournament_join_error:
+      "Invalid code or user does not belong to the tournament.",
+    tournament_join_success: "You have successfully joined the tournament!",
+    tournament_create_success: "Tournament created successfully!",
+    tournament_create_error: "Error creating tournament",
+    tournament_game_error: "Error crating tournament game.",
+    tournament_game_success: "Tournament game created successfully!",
+    tournament_delete_error: "Error deleting tournament",
+    tournament_delete_success: "Tournament deleted successfully!",
     // --- GameInvite ---
     game_invite_title: "Invite to Play",
     game_invite_description: "Select a friend to invite to a match",
@@ -353,6 +368,9 @@ export const translations = {
     tournament_winner: "Ganador: {alias}",
     tournament_vs: "VS",
     tournament_play: "Jugar",
+    tournament_refresh: "Actualizar Partidas",
+    tournament_refresh_error: "Error al actualizar partidas",
+    tournament_refresh_success: "Partidas actualizadas con éxito!",
     tournament_joining: "Uniéndose...",
     tournament_enter_code_hint:
       "Introduce el código de 8 caracteres proporcionado por el creador del torneo",
@@ -361,6 +379,18 @@ export const translations = {
     tournament_invited: "✓ Invitado",
     tournament_pending: "Pendiente...",
     tournament_full: "Lleno",
+    tournament_not_enough_players:
+      "No hay suficientes jugadores para iniciar el torneo.",
+    tournament_disclaimer:
+      "Los ajustes del juego del creador se utilizarán durante el torneo.",
+    tournament_join_error: "Código inválido o usuario no pertenece al torneo.",
+    tournament_join_success: "¡Te has unido al torneo con éxito!",
+    tournament_create_success: "¡Torneo creado con éxito!",
+    tournament_create_error: "Error al crear el torneo",
+    tournament_game_error: "Error al crear el juego del torneo.",
+    tournament_game_success: "¡Juego del torneo creado con éxito!",
+    tournament_delete_error: "Error al eliminar el torneo",
+    tournament_delete_success: "¡Torneo eliminado con éxito!",
     // --- GameInvite ---
     game_invite_title: "Invitar a Jugar",
     game_invite_description: "Selecciona un amigo para invitarlo a una partida",
@@ -549,6 +579,11 @@ export const translations = {
     tournament_winner: "Vencedor: {alias}",
     tournament_vs: "VS",
     tournament_play: "Jogar",
+    tournament_refresh: "Atualizar Partidas",
+    tournament_refresh_error: "Erro ao atualizar partidas",
+    tournament_game_error: "Erro ao criar jogo do torneio.",
+    tournament_game_success: "Jogo do torneio criado com sucesso!",
+    tournament_refresh_success: "Partidas atualizadas com sucesso!",
     tournament_joining: "Entrando...",
     tournament_enter_code_hint:
       "Digite o código de 8 caracteres fornecido pelo criador do torneio",
@@ -557,6 +592,17 @@ export const translations = {
     tournament_invited: "✓ Convidado",
     tournament_pending: "Pendente...",
     tournament_full: "Cheio",
+    tournament_not_enough_players:
+      "Não há jogadores suficientes para iniciar o torneio.",
+    tournament_disclaimer:
+      "As configurações do jogo do criador serão usadas durante o torneio.",
+    tournament_join_error:
+      "Código inválido ou usuário não pertence ao torneio.",
+    tournament_join_success: "Você entrou no torneio com sucesso!",
+    tournament_create_success: "Torneio criado com sucesso!",
+    tournament_create_error: "Erro ao criar o torneio",
+    tournament_delete_error: "Erro ao excluir o torneio",
+    tournament_delete_success: "Torneio excluído com sucesso!",
     // --- GameInvite ---
     game_invite_title: "Convidar para Jogar",
     game_invite_description:
