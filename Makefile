@@ -10,7 +10,7 @@ check_env:
 		exit 1; \
 	fi
 
-	@python3 check_env.py; \
+	@bash check_env.sh; \
 	STATUS=$$?; \
 	if [ $$STATUS -eq 1 ]; then \
 		echo "\e[31m[ ERROR ]\e[0m The system could not be started because the '.env' file is invalid or missing required environment variables"; \
