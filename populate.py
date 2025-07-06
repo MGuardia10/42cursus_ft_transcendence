@@ -4,10 +4,10 @@ import sqlite3
 import random
 from typing import List, Dict
 
-USERS_API_URL = 'http://localhost:8081/api/user'
+USERS_API_URL = 'https://localhost:8081/api/user'
 USERS_DATABASE = 'backend-user/database.sqlite'
 
-PLAYERS_API_URL = 'http://localhost:8081/api/pong'
+PLAYERS_API_URL = 'https://localhost:8081/api/pong'
 PLAYERS_DATABASE = 'backend-pong/database.sqlite'
 
 GAMES_COUNT = 100
@@ -31,7 +31,8 @@ def add_user(name: str, avatar_url: str) -> Dict:
 		},
 		headers={
 			'Content-Type': 'application/json'
-		}
+		},
+		verify=False
 	)
 	if response.status_code != 201:
 		error_code(
@@ -53,7 +54,8 @@ def create_relation(id_from: int, id_to: int, mutual: bool =False) -> None:
 			},
 			headers={
 				'Content-Type': 'application/json'
-			}
+			},
+			verify=False
 		)
 	
 	response = send_relation_request(id_from, id_to)
@@ -94,7 +96,8 @@ def generate_games(host: Dict, enemies: List[Dict], count) -> None:
 			json={
 				'player_a_id': player_a,
 				'player_b_id': player_b
-			}
+			},
+			verify=False
 		)
 		game_id = res.json()['game_id']
 
@@ -110,7 +113,8 @@ def generate_games(host: Dict, enemies: List[Dict], count) -> None:
 				'state': 'Finished',
 				'player_a_score': score_a,
 				'player_b_score': score_b,
-			}
+			},
+			verify=False
 		)
 
 def delete_data() -> None:
