@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-// import { Friend } from "@/types/friendsContext";
 import type { Player } from "@/types/tournamentTypes";
 import TournamentCodeInput from "./TournamentCodeInput";
 

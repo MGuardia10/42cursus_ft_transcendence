@@ -176,6 +176,8 @@ export const translations = {
     tournament_join_success: "You have successfully joined the tournament!",
     tournament_create_success: "Tournament created successfully!",
     tournament_create_error: "Error creating tournament",
+    tournament_game_error: "Error crating tournament game.",
+    tournament_game_success: "Tournament game created successfully!",
     // --- GameInvite ---
     game_invite_title: "Invite to Play",
     game_invite_description: "Select a friend to invite to a match",
@@ -383,6 +385,8 @@ export const translations = {
     tournament_join_success: "¡Te has unido al torneo con éxito!",
     tournament_create_success: "¡Torneo creado con éxito!",
     tournament_create_error: "Error al crear el torneo",
+    tournament_game_error: "Error al crear el juego del torneo.",
+    tournament_game_success: "¡Juego del torneo creado con éxito!",
     // --- GameInvite ---
     game_invite_title: "Invitar a Jugar",
     game_invite_description: "Selecciona un amigo para invitarlo a una partida",
@@ -573,6 +577,8 @@ export const translations = {
     tournament_play: "Jogar",
     tournament_refresh: "Atualizar Partidas",
     tournament_refresh_error: "Erro ao atualizar partidas",
+    tournament_game_error: "Erro ao criar jogo do torneio.",
+    tournament_game_success: "Jogo do torneio criado com sucesso!",
     tournament_refresh_success: "Partidas atualizadas com sucesso!",
     tournament_joining: "Entrando...",
     tournament_enter_code_hint:

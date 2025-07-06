@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Player, TournamentView } from "@/types/tournamentTypes";
 
 interface MainViewProps {
@@ -7,7 +7,6 @@ interface MainViewProps {
   user: any;
   setValidatedUsers: React.Dispatch<React.SetStateAction<Set<number>>>;
   setParticipants: React.Dispatch<React.SetStateAction<Player[]>>;
-  selectedPlayers: number;
 }
 
 const MainView: React.FC<MainViewProps> = ({
@@ -16,7 +15,6 @@ const MainView: React.FC<MainViewProps> = ({
   user,
   setValidatedUsers,
   setParticipants,
-  selectedPlayers,
 }) => (
   <div className="flex justify-center px-4 lg:px-16 py-8">
     <div className="w-full max-w-6xl">

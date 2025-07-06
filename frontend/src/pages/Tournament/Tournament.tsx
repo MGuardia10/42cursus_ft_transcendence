@@ -60,7 +60,6 @@ const Tournament: React.FC = () => {
             user={user}
             setValidatedUsers={setValidatedUsers}
             setParticipants={setParticipants}
-            selectedPlayers={selectedPlayers}
           />
         );
     }

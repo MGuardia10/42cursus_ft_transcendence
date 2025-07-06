@@ -278,7 +278,21 @@ export function useTournament() {
             refreshedGame.player_b_id
           }/avatar`,
         },
-        configuration: refreshedTournament.configuracion,
+        configuration: {
+          ...refreshedTournament.configuracion,
+          ball_color: refreshedTournament.configuracion.ball_color.replace(
+            "#",
+            ""
+          ),
+          stick_color: refreshedTournament.configuracion.stick_color.replace(
+            "#",
+            ""
+          ),
+          field_color: refreshedTournament.configuracion.field_color.replace(
+            "#",
+            ""
+          ),
+        },
       };
 
       return tournamentGameData;
@@ -287,7 +301,7 @@ export function useTournament() {
   );
 
   // Delete tournament
-  const deleteTournament = useCallback(async (id: number) => {
+  const deleteTournament = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
     try {
