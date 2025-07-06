@@ -156,6 +156,8 @@ export const translations = {
     tournament_winner: "Winner: {alias}",
     tournament_vs: "VS",
     tournament_play: "Play",
+    tournament_match: "Tournament Match",
+    tournament_match_play: "Tournament match in progress",
     tournament_refresh: "Refresh Matches",
     tournament_refresh_error: "Error refreshing matches",
     tournament_refresh_success: "Matches refreshed successfully!",
@@ -170,7 +172,7 @@ export const translations = {
     tournament_not_enough_players:
       "Not enough players to start the tournament.",
     tournament_disclaimer:
-      "game settings of the creator will be used during the tournament.",
+      "Game settings of the creator will be used during the tournament.",
     tournament_join_error:
       "Invalid code or user does not belong to the tournament.",
     tournament_join_success: "You have successfully joined the tournament!",
@@ -368,6 +370,8 @@ export const translations = {
     tournament_winner: "Ganador: {alias}",
     tournament_vs: "VS",
     tournament_play: "Jugar",
+    tournament_match: "Partida de Torneo",
+    tournament_match_play: "Partida de torneo en curso",
     tournament_refresh: "Actualizar Partidas",
     tournament_refresh_error: "Error al actualizar partidas",
     tournament_refresh_success: "Partidas actualizadas con éxito!",
@@ -579,6 +583,8 @@ export const translations = {
     tournament_winner: "Vencedor: {alias}",
     tournament_vs: "VS",
     tournament_play: "Jogar",
+    tournament_match: "Partida de Torneio",
+    tournament_match_play: "Partida de torneio em andamento",
     tournament_refresh: "Atualizar Partidas",
     tournament_refresh_error: "Erro ao atualizar partidas",
     tournament_game_error: "Erro ao criar jogo do torneio.",
